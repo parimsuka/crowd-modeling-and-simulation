@@ -8,7 +8,7 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, speed=1):
+    def __init__(self, x: float, y: float, absorbable: bool, speed=1):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -18,6 +18,7 @@ class Pedestrian:
         """
         self.x = x
         self.y = y
+        self.absorbable = absorbable
         if 0 <= speed <= 1:
             self.speed = speed
         else:
@@ -28,6 +29,16 @@ class Pedestrian:
     def get_position(self) -> (float, float):
         """Returns the current position of the pedestrian as a float tuple."""
         return self.x, self.y
+
+    def set_position(self, x, y):
+        """
+        Set the position of the pedestrian.
+
+        :param x: The new x-coordinate of the pedestrian
+        :param y: The new y-coordinate of the pedestrian
+        """
+        self.x = x
+        self.y = y
 
     def move(self, dx: float, dy: float) -> (float, float):
         """

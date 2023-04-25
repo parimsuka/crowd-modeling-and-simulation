@@ -1,5 +1,6 @@
 {
   "grid_size": 25,
+  "absorbable": true,
   "cell_size": 20,
   "pedestrians": [
     {"x": 2, "y": 2},

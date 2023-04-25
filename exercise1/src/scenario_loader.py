@@ -17,10 +17,10 @@ def load_scenario(scenario_path, grid_size, cell_size):
         scenario = json.load(f)
 
     grid = Grid(grid_size, cell_size)
-
+    absorbable = scenario["absorbable"]
     # Add pedestrians
     for ped in scenario['pedestrians']:
-        grid.add_pedestrian(Pedestrian(ped['x']+0.5, ped['y']+0.5))
+        grid.add_pedestrian(Pedestrian(ped['x']+0.5, ped['y']+0.5, absorbable))
 
     # Add targets
     if 'targets' in scenario:

@@ -92,7 +92,12 @@ class Grid:
             # If new position is not target: move pedestrian
             if self.grid[int(new_x)][int(new_y)] != 'T':
                 self.grid[int(new_x)][int(new_y)] = 'P'
-            # If new position IS target: remove pedestrian (absorbing target)
+            # If new position IS target: do not move pedestrian (pedestrian waits by the target)
+            elif not ped.absorbable:
+                # Keep pedestrian in the old position
+                self.grid[int(old_x)][int(old_y)] = 'P'
+                # Update pedestrian's internal position to the old position
+                ped.set_position(old_x, old_y)
             else:
                 self.pedestrians.remove(ped)
 
