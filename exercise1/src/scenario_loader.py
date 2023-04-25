@@ -1,6 +1,7 @@
 import json
 
 from grid import Grid
+from pedestrian import Pedestrian
 
 
 def load_scenario(scenario_path, grid_size, cell_size):
@@ -19,7 +20,7 @@ def load_scenario(scenario_path, grid_size, cell_size):
 
     # Add pedestrians
     for ped in scenario['pedestrians']:
-        grid.add_pedestrian(ped['x'], ped['y'])
+        grid.add_pedestrian(Pedestrian(ped['x'], ped['y']))
 
     # Add targets
     if 'targets' in scenario:

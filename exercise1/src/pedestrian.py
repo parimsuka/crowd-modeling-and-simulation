@@ -22,10 +22,11 @@ class Pedestrian:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        return self.x, self.y
 
     def move_target_direction(self, target_x, target_y, distance, grid):
         dx, dy = self.find_best_move_cell(target_x, target_y, distance, grid)
-        self.move(dx, dy)
+        return self.move(dx, dy)
 
     def find_closest_target(self, targets):
         closest_target = None
@@ -45,7 +46,7 @@ class Pedestrian:
         if closest_target is None:
             return
 
-        self.move_target_direction(closest_target[0], closest_target[1], self.speed, grid)
+        return self.move_target_direction(closest_target[0], closest_target[1], self.speed, grid)
 
     def get_move_deltas(self, target_x, target_y, distance):
         target_vector = [target_x - self.x, target_y - self.y]
@@ -70,6 +71,14 @@ class Pedestrian:
         if grid[int(x_new)][int(y_new)] == 'E':
             return dx, dy
 
+        # If target cell is Target: Move inside target (currently only absorbing targets are implemented)
+        if grid[int(x_new)][int(y_new)] == 'T':
+            return dx, dy
+
+        # If target cell is empty (but there is a trace): Move to new target position
+        if grid[int(x_new)][int(y_new)] == 'R':
+            return dx, dy
+
         # Target cell is neither current cell nor empty
         # -> Consider if other neighboring cells are closer to target than current position
         int_x = int(self.x)
@@ -80,7 +89,7 @@ class Pedestrian:
         best_neighbor_cell_distance = target_vector_norm
 
         for nc_x, nc_y, nc_value in neighbor_cells:
-            if nc_value == 'E':
+            if nc_value == 'E' or nc_value == 'R' or nc_value == 'T':
                 # Cell is empty -> Check for distance to target
                 distance_vector = [target_x - nc_x, target_y - nc_y]
                 distance_vector_norm = np.linalg.norm(distance_vector)
