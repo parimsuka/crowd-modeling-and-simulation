@@ -86,7 +86,7 @@ class Grid:
             # calculate best pedestrian move and update its internal position
             new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
 
-            # Update trace of pedestrian path
+            # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = 'R'
 
             # If new position is not target: move pedestrian
