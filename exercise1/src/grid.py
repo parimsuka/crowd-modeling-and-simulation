@@ -82,68 +82,22 @@ class Grid:
         """
         Update the grid by moving pedestrians towards the target.
         """
-        # Create a new empty grid with the same size as the current grid
-        new_grid = [['E' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
-
-        pedestrian_positions = []
-
-        # Move pedestrians
+        
         for ped in self.pedestrians:
             # save old pedestrian position
             old_x, old_y = ped.get_position()
             # calculate best pedestrian move and update its internal position
             new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
 
-            # Handle the new pedestrian position
-            # If the new position is a target, the pedestrian is absorbed.
-            # (Only absorbing targets are currently implemented)
+            # Update trace of pedestrian path
+            self.grid[int(old_x)][int(old_y)] = 'R'
 
-            # If new position is not target:
+            # If new position is not target: move pedestrian
             if self.grid[int(new_x)][int(new_y)] != 'T':
-                # Add pedestrian to new grid
-                new_grid[int(new_x)][int(new_y)] = 'P'
-                # Keep track of the new pedestrian position
-                pedestrian_positions.append((int(new_x), int(new_y)))
-
-            # If the previous position of the pedestrian is not already taken by another pedestrian,
-            # update the old position with a trace
-            if (int(old_x), int(old_y)) not in pedestrian_positions:
-                new_grid[int(old_x)][int(old_y)] = 'R'
-                # Change the previously occupied space on the current (not new) grid to empty, so other pedestrians
-                # can go there now
-                self.grid[int(old_x)][int(old_y)] = 'E'
-
-
-        for i, row in enumerate(self.grid):
-            for j, cell in enumerate(row):
-                # if cell == 'P':
-                    # move_i, move_j = self.find_best_move(i, j, self.target_positions)
-                    # # If the cell where the pedestrian wants to move is not occupied by the target
-                    # if self.grid[move_i][move_j] != 'T':
-                    #     new_grid[move_i][move_j] = 'P'
-                    #     # Keep track of the new pedestrian position
-                    #     pedestrian_positions.append((move_i, move_j))
-                    #     # If the previous position of the pedestrian is not already taken by another pedestrian,
-                    #     # update the old position with a trace
-                    #     if (i, j) not in pedestrian_positions:
-                    #         new_grid[i][j] = 'R'
-                    # # If the cell where the pedestrian wants to move is occupied by the target
-                    # elif self.grid[move_i][move_j] == 'T':
-                    #     # If the previous position of the pedestrian is not already taken by another pedestrian,
-                    #     # update the old position with a trace
-                    #     if (i, j) not in pedestrian_positions:
-                    #         new_grid[i][j] = 'R'
-                # If the cell contains an obstacle, keep the obstacle in the new grid
-                if cell == 'O':
-                    new_grid[i][j] = 'O'
-                # If the cell contains a target, keep the target in the new grid
-                elif cell == 'T':
-                    new_grid[i][j] = 'T'
-                # If the cell contains a trace and the trace is not occupied by a pedestrian, keep trace in the new grid
-                elif cell == 'R' and (i, j) not in pedestrian_positions:
-                    new_grid[i][j] = 'R'
-
-        self.grid = new_grid
+                self.grid[int(new_x)][int(new_y)] = 'P'
+            # If new position IS target: remove pedestrian (absorbing target)
+            else:
+                self.pedestrians.remove(ped)
 
     def find_best_move(self, i, j, target_positions):
         """

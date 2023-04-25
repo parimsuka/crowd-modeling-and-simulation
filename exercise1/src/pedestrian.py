@@ -46,7 +46,7 @@ class Pedestrian:
         if closest_target is None:
             return
 
-        return self.move_target_direction(closest_target[0], closest_target[1], self.speed, grid)
+        return self.move_target_direction(closest_target[0]+0.5, closest_target[1]+0.5, self.speed, grid)
 
     def get_move_deltas(self, target_x, target_y, distance):
         target_vector = [target_x - self.x, target_y - self.y]
@@ -83,7 +83,12 @@ class Pedestrian:
         # -> Consider if other neighboring cells are closer to target than current position
         int_x = int(self.x)
         int_y = int(self.y)
-        neighbor_cells = [(i+0.5, j+0.5, grid[i][j]) for i in [int_x-1, int_x, int_x+1] for j in [int_y-1, int_y, int_y+1]]
+        neighbor_cells = []
+        for i in [int_x-1, int_x, int_x+1]:
+            if 0 <= i < len(grid):
+                for j in [int_y-1, int_y, int_y+1]:
+                    if 0 <= j < len(grid[0]):
+                        neighbor_cells.append((i+0.5, j+0.5, grid[i][j]))
 
         best_neighbor_cell = 0, 0  # If we don't find a cell, do not move
         best_neighbor_cell_distance = target_vector_norm

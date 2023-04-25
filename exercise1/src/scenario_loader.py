@@ -20,7 +20,7 @@ def load_scenario(scenario_path, grid_size, cell_size):
 
     # Add pedestrians
     for ped in scenario['pedestrians']:
-        grid.add_pedestrian(Pedestrian(ped['x'], ped['y']))
+        grid.add_pedestrian(Pedestrian(ped['x']+0.5, ped['y']+0.5))
 
     # Add targets
     if 'targets' in scenario:
