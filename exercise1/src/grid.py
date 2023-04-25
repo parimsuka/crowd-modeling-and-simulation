@@ -1,7 +1,8 @@
 import pygame
+import pygame.gfxdraw
+
 from constants import EMPTY_CELL_COLOR, PEDESTRIAN_COLOR, OBSTACLE_COLOR, TARGET_COLOR, TRACE_COLOR
 from utils import draw_rounded_rect
-import pygame.gfxdraw
 
 
 class Grid:

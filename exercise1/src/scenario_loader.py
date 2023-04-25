@@ -1,4 +1,5 @@
 import json
+
 from grid import Grid
 
 
