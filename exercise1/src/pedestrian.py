@@ -2,6 +2,11 @@ import numpy as np
 
 
 class Pedestrian:
+    """
+    A class representing pedestrians on a 2d space.
+    The pedestrian has attributes for its position and speed.
+    The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
+    """
 
     def __init__(self, x: float, y: float, speed=1):
         """
@@ -21,8 +26,7 @@ class Pedestrian:
                              "A speed <0 is not supported either.")
 
     def get_position(self) -> (float, float):
-        """Returns the current position of the pedestrian as a float tuple.
-        """
+        """Returns the current position of the pedestrian as a float tuple."""
         return self.x, self.y
 
     def move(self, dx: float, dy: float) -> (float, float):
