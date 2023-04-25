@@ -48,6 +48,6 @@ class FileDialog:
         :return: The file path of the clicked file or None if no file was clicked.
         """
         for i, file in enumerate(self.files):
-            if pygame.Rect(10, 10 + i * 25, 200, 20).collidepoint(pos):
+            if pygame.Rect(10, 10 + i * 25, 500, 20).collidepoint(pos):
                 return os.path.join(self.directory, file)
         return None
