@@ -48,9 +48,6 @@ class Grid:
         """
         self.grid[x][y] = 'O'
 
-    def get_cell_type(self, x, y):
-        return self.grid[x][y]
-
     def draw(self, win):
         """
         Draw the grid and its elements on the window.
@@ -82,7 +79,7 @@ class Grid:
         """
         Update the grid by moving pedestrians towards the target.
         """
-        
+
         for ped in self.pedestrians:
             # save old pedestrian position
             old_x, old_y = ped.get_position()
