@@ -46,6 +46,9 @@ class Grid:
         """
         self.grid[x][y] = 'O'
 
+    def get_cell_type(self, x, y):
+        return self.grid[x][y]
+
     def draw(self, win):
         """
         Draw the grid and its elements on the window.
@@ -53,8 +56,8 @@ class Grid:
         :param win: The pygame window to draw on
         """
         corner_radius = 1
-        for i, row in enumerate(self.grid):
-            for j, cell in enumerate(row):
+        for j, row in enumerate(self.grid):  # TODO Tali: Check that swapping i and j as a fix for the x/y reversion does not break anything else
+            for i, cell in enumerate(row):
                 rect = pygame.Rect(j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size)
                 if cell == 'E':
                     color = EMPTY_CELL_COLOR
