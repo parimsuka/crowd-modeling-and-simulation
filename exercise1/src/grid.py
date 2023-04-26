@@ -74,7 +74,7 @@ class Grid:
         corner_radius = 1
         for j, row in enumerate(
             self.grid
-        ):  # TODO Tali: Check that swapping i and j as a fix for the x/y reversion does not break anything else
+        ):
             for i, cell in enumerate(row):
                 rect = pygame.Rect(
                     j * self.cell_size,
