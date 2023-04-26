@@ -7,7 +7,10 @@ class FileDialog:
     """
     A simple file dialog class to display and select files.
     """
-    def __init__(self, directory, file_extension, screen, background_color=(200, 200, 200)):
+
+    def __init__(
+        self, directory, file_extension, screen, background_color=(200, 200, 200)
+    ):
         """
         Initialize a FileDialog instance.
         :param directory: The directory to display the files from.
@@ -27,7 +30,9 @@ class FileDialog:
         Get a list of files in the specified directory with the specified file extension.
         :return: A list of file names.
         """
-        return [f for f in os.listdir(self.directory) if f.endswith(self.file_extension)]
+        return [
+            f for f in os.listdir(self.directory) if f.endswith(self.file_extension)
+        ]
 
     def draw(self):
         """

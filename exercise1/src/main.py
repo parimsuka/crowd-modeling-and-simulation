@@ -22,7 +22,9 @@ def main():
 
     # Initialize buttons
     next_step_button = Button(10, height - 60, 100, 40, "Next Step", (200, 200, 200))
-    choose_scenario_button = ChooseScenarioButton(120, height - 60, 200, 40, "Choose Scenario", (200, 200, 200))
+    choose_scenario_button = ChooseScenarioButton(
+        120, height - 60, 200, 40, "Choose Scenario", (200, 200, 200)
+    )
 
     # Initialize the file dialog
     file_dialog = FileDialog("./scenarios", ".json", screen)
@@ -48,9 +50,17 @@ def main():
                         pygame.display.set_caption("Crowd Simulation")
 
                         # Initialize buttons
-                        next_step_button = Button(10, height - 60, 100, 40, "Next Step", (200, 200, 200))
-                        choose_scenario_button = ChooseScenarioButton(120, height - 60, 200, 40, "Choose Scenario",
-                                                                      (200, 200, 200))
+                        next_step_button = Button(
+                            10, height - 60, 100, 40, "Next Step", (200, 200, 200)
+                        )
+                        choose_scenario_button = ChooseScenarioButton(
+                            120,
+                            height - 60,
+                            200,
+                            40,
+                            "Choose Scenario",
+                            (200, 200, 200),
+                        )
                         step_count = 0
                         choose_scenario_button.choosing_scenario = False
                 else:
@@ -76,5 +86,5 @@ def main():
         pygame.display.flip()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ class Button:
     """
     A simple button class with text to be used in a Pygame application.
     """
+
     def __init__(self, x, y, width, height, text, color):
         """
         Initialize a Button instance.
@@ -41,13 +42,16 @@ class Button:
         :return: True if the button is clicked, False otherwise.
         """
         x, y = pos
-        return self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
+        return (
+            self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
+        )
 
 
 class ChooseScenarioButton(Button):
     """
     A subclass of the Button class that includes a callback function to be executed when the button is clicked.
     """
+
     def __init__(self, x, y, width, height, text, color):
         """
         Initialize a ChooseScenarioButton instance.

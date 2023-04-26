@@ -22,9 +22,11 @@ class Pedestrian:
         if 0 <= speed <= 1:
             self.speed = speed
         else:
-            raise ValueError("A pedestrian speed >1 is not supported, since it might lead to skipping cells. "
-                             "Instead, reduce the speed of all other pedestrians accordingly.\n"
-                             "A speed <0 is not supported either.")
+            raise ValueError(
+                "A pedestrian speed >1 is not supported, since it might lead to skipping cells. "
+                "Instead, reduce the speed of all other pedestrians accordingly.\n"
+                "A speed <0 is not supported either."
+            )
 
     def get_position(self) -> (float, float):
         """Returns the current position of the pedestrian as a float tuple."""
@@ -52,7 +54,9 @@ class Pedestrian:
         self.y += dy
         return self.x, self.y
 
-    def move_target_direction(self, target_x: float, target_y: float, distance: float, grid: list[list[str]]) -> (float, float):
+    def move_target_direction(
+        self, target_x: float, target_y: float, distance: float, grid: list[list[str]]
+    ) -> (float, float):
         """
         Moves the pedestrian in the direction of a target for a distance. Only enters Empty, Trace and Target Cells.
 
@@ -85,7 +89,9 @@ class Pedestrian:
 
         return closest_target
 
-    def move_to_closest_target(self, targets: list[tuple[int, int]], grid: list[list[str]]) -> (float, float):
+    def move_to_closest_target(
+        self, targets: list[tuple[int, int]], grid: list[list[str]]
+    ) -> (float, float):
         """
         Moves the pedestrian to the closest target.
 
@@ -97,9 +103,13 @@ class Pedestrian:
         if closest_target is None:
             return 0, 0
 
-        return self.move_target_direction(closest_target[0]+0.5, closest_target[1]+0.5, self.speed, grid)
+        return self.move_target_direction(
+            closest_target[0] + 0.5, closest_target[1] + 0.5, self.speed, grid
+        )
 
-    def get_move_deltas(self, target_x: float, target_y: float, distance: float) -> (float, float, float):
+    def get_move_deltas(
+        self, target_x: float, target_y: float, distance: float
+    ) -> (float, float, float):
         """
         Calculates delta-x and delta-y to move the pedestrian a certain distance towards the target.
         Also calculates the distance between the pedestrian and the target.
@@ -123,7 +133,9 @@ class Pedestrian:
 
         return dx, dy, target_vector_norm
 
-    def find_best_move_cell(self, target_x: float, target_y: float, distance: float, grid: list[list[str]]) -> (float, float):
+    def find_best_move_cell(
+        self, target_x: float, target_y: float, distance: float, grid: list[list[str]]
+    ) -> (float, float):
         """
         Calculates the best move for the pedestrian to reach a certain target, taking into account that the pedestrian
         only enters Empty, Target or Trace cells.
@@ -145,15 +157,15 @@ class Pedestrian:
             return dx, dy
 
         # If target cell is empty: Move to target position
-        if grid[int(x_new)][int(y_new)] == 'E':
+        if grid[int(x_new)][int(y_new)] == "E":
             return dx, dy
 
         # If target cell is Target: Move inside target (currently only absorbing targets are implemented)
-        if grid[int(x_new)][int(y_new)] == 'T':
+        if grid[int(x_new)][int(y_new)] == "T":
             return dx, dy
 
         # If target cell is empty (but there is a trace): Move to new target position
-        if grid[int(x_new)][int(y_new)] == 'R':
+        if grid[int(x_new)][int(y_new)] == "R":
             return dx, dy
 
         # If we are here, Target cell is neither current cell nor empty nor a trace cell
@@ -163,11 +175,11 @@ class Pedestrian:
         int_x = int(self.x)
         int_y = int(self.y)
         neighbor_cells = []
-        for i in [int_x-1, int_x, int_x+1]:
+        for i in [int_x - 1, int_x, int_x + 1]:
             if 0 <= i < len(grid):
-                for j in [int_y-1, int_y, int_y+1]:
+                for j in [int_y - 1, int_y, int_y + 1]:
                     if 0 <= j < len(grid[0]):
-                        neighbor_cells.append((i+0.5, j+0.5, grid[i][j]))
+                        neighbor_cells.append((i + 0.5, j + 0.5, grid[i][j]))
 
         # Initial target position: our current position -> No better position: No movement
         best_neighbor_cell = self.x, self.y
@@ -175,7 +187,7 @@ class Pedestrian:
         best_neighbor_cell_distance = target_vector_norm
 
         for nc_x, nc_y, nc_value in neighbor_cells:
-            if nc_value == 'E' or nc_value == 'R' or nc_value == 'T':
+            if nc_value == "E" or nc_value == "R" or nc_value == "T":
                 # Cell is empty (or Trace or Target) -> Check distance of this cell to target
                 distance_vector = [target_x - nc_x, target_y - nc_y]
                 distance_vector_norm = np.linalg.norm(distance_vector)
@@ -186,5 +198,7 @@ class Pedestrian:
                     best_neighbor_cell = nc_x, nc_y
 
         # calculate the new move deltas to move the pedestrian towards the (new) target best_neighbor_cell
-        dx, dy, _ = self.get_move_deltas(best_neighbor_cell[0], best_neighbor_cell[1], distance)
+        dx, dy, _ = self.get_move_deltas(
+            best_neighbor_cell[0], best_neighbor_cell[1], distance
+        )
         return dx, dy
