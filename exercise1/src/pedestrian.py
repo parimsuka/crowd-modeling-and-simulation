@@ -8,7 +8,7 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, absorbable: bool, speed=1):
+    def __init__(self, x: float, y: float, speed=1):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -18,7 +18,6 @@ class Pedestrian:
         """
         self.x = x
         self.y = y
-        self.absorbable = absorbable
         if 0 <= speed <= 1:
             self.speed = speed
         else:
@@ -81,7 +80,7 @@ class Pedestrian:
 
         # iterate over all possible targets to find the closest target
         for target in targets:
-            target_vector = [target[0] - self.x, target[1] - self.y]
+            target_vector = [target[0]+0.5 - self.x, target[1]+0.5 - self.y]
             target_distance = np.linalg.norm(target_vector)
             if target_distance < closest_target_distance:
                 closest_target_distance = target_distance
@@ -134,7 +133,7 @@ class Pedestrian:
         return dx, dy, target_vector_norm
 
     def find_best_move_cell(
-        self, target_x: float, target_y: float, distance: float, grid: list[list[str]]
+        self, target_x: float, target_y: float, walking_distance: float, grid: list[list[str]]
     ) -> (float, float):
         """
         Calculates the best move for the pedestrian to reach a certain target, taking into account that the pedestrian
@@ -142,13 +141,13 @@ class Pedestrian:
 
         :param target_x: The x-coordinate of the target.
         :param target_y: The y-coordinate of the target.
-        :param distance: The distance which the pedestrian will be moved.
+        :param walking_distance: The distance which the pedestrian will be moved.
         :param grid: The grid containing the environment. Used to avoid pathing into certain cell types.
         :return: A tuple containing delta-x and delta-y, the distances that the pedestrian will move in the
             x- and y-direction
         """
         # calculate the possible new position of the pedestrian, moving directly towards the target
-        dx, dy, target_vector_norm = self.get_move_deltas(target_x, target_y, distance)
+        dx, dy, target_vector_norm = self.get_move_deltas(target_x, target_y, walking_distance)
         x_new = self.x + dx
         y_new = self.y + dy
 
@@ -160,8 +159,8 @@ class Pedestrian:
         if grid[int(x_new)][int(y_new)] == "E":
             return dx, dy
 
-        # If target cell is Target: Move inside target (currently only absorbing targets are implemented)
-        if grid[int(x_new)][int(y_new)] == "T":
+        # If target cell is absorbable Target: Move inside target
+        if grid[int(x_new)][int(y_new)] == "Ta":
             return dx, dy
 
         # If target cell is empty (but there is a trace): Move to new target position
@@ -170,35 +169,99 @@ class Pedestrian:
 
         # If we are here, Target cell is neither current cell nor empty nor a trace cell
         # -> Consider if other neighboring cells are closer to target than current position
-
-        # enumerate all neighbor cells on the grid
-        int_x = int(self.x)
-        int_y = int(self.y)
-        neighbor_cells = []
-        for i in [int_x - 1, int_x, int_x + 1]:
-            if 0 <= i < len(grid):
-                for j in [int_y - 1, int_y, int_y + 1]:
-                    if 0 <= j < len(grid[0]):
-                        neighbor_cells.append((i + 0.5, j + 0.5, grid[i][j]))
+        reachable_cells = self.get_reachable_cells(grid)
 
         # Initial target position: our current position -> No better position: No movement
-        best_neighbor_cell = self.x, self.y
+        best_neighbor_cell = self.x, self.y, 0
         # Initial comparison: our current distance to our current target
         best_neighbor_cell_distance = target_vector_norm
 
-        for nc_x, nc_y, nc_value in neighbor_cells:
-            if nc_value == "E" or nc_value == "R" or nc_value == "T":
-                # Cell is empty (or Trace or Target) -> Check distance of this cell to target
-                distance_vector = [target_x - nc_x, target_y - nc_y]
-                distance_vector_norm = np.linalg.norm(distance_vector)
+        for rc_x, rc_y, rc_value, rc_contact_x, rc_contact_y, rc_distance in reachable_cells:
+            if rc_value == "E" or rc_value == "R" or rc_value == "Ta" or rc_value == "current":
+                # Cell is empty or Trace or absorbableTarget or current
+                # -> Calculate which of these cells is closest to our target (with respect to the distance to us)
+                distance_cell_target = [target_x - (rc_x+0.5), target_y - (rc_y+0.5)]
+                distance_cell_target_norm = np.linalg.norm(distance_cell_target)
 
                 # If the new cell has a smaller distance to the target: update the best neighbor cell (and distance)
-                if distance_vector_norm < best_neighbor_cell_distance:
-                    best_neighbor_cell_distance = distance_vector_norm
-                    best_neighbor_cell = nc_x, nc_y
+                if distance_cell_target_norm < best_neighbor_cell_distance:
+                    best_neighbor_cell_distance = distance_cell_target_norm
+                    best_neighbor_cell = [rc_contact_x, rc_contact_y, walking_distance]
+                    # Make sure we don't overshoot if we want to stay inside our cell.
+                    if rc_value == "current":
+                        best_neighbor_cell[2] = rc_distance
 
         # calculate the new move deltas to move the pedestrian towards the (new) target best_neighbor_cell
         dx, dy, _ = self.get_move_deltas(
-            best_neighbor_cell[0], best_neighbor_cell[1], distance
+            best_neighbor_cell[0], best_neighbor_cell[1], best_neighbor_cell[2]
         )
         return dx, dy
+
+    def get_reachable_cells(self, grid: list[list[str]]) -> list[list[int, int, str, float, float, float]]:
+        """
+        Searches all neighboring cells to find the reachable cells for a pedestrian with a respective speed.
+
+        :param grid: The current grid.
+        :return: List: [x, y, val, contact_point_x, contact_point_y, distance]
+            x, y: The x- and y-coordinate of the reacable cell (top left corner)
+            val: The grid status of the cell
+            contact_point_x, contact_point_y: The x- and y-coordinate of the closest cell point to the pedestrian
+            distance: The distance of the pedestrian to the closest cell point
+        """
+        int_x = int(self.x)
+        int_y = int(self.y)
+
+        # Variable containing all neighboring cells, starting with the current cell
+        neighbor_cells = [[int_x, int_y, "current"]]
+
+        for i, j in [
+            [1, 0], [0, 1], [-1, 0], [0, -1],
+            [-1, -1], [-1, 1], [1, -1], [1, 1]
+        ]:
+            cell_x = int_x+i
+            cell_y = int_y+j
+            if 0 <= cell_x < len(grid) and 0 <= cell_y < len(grid[0]):
+                neighbor_cells.append([cell_x, cell_y, grid[cell_x][cell_y]])
+
+        c = 1  # edge size of one cell, probably will always stay 1
+        reachable_cells = []
+        for x, y, val in neighbor_cells:
+            # calculate where the pedestrian is with respect to the corner
+            dx_s = x - self.x       # Distance to the smaller (left) side in x-direction
+            dx_l = self.x - (x+c)   # Distance to the larger (right) side in x-direction
+            dy_s = y - self.y       # Distance to the smaller (up)  side in y-direction
+            dy_l = self.y - (y+c)   # Distance to the larger (down) side in y-direction
+
+            # calculate the closest point of the cell to the pedestrian
+            if dx_s > 0:
+                contact_point_x = x
+            elif dx_l > 0:
+                contact_point_x = x+c
+            else:
+                contact_point_x = self.x
+
+            if dy_s > 0:
+                contact_point_y = y
+            elif dy_l > 0:
+                contact_point_y = y+c
+            else:
+                contact_point_y = self.y
+
+            # calculate distance from pedestrian to closest cell edge/corner
+            dx = np.max([dx_s, dx_l, 0])
+            dy = np.max([dy_s, dy_l, 0])
+
+            # Contact point for our current cell: middle of our current cell
+            # Ensures that the pedestrian can reach all surrounding cells after this move
+            if val == "current":
+                contact_point_x = x+0.5
+                contact_point_y = y+0.5
+                dx = contact_point_x - self.x
+                dy = contact_point_y - self.y
+
+            distance = np.sqrt(dx*dx + dy*dy)
+
+            if distance <= self.speed:
+                reachable_cells.append([x, y, val, contact_point_x, contact_point_y, distance])
+
+        return reachable_cells

@@ -12,7 +12,6 @@ from constants import (
     TRACE_COLOR,
 )
 from utils import draw_rounded_rect
-from pedestrian import Pedestrian
 
 
 class Grid:
@@ -46,14 +45,19 @@ class Grid:
         self.grid[int(pedestrian.x)][int(pedestrian.y)] = "P"
         self.pedestrians.append(pedestrian)
 
-    def add_target(self, x, y):
+    def add_target(self, x, y, absorbable=False):
         """
         Add a target at a specific position on the grid.
 
         :param x: The x-coordinate of the target's position
         :param y: The y-coordinate of the target's position
+        :param absorbable: If the target should absorb pedestrians
         """
-        self.grid[x][y] = "T"
+        if absorbable:
+            self.grid[x][y] = 'Ta'
+        else:
+            self.grid[x][y] = 'Tn'
+        # self.grid[x][y] = "T"
         self.target_positions.append((x, y))
 
     def add_obstacle(self, x, y):
@@ -72,9 +76,7 @@ class Grid:
         :param win: The pygame window to draw on
         """
         corner_radius = 1
-        for j, row in enumerate(
-            self.grid
-        ):
+        for j, row in enumerate(self.grid):
             for i, cell in enumerate(row):
                 rect = pygame.Rect(
                     j * self.cell_size,
@@ -91,7 +93,7 @@ class Grid:
                     continue
                 elif cell == "O":
                     color = OBSTACLE_COLOR
-                elif cell == "T":
+                elif cell == "T" or cell == 'Ta' or cell == 'Tn':
                     color = TARGET_COLOR
                 elif cell == "R":
                     color = TRACE_COLOR
@@ -109,21 +111,15 @@ class Grid:
             old_x, old_y = ped.get_position()
             # calculate best pedestrian move and update its internal position
             new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
-
             # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = "R"
 
-            # If new position is not target: move pedestrian
-            if self.grid[int(new_x)][int(new_y)] != "T":
-                self.grid[int(new_x)][int(new_y)] = "P"
-            # If new position IS target: do not move pedestrian (pedestrian waits by the target)
-            elif not ped.absorbable:
-                # Keep pedestrian in the old position
-                self.grid[int(old_x)][int(old_y)] = "P"
-                # Update pedestrian's internal position to the old position
-                ped.set_position(old_x, old_y)
-            else:
+            # If new position is absorbable target: remove pedestrian
+            if self.grid[int(new_x)][int(new_y)] == 'Ta':
                 self.pedestrians.remove(ped)
+            else:
+                # Otherwise: Move the Pedestrian
+                self.grid[int(new_x)][int(new_y)] = 'P'
 
     def find_best_move(self, i, j, target_positions):
         """

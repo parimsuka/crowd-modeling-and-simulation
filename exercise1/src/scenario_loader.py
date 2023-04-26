@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 from grid import Grid
 from pedestrian import Pedestrian
@@ -17,16 +18,26 @@ def load_scenario(scenario_path):
     with open(scenario_path, "r") as f:
         scenario = json.load(f)
 
+    if 'cell_size' not in scenario:
+        # Choose an appropriate cell size
+        height_limit = 900  # height limit of 900px
+        width_limit = 1600  # width limit of 1600px
+        scenario['cell_size'] = int(np.minimum(height_limit/scenario['grid_height'], width_limit/scenario['grid_width']))
+
     grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
-    absorbable = scenario["absorbable"]
+
     # Add pedestrians
     for ped in scenario["pedestrians"]:
-        grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5, absorbable))
+        grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5))
+        print()
 
     # Add targets
     if "targets" in scenario:
         for tgt in scenario["targets"]:
-            grid.add_target(tgt["x"], tgt["y"])
+            if 'absorbable' in tgt:
+                grid.add_target(tgt['x'], tgt['y'], tgt['absorbable'])
+            else:
+                grid.add_target(tgt["x"], tgt["y"])
     else:
         raise ValueError("No targets found in the scenario")
 
