@@ -1,7 +1,8 @@
 {
-  "grid_size": 25,
-  "absorbable": true,
-  "cell_size": 20,
+  "grid_width": 25,
+  "grid_height":  25,
+  "absorbable": false,
+  "cell_size": 25,
   "pedestrians": [
     {"x": 24, "y": 12},
     {"x": 16, "y": 23},

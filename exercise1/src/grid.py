@@ -7,16 +7,17 @@ from pedestrian import Pedestrian
 
 
 class Grid:
-    def __init__(self, grid_size, cell_size):
+    def __init__(self, grid_height, grid_width, cell_size):
         """
         Initialize the Grid.
 
         :param grid_size: The number of rows and columns of the grid
         :param cell_size: The size (width and height) of each cell in pixels
         """
-        self.grid_size = grid_size
+        self.grid_height = grid_width
+        self.grid_width = grid_width
         self.cell_size = cell_size
-        self.grid = [['E' for _ in range(grid_size)] for _ in range(grid_size)]
+        self.grid = [['E' for _ in range(grid_height)] for _ in range(grid_width)]
         self.target_positions = []
         self.pedestrians = []
 
@@ -116,7 +117,7 @@ class Grid:
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
             new_i, new_j = i + dx, j + dy
             # check if the new position would be inside the grid
-            if 0 <= new_i < self.grid_size and 0 <= new_j < self.grid_size:
+            if 0 <= new_i < self.grid_height and 0 <= new_j < self.grid_width:
                 if self.grid[new_i][new_j] not in ('O', 'P'):
                     min_tgt_distance = min(
                         (new_i - tgt_i) ** 2 + (new_j - tgt_j) ** 2 for tgt_i, tgt_j in target_positions)

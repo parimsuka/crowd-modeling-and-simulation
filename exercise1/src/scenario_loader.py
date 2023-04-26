@@ -4,7 +4,7 @@ from grid import Grid
 from pedestrian import Pedestrian
 
 
-def load_scenario(scenario_path, grid_size, cell_size):
+def load_scenario(scenario_path):
     """
     Load a scenario from a JSON file and initialize the grid.
 
@@ -16,7 +16,7 @@ def load_scenario(scenario_path, grid_size, cell_size):
     with open(scenario_path, 'r') as f:
         scenario = json.load(f)
 
-    grid = Grid(grid_size, cell_size)
+    grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
     absorbable = scenario["absorbable"]
     # Add pedestrians
     for ped in scenario['pedestrians']:
@@ -33,5 +33,8 @@ def load_scenario(scenario_path, grid_size, cell_size):
     for obs in scenario['obstacles']:
         grid.add_obstacle(obs['x'], obs['y'])
 
-    return grid
+    width = scenario["grid_width"] * scenario["cell_size"]
+    height = scenario["grid_height"] * scenario["cell_size"] + 60
+
+    return width, height, grid
 
