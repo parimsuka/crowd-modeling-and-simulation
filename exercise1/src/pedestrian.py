@@ -8,7 +8,7 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, speed=1):
+    def __init__(self, x: float, y: float, dijkstra_used=False, speed=1):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -18,6 +18,7 @@ class Pedestrian:
         """
         self.x = x
         self.y = y
+        self.dijkstra_used = dijkstra_used
         if 0 <= speed <= 1:
             self.speed = speed
         else:
@@ -98,9 +99,26 @@ class Pedestrian:
         :param grid: The grid containing the environment. Used to avoid pathing into certain cell types.
         :return: New position (x,y) of the pedestrian.
         """
+        
         closest_target = self.find_closest_target(targets)
         if closest_target is None:
             return 0, 0
+
+        if self.dijkstra_used:
+
+            #Call dijsktra to find the shortest path
+            path = self.dijkstra(closest_target[0], closest_target[1], grid)
+            print(path)
+
+            #Make the resulting path the only available cells for the pedestrian
+            new_grid = [['O' for _ in range(len(grid))] for _ in range(len(grid[0]))]
+            for cell in path:
+                if not (grid[cell[0]][cell[1]] == 'Ta' or grid[cell[0]][cell[1]] == 'Tn' or grid[cell[0]][cell[1]] == 'P'):
+                    new_grid[cell[0]][cell[1]] = 'E'
+
+            return self.move_target_direction(
+                closest_target[0] + 0.5, closest_target[1] + 0.5, self.speed, new_grid
+            )
 
         return self.move_target_direction(
             closest_target[0] + 0.5, closest_target[1] + 0.5, self.speed, grid
@@ -265,3 +283,109 @@ class Pedestrian:
                 reachable_cells.append([x, y, val, contact_point_x, contact_point_y, distance])
 
         return reachable_cells
+    
+
+    def backtrack(self, target_x, target_y, distances):
+        '''
+        Backtrack from the target cell to the start cell using the distance matrix
+        :param target_x: x-coordinate of the target cell
+        :param target_y: y-coordinate of the target cell
+        :param distances: distance matrix
+        :return: path from the target cell to the start cell
+        '''
+
+        # Start from the last cell and backtrack to the first cell with the lowest cost cells
+        path = [[target_x, target_y]]
+
+        while True:
+            # check up down left right - choose the direction that has the least distance
+            neighbor_distances = []
+            neighbor_cells = []
+
+            for i, j in [
+                [1, 0], [0, 1], [-1, 0], [0, -1]
+                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+            ]:
+                neighbor_cell = [path[-1][0] + i, path[-1][1] + j]
+                if 0 <= neighbor_cell[0] < len(distances) and 0 <= neighbor_cell[1] < len(distances[0]):
+                    neighbor_cells.append(neighbor_cell)
+                    neighbor_distances.append(distances[neighbor_cell[0]][neighbor_cell[1]])
+
+            path.append(neighbor_cells[np.argmin(neighbor_distances)])
+
+            if path[-1][0] == int(self.x) and path[-1][1] == int(self.y):
+                break
+
+        return list(reversed(path))
+
+
+    def dijkstra(self, target_x, target_y, grid):
+        '''
+        Dijkstra algorithm to find the shortest path from the target cell to the start cell
+        :param target_x: x-coordinate of the target cell
+        :param target_y: y-coordinate of the target cell
+        :param grid: the grid
+        :return: the shortest path from the target cell to the start cell
+        '''
+
+        # Initialize costs for each cell in the grid
+        cost_grid = [[1 for _ in range(len(grid))] for _ in range(len(grid[0]))]
+
+        # Obstacles have infinite cost (we don't want to go through them)
+        for x in range (len(grid)):
+            for y in range (len(grid[0])):
+                if grid[x][y] == 'O':
+                    cost_grid[x][y] = float('inf')
+
+        # Target and pedestrian's initial cell have 0 costs
+        cost_grid[target_x][target_y] = 0
+        cost_grid[int(self.x)][int(self.y)] = 0
+
+        # Initialize the visited cells
+        visited = [[False for _ in range(len(grid))] for _ in range(len(grid[0]))]
+
+        # Initialize the distance from each cell to pedestrian, the distance for its own position is 0
+        distances = [[float('inf') for _ in range(len(grid))] for _ in range(len(grid[0]))]
+        distances[int(self.x)][int(self.y)] = 0
+
+        #Begin the search
+        current_cell = [int(self.x), int(self.y)]
+        while True:
+            # Get the neighbors of the current cell
+            for i, j in [
+                [1, 0], [0, 1], [-1, 0], [0, -1]
+                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+            ]:
+                neighbor_cell = [current_cell[0] + i, current_cell[1] + j]
+                if (0 <= neighbor_cell[0] < len(grid) and 0 <= neighbor_cell[1] < len(grid[0])): # Check if the neighbor cell is within the grid
+                    if not visited[neighbor_cell[0]][neighbor_cell[1]]: # Check if the neighbor cell has not been visited
+                        # Update distance to neighbor
+                        distance = distances[current_cell[0]][ current_cell[1]] + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
+                        if abs(i+j) != 1:
+                            distance += 0.41
+                        # Update distance if it is smaller than the current distance
+                        if distance < distances[neighbor_cell[0]][neighbor_cell[1]]:
+                            distances[neighbor_cell[0]][neighbor_cell[1]] = distance
+
+            # Mark current cell as visited
+            visited[current_cell[0]][current_cell[1]] = True
+
+            # Choose the next cell to visit
+            min_distance = float('inf')
+            for i in range(len(grid)):
+                for j in range(len(grid[0])):
+                    if not visited[i][j] and distances[i][j] < min_distance:
+                        min_distance = distances[i][j]
+                        current_cell = [i,j]
+
+            # Stop if we have reached the target cell
+            if current_cell[0] == target_x and current_cell[1] == target_y:
+                break
+
+        # Backtrack for the path
+        return self.backtrack(target_x, target_y, distances)
+
+        
+
+        
+

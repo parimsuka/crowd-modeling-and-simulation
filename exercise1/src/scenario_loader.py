@@ -28,7 +28,10 @@ def load_scenario(scenario_path):
 
     # Add pedestrians
     for ped in scenario["pedestrians"]:
-        grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5))
+        if "dijkstra" in ped:
+            grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5, dijkstra_used = ped["dijkstra"]))
+        else:
+            grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5))
         print()
 
     # Add targets
