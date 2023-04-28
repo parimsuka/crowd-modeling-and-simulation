@@ -5,26 +5,26 @@ from grid import Grid
 from pedestrian import Pedestrian
 
 
-def load_scenario(scenario_path):
+def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     """
     Load a scenario from a JSON file and initialize the grid.
 
     :param scenario_path: Path to the scenario JSON file.
     :return:
-    -The width of the complete application window.
-    -The height of the complete application window.
-    -An initialized Grid object.
+    - The width of the complete application window.
+    - The height of the complete application window.
+    - An initialized Grid object.
     """
     with open(scenario_path, "r") as f:
-        scenario = json.load(f)
+        scenario: dict = json.load(f)
 
     if 'cell_size' not in scenario:
         # Choose an appropriate cell size
-        height_limit = 900  # height limit of 900px
-        width_limit = 1600  # width limit of 1600px
+        height_limit: int = 900  # height limit of 900px
+        width_limit: int = 1600  # width limit of 1600px
         scenario['cell_size'] = int(np.minimum(height_limit/scenario['grid_height'], width_limit/scenario['grid_width']))
 
-    grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
+    grid: Grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
 
     # Add pedestrians
     for ped in scenario["pedestrians"]:
@@ -32,7 +32,6 @@ def load_scenario(scenario_path):
             grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5, dijkstra_used = ped["dijkstra"]))
         else:
             grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5))
-        print()
 
     # Add targets
     if "targets" in scenario:
@@ -48,7 +47,7 @@ def load_scenario(scenario_path):
     for obs in scenario["obstacles"]:
         grid.add_obstacle(obs["x"], obs["y"])
 
-    width = scenario["grid_width"] * scenario["cell_size"]
-    height = scenario["grid_height"] * scenario["cell_size"] + 60
+    width: int = scenario["grid_width"] * scenario["cell_size"]
+    height: int = scenario["grid_height"] * scenario["cell_size"] + 60
 
     return width, height, grid

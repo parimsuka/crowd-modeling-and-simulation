@@ -1,7 +1,3 @@
-"""
-This module contains the class for the Grid.
-"""
-
 import pygame
 
 from constants import (
@@ -21,7 +17,7 @@ class Grid:
       The grid consists of a number of rows and columns, and each cell in the grid
       has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
     """
-    def __init__(self, grid_height, grid_width, cell_size):
+    def __init__(self, grid_height: int, grid_width: int, cell_size: int) -> None:
         """
         Initialize the Grid.
 
@@ -29,14 +25,14 @@ class Grid:
         :param grid_width: The number of columns of the grid
         :param cell_size: The size (width and height) of each cell in pixels
         """
-        self.grid_height = grid_width
-        self.grid_width = grid_width
-        self.cell_size = cell_size
-        self.grid = [["E" for _ in range(grid_height)] for _ in range(grid_width)]
-        self.target_positions = []
-        self.pedestrians = []
+        self.grid_height: int = grid_width
+        self.grid_width: int = grid_width
+        self.cell_size: int = cell_size
+        self.grid: list[list[str]] = [["E" for _ in range(grid_height)] for _ in range(grid_width)]
+        self.target_positions: list = []
+        self.pedestrians: list = []
 
-    def add_pedestrian(self, pedestrian):
+    def add_pedestrian(self, pedestrian) -> None:
         """
         Add a pedestrian at a specific position on the grid.
 
@@ -45,7 +41,7 @@ class Grid:
         self.grid[int(pedestrian.x)][int(pedestrian.y)] = "P"
         self.pedestrians.append(pedestrian)
 
-    def add_target(self, x, y, absorbable=False):
+    def add_target(self, x: int, y: int, absorbable: bool = False) -> None:
         """
         Add a target at a specific position on the grid.
 
@@ -60,7 +56,7 @@ class Grid:
         # self.grid[x][y] = "T"
         self.target_positions.append((x, y))
 
-    def add_obstacle(self, x, y):
+    def add_obstacle(self, x: int, y: int) -> None:
         """
         Add an obstacle at a specific position on the grid.
 
@@ -69,47 +65,50 @@ class Grid:
         """
         self.grid[x][y] = "O"
 
-    def draw(self, win):
+    def draw(self, win: pygame.Surface) -> None:
         """
         Draw the grid and its elements on the window.
 
         :param win: The pygame window to draw on
         """
-        corner_radius = 1
+        corner_radius: int = 1
         for j, row in enumerate(self.grid):
             for i, cell in enumerate(row):
-                rect = pygame.Rect(
+                rect: pygame.Rect = pygame.Rect(
                     j * self.cell_size,
                     i * self.cell_size,
                     self.cell_size,
                     self.cell_size,
                 )
                 if cell == "E":
-                    color = EMPTY_CELL_COLOR
+                    color: tuple = EMPTY_CELL_COLOR
                 elif cell == "P":
                     # Draw the pedestrian as a circle
                     pygame.draw.ellipse(win, PEDESTRIAN_COLOR, rect)
                     pygame.draw.ellipse(win, (0, 0, 0), rect, 1)
                     continue
                 elif cell == "O":
-                    color = OBSTACLE_COLOR
+                    color: tuple = OBSTACLE_COLOR
                 elif cell == "T" or cell == 'Ta' or cell == 'Tn':
-                    color = TARGET_COLOR
+                    color: tuple = TARGET_COLOR
                 elif cell == "R":
-                    color = TRACE_COLOR
-
+                    color: tuple = TRACE_COLOR
                 draw_rounded_rect(win, color, rect, corner_radius)
                 pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
 
-    def update(self):
+    def update(self) -> None:
         """
         Update the grid by moving pedestrians towards the target.
         """
 
         for ped in self.pedestrians:
             # save old pedestrian position
+            old_x: float
+            old_y: float
             old_x, old_y = ped.get_position()
-            # calculate best pedestrian move and update its internal position
+            # calculate the best pedestrian move and update its internal position
+            new_x: float
+            new_y: float
             new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
             # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = "R"
@@ -121,7 +120,7 @@ class Grid:
                 # Otherwise: Move the Pedestrian
                 self.grid[int(new_x)][int(new_y)] = 'P'
 
-    def find_best_move(self, i, j, target_positions):
+    def find_best_move(self, i: int, j: int, target_positions: list[tuple[int, int]]) -> tuple[int, int]:
         """
         Find the best move for a pedestrian at position (i, j) based on the shortest distance to a target.
 
@@ -130,8 +129,8 @@ class Grid:
         :param target_positions: A list of (x, y) tuples representing target positions
         :return: The (x, y) tuple representing the best move for the pedestrian
         """
-        min_distance = float("inf")
-        best_move = (i, j)
+        min_distance: float = float("inf")
+        best_move: tuple[int, int] = (i, j)
 
         for dx, dy in [
             (-1, 0),
@@ -143,16 +142,17 @@ class Grid:
             (1, -1),
             (1, 1),
         ]:
-            new_i, new_j = i + dx, j + dy
+            new_i: int = i + dx
+            new_j: int = j + dy
             # check if the new position would be inside the grid
             if 0 <= new_i < self.grid_height and 0 <= new_j < self.grid_width:
                 if self.grid[new_i][new_j] not in ("O", "P"):
-                    min_tgt_distance = min(
+                    min_tgt_distance: float = min(
                         (new_i - tgt_i) ** 2 + (new_j - tgt_j) ** 2
                         for tgt_i, tgt_j in target_positions
                     )
                     if min_tgt_distance < min_distance:
                         min_distance = min_tgt_distance
-                        best_move = (new_i, new_j)
+                        best_move: tuple[int, int] = (new_i, new_j)
 
         return best_move

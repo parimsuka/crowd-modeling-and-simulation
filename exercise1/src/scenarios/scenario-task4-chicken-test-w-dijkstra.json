@@ -1,12 +1,12 @@
 {
-    "grid_width": 9,
-    "grid_height": 9,
+    "grid_width": 15,
+    "grid_height": 15,
     "cell_size": 50,
     "pedestrians": [
         { "x": 4, "y": 1, "dijkstra": true }
     ],
     "targets": [
-        { "y": 8, "x": 3 }
+        { "y": 13, "x": 3 }
     ],
     "obstacles": [
         { "x": 2, "y": 4 },
