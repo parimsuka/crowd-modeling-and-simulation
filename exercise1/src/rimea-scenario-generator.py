@@ -1,5 +1,36 @@
 import json
 
+def rimea_test_scenario():
+
+    '''Generates a test scenario for the Rimea scenarios.
+    To do: 
+    1) Initialize the dictionary (scenario_data)
+    2) Add the grid parameters (grid_width, grid_height, cell_size)
+    3) Add the pedestrians (x, y, dijkstra, speed) as a pedestrian list
+    4) Add the targets (x, y, absorbable) as a target list
+    5) Add the obstacles (x, y) as an obstacle list)'''
+
+    scenario_data = {}
+
+    scenario_data["grid_width"] = 20
+    scenario_data["grid_height"] = 10
+    scenario_data["cell_size"] = 30
+
+    scenario_data["pedestrians"] = []
+
+    for i in range(0, 10):
+        scenario_data["pedestrians"].append({"x": 0, "y": i})
+
+    scenario_data["targets"] = []
+    scenario_data["obstacles"] = []
+
+    scenario_data["targets"].append({"x": 5, "y": 5, "absorbable": True})
+
+
+    #Dump as a json file
+    with open("scenarios/test.json", "w") as f:
+            json.dump(scenario_data, f, indent=4)
+
 
 def rimea_bottleneck_scenario(dijkstra):
     '''Generates a scenario for the Rimea bottleneck scenario.
@@ -54,5 +85,6 @@ def rimea_bottleneck_scenario(dijkstra):
 
 
 
-rimea_bottleneck_scenario(dijkstra=False)
-rimea_bottleneck_scenario(dijkstra=True)
+#rimea_bottleneck_scenario(dijkstra=False)
+#rimea_bottleneck_scenario(dijkstra=True)
+rimea_test_scenario()
