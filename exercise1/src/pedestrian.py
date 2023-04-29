@@ -1,5 +1,7 @@
 import numpy as np
 
+from constants import PEDESTRIAN_COLOR
+
 
 class Pedestrian:
     """
@@ -8,7 +10,7 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, dijkstra_used=False, speed=1):
+    def __init__(self, x: float, y: float, dijkstra_used=False, speed=1, color=PEDESTRIAN_COLOR):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -19,6 +21,7 @@ class Pedestrian:
         self.x = x
         self.y = y
         self.dijkstra_used = dijkstra_used
+        self.color = color
         if 0 <= speed <= 1:
             self.speed = speed
         else:
@@ -113,7 +116,7 @@ class Pedestrian:
             #Make the resulting path the only available cells for the pedestrian
             new_grid = [['O' for _ in range(len(grid[0]))] for _ in range(len(grid))]
             for cell in path:
-                if not (grid[cell[0]][cell[1]] == 'Ta' or grid[cell[0]][cell[1]] == 'Tn' or grid[cell[0]][cell[1]] == 'P'):
+                if not (grid[cell[0]][cell[1]] == 'Ta' or grid[cell[0]][cell[1]] == 'Tn' or grid[cell[0]][cell[1]].startswith("P")):
                     new_grid[cell[0]][cell[1]] = 'E'
 
             return self.move_target_direction(

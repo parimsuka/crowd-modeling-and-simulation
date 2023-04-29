@@ -7,6 +7,8 @@ from constants import (
     TARGET_COLOR,
     TRACE_COLOR,
 )
+
+from pedestriancolors import PedestrianColors
 from utils import draw_rounded_rect
 
 
@@ -38,7 +40,7 @@ class Grid:
 
         :param pedestrian: A pedestrian object, containing the x and y coordinate of the pedestrian and the speed.
         """
-        self.grid[int(pedestrian.x)][int(pedestrian.y)] = "P"
+        self.grid[int(pedestrian.x)][int(pedestrian.y)] = pedestrian.color.name
         self.pedestrians.append(pedestrian)
 
     def add_target(self, x: int, y: int, absorbable: bool = False) -> None:
@@ -82,17 +84,21 @@ class Grid:
                 )
                 if cell == "E":
                     color: tuple = EMPTY_CELL_COLOR
-                elif cell == "P":
+                if cell.startswith("P"):
+                    grid_color = PedestrianColors.get_color_by_name(cell)
+                    
                     # Draw the pedestrian as a circle
-                    pygame.draw.ellipse(win, PEDESTRIAN_COLOR, rect)
+                    pygame.draw.ellipse(win, grid_color.main_color, rect)
                     pygame.draw.ellipse(win, (0, 0, 0), rect, 1)
                     continue
                 elif cell == "O":
                     color: tuple = OBSTACLE_COLOR
                 elif cell == "T" or cell == 'Ta' or cell == 'Tn':
                     color: tuple = TARGET_COLOR
-                elif cell == "R":
-                    color: tuple = TRACE_COLOR
+                elif cell.startswith("R"):
+                    grid_color = PedestrianColors.get_color_by_name(cell)
+                    color: tuple = grid_color.main_color
+                    
                 draw_rounded_rect(win, color, rect, corner_radius)
                 pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
 
@@ -111,14 +117,14 @@ class Grid:
             new_y: float
             new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
             # Update trace of pedestrian path (removing old pedestrian position)
-            self.grid[int(old_x)][int(old_y)] = "R"
+            self.grid[int(old_x)][int(old_y)] = ped.color.trace_name
 
             # If new position is absorbable target: remove pedestrian
             if self.grid[int(new_x)][int(new_y)] == 'Ta':
                 self.pedestrians.remove(ped)
             else:
                 # Otherwise: Move the Pedestrian
-                self.grid[int(new_x)][int(new_y)] = 'P'
+                self.grid[int(new_x)][int(new_y)] = ped.color.name
 
     def find_best_move(self, i: int, j: int, target_positions: list[tuple[int, int]]) -> tuple[int, int]:
         """
