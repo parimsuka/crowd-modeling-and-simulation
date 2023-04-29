@@ -1,6 +1,8 @@
 import json
 import numpy as np
 
+from pedestriancolors import *
+
 from grid import Grid
 from pedestrian import Pedestrian
 
@@ -31,19 +33,23 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     for ped in scenario["pedestrians"]:
         x = ped["x"]
         y = ped["y"]
-
+        
         dijkstra_used = False
         if "dijkstra" in ped:
             dijkstra_used = ped["dijkstra"]
-            if ped["dijkstra"] == "True":
+            if dijkstra_used:
                 compute_dijkstra_distance = True
-        
+            
         speed = 1
         if "speed" in ped:
             speed = ped["speed"]
-
-        grid.add_pedestrian(Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed))
-
+            
+        grid_color = PedestrianColors.P_BLUE
+        if "color" in ped:
+            grid_color = PedestrianColors.get_color_by_name(ped["color"])
+            print(grid_color)
+        
+        grid.add_pedestrian(Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed, grid_color))
 
     # Add targets
     if "targets" in scenario:

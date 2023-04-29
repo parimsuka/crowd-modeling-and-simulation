@@ -62,7 +62,7 @@ def main() -> None:
             if event.type == TIMER_EVENT and loop_flag:
                 # Call your function here
                 grid.update()
-
+                step_count += 1
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the file dialog is open and a file is clicked
