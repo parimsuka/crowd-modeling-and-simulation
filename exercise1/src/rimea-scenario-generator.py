@@ -16,9 +16,9 @@ def normalize_pedestrian_speeds(pedestrian_speeds):
     normalized = [ speed/max_speed for speed in pedestrian_speeds]
 
     #Round the normalized speeds to two decimals
-    rounded = [round(speed, 2) for speed in normalized]
+    #rounded = [round(speed, 2) for speed in normalized]
 
-    return rounded
+    return normalized
 
 
 def distribute_age_groups(num_pedestrians):
@@ -124,5 +124,3 @@ def rimea_bottleneck_scenario(dijkstra):
 #rimea_bottleneck_scenario(dijkstra=False)
 #rimea_bottleneck_scenario(dijkstra=True)
 #rimea_test_scenario()
-#print(distribute_age_groups(50))
-print(normalize_pedestrian_speeds(distribute_age_groups(50)))
