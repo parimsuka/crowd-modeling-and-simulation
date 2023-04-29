@@ -1,4 +1,38 @@
 import json
+import numpy as np
+from constants import SPEED_TABLE
+
+
+def normalize_pedestrian_speeds(pedestrian_speeds):
+    '''
+    Normalize the pedestrian speeds based on the maximum speed.
+    :param pedestrian_speeds: A list of pedestrian speeds.
+    :return: A list of normalized and rounded pedestrian speeds.'''
+
+    #Get the maximum speed from the pedestrian speeds
+    max_speed = max(pedestrian_speeds)
+
+    #Normalize the pedestrian speeds based on the maximum speed
+    normalized = [ speed/max_speed for speed in pedestrian_speeds]
+
+    #Round the normalized speeds to two decimals
+    rounded = [round(speed, 2) for speed in normalized]
+
+    return rounded
+
+
+def distribute_age_groups(num_pedestrians):
+    '''
+    Uniformly distribute the pedestrians over the age groups.
+    :param num_pedestrians: The total number of pedestrians to be added to the scenario.
+    :return: A list of pedestrian speeds.
+    '''
+    # Uniformly distribute the ages of pedestrians
+    distribution = np.random.randint(low=0, high=15, size=num_pedestrians)
+
+    # Convert the ages to speeds
+    return [SPEED_TABLE[age] for age in distribution]
+
 
 def rimea_test_scenario():
 
@@ -38,6 +72,8 @@ def rimea_bottleneck_scenario(dijkstra):
 
     scenario_data = {}
     num_pedestrians = 50
+    pedestrian_speeds = distribute_age_groups(num_pedestrians)
+    normalized_speeds = normalize_pedestrian_speeds(pedestrian_speeds)
 
     # Grid parameters
     scenario_data["grid_width"] = 10
@@ -54,7 +90,7 @@ def rimea_bottleneck_scenario(dijkstra):
 
     for i in range(1,num_pedestrians+1):
         
-        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra})
+        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": normalized_speeds[i-1]})
         if i % 5 == 0:
             x_val += 1
             y_val = 0
@@ -87,4 +123,6 @@ def rimea_bottleneck_scenario(dijkstra):
 
 #rimea_bottleneck_scenario(dijkstra=False)
 #rimea_bottleneck_scenario(dijkstra=True)
-rimea_test_scenario()
+#rimea_test_scenario()
+#print(distribute_age_groups(50))
+print(normalize_pedestrian_speeds(distribute_age_groups(50)))
