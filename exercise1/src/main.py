@@ -6,9 +6,8 @@ from button import Button, ChooseScenarioButton
 from constants import BACKGROUND_COLOR
 from file_dialog import FileDialog
 from scenario_loader import load_scenario
-from utils import draw_step_counter
 from grid import Grid
-
+from utils import draw_step_counter, draw_elapsed_time
 
 def main() -> None:
     """
@@ -35,6 +34,15 @@ def main() -> None:
 
     step_count: int = 0
 
+    # Initialize the clock and elapsed time variables
+    clock = pygame.time.Clock()
+    elapsed_time = 0
+    # Define a custom event
+    TIMER_EVENT = pygame.USEREVENT + 1
+
+    # Set the timer to generate the custom event every 5000 milliseconds (5 seconds)
+    pygame.time.set_timer(TIMER_EVENT, 306)
+
     # Main game loop
     while True:
         # Handle pygame events
@@ -42,6 +50,10 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == TIMER_EVENT:
+                # Call your function here
+                grid.update()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the file dialog is open and a file is clicked
@@ -66,6 +78,7 @@ def main() -> None:
                             (200, 200, 200),
                         )
                         step_count = 0
+                        elapsed_time = 0
                         choose_scenario_button.choosing_scenario = False
                 else:
                     # Check if buttons are clicked
@@ -78,6 +91,9 @@ def main() -> None:
         # Draw elements on the screen
         screen.fill(BACKGROUND_COLOR)
 
+        # Update the elapsed time
+        elapsed_time += clock.tick(60) / 1000.0
+
         if choose_scenario_button.choosing_scenario:
             file_dialog.draw()
         else:
@@ -85,6 +101,7 @@ def main() -> None:
             next_step_button.draw(screen)
             choose_scenario_button.draw(screen)
             draw_step_counter(screen, step_count, width - 10, height - 10)
+            draw_elapsed_time(screen, elapsed_time, 0, height - 5)
 
         # Update the display
         pygame.display.flip()
