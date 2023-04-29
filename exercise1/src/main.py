@@ -9,6 +9,16 @@ from scenario_loader import load_scenario
 from grid import Grid
 from utils import draw_step_counter, draw_elapsed_time
 
+def initialize_buttons(height):
+    # Initialize buttons
+    next_step_button: Button = Button(10, height - 60, 100, 40, "Next Step", (200, 200, 200))
+    choose_scenario_button: ChooseScenarioButton = ChooseScenarioButton(
+        120, height - 60, 200, 40, "Choose Scenario", (200, 200, 200)
+    )
+    toggle_loop_button = Button(330, height - 60, 100, 40, "Loop", (200, 200, 200))
+
+    return next_step_button, choose_scenario_button, toggle_loop_button
+
 def main() -> None:
     """
     Main function to initialize and run the crowd simulation.
@@ -24,10 +34,8 @@ def main() -> None:
     pygame.display.set_caption("Crowd Simulation")
 
     # Initialize buttons
-    next_step_button: Button = Button(10, height - 60, 100, 40, "Next Step", (200, 200, 200))
-    choose_scenario_button: ChooseScenarioButton = ChooseScenarioButton(
-        120, height - 60, 200, 40, "Choose Scenario", (200, 200, 200)
-    )
+    next_step_button, choose_scenario_button, toggle_loop_button = initialize_buttons(height)
+    loop_flag = False
 
     # Initialize the file dialog
     file_dialog: FileDialog = FileDialog("./scenarios", ".json", screen)
@@ -51,9 +59,10 @@ def main() -> None:
                 pygame.quit()
                 sys.exit()
 
-            if event.type == TIMER_EVENT:
+            if event.type == TIMER_EVENT and loop_flag:
                 # Call your function here
                 grid.update()
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the file dialog is open and a file is clicked
@@ -66,17 +75,8 @@ def main() -> None:
                         pygame.display.set_caption("Crowd Simulation")
 
                         # Initialize buttons
-                        next_step_button = Button(
-                            10, height - 60, 100, 40, "Next Step", (200, 200, 200)
-                        )
-                        choose_scenario_button = ChooseScenarioButton(
-                            120,
-                            height - 60,
-                            200,
-                            40,
-                            "Choose Scenario",
-                            (200, 200, 200),
-                        )
+                        next_step_button, choose_scenario_button, toggle_loop_button = initialize_buttons(height)
+
                         step_count = 0
                         elapsed_time = 0
                         choose_scenario_button.choosing_scenario = False
@@ -85,6 +85,9 @@ def main() -> None:
                     if next_step_button.is_clicked(event.pos):
                         grid.update()
                         step_count += 1
+                    # Check if buttons are clicked
+                    if toggle_loop_button.is_clicked(event.pos):
+                        loop_flag = not loop_flag
 
                     choose_scenario_button.on_click(event)
 
@@ -100,6 +103,7 @@ def main() -> None:
             grid.draw(screen)
             next_step_button.draw(screen)
             choose_scenario_button.draw(screen)
+            toggle_loop_button.draw(screen)
             draw_step_counter(screen, step_count, width - 10, height - 10)
             draw_elapsed_time(screen, elapsed_time, 0, height - 5)
 
