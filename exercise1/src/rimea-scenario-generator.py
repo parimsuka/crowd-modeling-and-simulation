@@ -102,7 +102,6 @@ def rimea_bottleneck_scenario(dijkstra):
 
     # Add obstacles
     for i in range(0,5):
-        #scenario_data["obstacles"].append({"y": i, "x": 5})
         scenario_data["obstacles"].append({"x": i, "y": 10})
         scenario_data["obstacles"].append({"x": i, "y": 15})
         scenario_data["obstacles"].append({"x": 4, "y": i+10})
@@ -123,4 +122,4 @@ def rimea_bottleneck_scenario(dijkstra):
 
 #rimea_bottleneck_scenario(dijkstra=False)
 #rimea_bottleneck_scenario(dijkstra=True)
-#rimea_test_scenario()
+rimea_test_scenario()

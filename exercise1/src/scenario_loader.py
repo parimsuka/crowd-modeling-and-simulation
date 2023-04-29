@@ -26,12 +26,24 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
 
     grid: Grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
 
+    compute_dijkstra_distance = False
     # Add pedestrians
     for ped in scenario["pedestrians"]:
+        x = ped["x"]
+        y = ped["y"]
+
+        dijkstra_used = False
         if "dijkstra" in ped:
-            grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5, dijkstra_used = ped["dijkstra"]))
-        else:
-            grid.add_pedestrian(Pedestrian(ped["x"] + 0.5, ped["y"] + 0.5))
+            dijkstra_used = ped["dijkstra"]
+            if ped["dijkstra"] == "True":
+                compute_dijkstra_distance = True
+        
+        speed = 1
+        if "speed" in ped:
+            speed = ped["speed"]
+
+        grid.add_pedestrian(Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed))
+
 
     # Add targets
     if "targets" in scenario:
@@ -40,6 +52,8 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
                 grid.add_target(tgt['x'], tgt['y'], tgt['absorbable'])
             else:
                 grid.add_target(tgt["x"], tgt["y"])
+            
+
     else:
         raise ValueError("No targets found in the scenario")
 
@@ -47,6 +61,14 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     for obs in scenario["obstacles"]:
         grid.add_obstacle(obs["x"], obs["y"])
 
+    for tgt in scenario["targets"]:
+        grid.dijkstra(tgt["x"], tgt["y"])
+
+    # Compute dijkstra distance grid considering all targets
+    if compute_dijkstra_distance:
+        for tgt in scenario["targets"]:
+            grid.dijkstra(tgt["x"], tgt["y"])
+        
     width: int = scenario["grid_width"] * scenario["cell_size"]
     height: int = scenario["grid_height"] * scenario["cell_size"] + 60
 
