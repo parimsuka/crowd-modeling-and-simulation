@@ -1,0 +1,377 @@
+{
+    "grid_width": 10,
+    "grid_height": 25,
+    "cell_size": 30,
+    "pedestrians": [
+        {
+            "x": 0,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 0,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 0,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 0,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 0,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 1,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 1,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 1,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 1,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 1,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 2,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 2,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 2,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 2,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 2,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 3,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 3,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 3,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 3,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 3,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 4,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 4,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 4,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 4,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 4,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 5,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 5,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 5,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 5,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 5,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 6,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 6,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 6,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 6,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 6,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 7,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 7,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 7,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 7,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 7,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 8,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 8,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 8,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 8,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 8,
+            "y": 4,
+            "dijkstra": true
+        },
+        {
+            "x": 9,
+            "y": 0,
+            "dijkstra": true
+        },
+        {
+            "x": 9,
+            "y": 1,
+            "dijkstra": true
+        },
+        {
+            "x": 9,
+            "y": 2,
+            "dijkstra": true
+        },
+        {
+            "x": 9,
+            "y": 3,
+            "dijkstra": true
+        },
+        {
+            "x": 9,
+            "y": 4,
+            "dijkstra": true
+        }
+    ],
+    "targets": [
+        {
+            "x": 5,
+            "y": 24
+        }
+    ],
+    "obstacles": [
+        {
+            "x": 0,
+            "y": 10
+        },
+        {
+            "x": 0,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 10
+        },
+        {
+            "x": 6,
+            "y": 10
+        },
+        {
+            "x": 6,
+            "y": 10
+        },
+        {
+            "x": 6,
+            "y": 15
+        },
+        {
+            "x": 1,
+            "y": 10
+        },
+        {
+            "x": 1,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 11
+        },
+        {
+            "x": 6,
+            "y": 11
+        },
+        {
+            "x": 7,
+            "y": 10
+        },
+        {
+            "x": 7,
+            "y": 15
+        },
+        {
+            "x": 2,
+            "y": 10
+        },
+        {
+            "x": 2,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 12
+        },
+        {
+            "x": 6,
+            "y": 12
+        },
+        {
+            "x": 8,
+            "y": 10
+        },
+        {
+            "x": 8,
+            "y": 15
+        },
+        {
+            "x": 3,
+            "y": 10
+        },
+        {
+            "x": 3,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 13
+        },
+        {
+            "x": 6,
+            "y": 13
+        },
+        {
+            "x": 9,
+            "y": 10
+        },
+        {
+            "x": 9,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 10
+        },
+        {
+            "x": 4,
+            "y": 15
+        },
+        {
+            "x": 4,
+            "y": 14
+        },
+        {
+            "x": 6,
+            "y": 14
+        }
+    ]
+}

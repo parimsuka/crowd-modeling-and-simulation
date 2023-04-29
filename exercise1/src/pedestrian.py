@@ -108,10 +108,10 @@ class Pedestrian:
 
             #Call dijsktra to find the shortest path
             path = self.dijkstra(closest_target[0], closest_target[1], grid)
-            print(path)
+            #print(path)
 
             #Make the resulting path the only available cells for the pedestrian
-            new_grid = [['O' for _ in range(len(grid))] for _ in range(len(grid[0]))]
+            new_grid = [['O' for _ in range(len(grid[0]))] for _ in range(len(grid))]
             for cell in path:
                 if not (grid[cell[0]][cell[1]] == 'Ta' or grid[cell[0]][cell[1]] == 'Tn' or grid[cell[0]][cell[1]] == 'P'):
                     new_grid[cell[0]][cell[1]] = 'E'
@@ -329,7 +329,7 @@ class Pedestrian:
         '''
 
         # Initialize costs for each cell in the grid
-        cost_grid = [[1 for _ in range(len(grid))] for _ in range(len(grid[0]))]
+        cost_grid = [[1 for _ in range(len(grid[0]))] for _ in range(len(grid))]
 
         # Obstacles have infinite cost (we don't want to go through them)
         for x in range (len(grid)):
@@ -342,10 +342,10 @@ class Pedestrian:
         cost_grid[int(self.x)][int(self.y)] = 0
 
         # Initialize the visited cells
-        visited = [[False for _ in range(len(grid))] for _ in range(len(grid[0]))]
+        visited = [[False for _ in range(len(grid[0]))] for _ in range(len(grid))]
 
         # Initialize the distance from each cell to pedestrian, the distance for its own position is 0
-        distances = [[float('inf') for _ in range(len(grid))] for _ in range(len(grid[0]))]
+        distances = [[float('inf') for _ in range(len(grid[0]))] for _ in range(len(grid))]
         distances[int(self.x)][int(self.y)] = 0
 
         #Begin the search

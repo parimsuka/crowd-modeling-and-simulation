@@ -6,7 +6,7 @@
         { "x": 4, "y": 1, "dijkstra": false }
     ],
     "targets": [
-        { "y": 8, "x": 3 }
+        { "y": 8, "x": 4 }
     ],
     "obstacles": [
         { "x": 2, "y": 4 },
