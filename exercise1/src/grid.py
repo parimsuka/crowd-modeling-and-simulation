@@ -9,7 +9,7 @@ from constants import (
 )
 
 from pedestriancolors import PedestrianColors
-from utils import draw_rounded_rect
+from visualisation import draw_rounded_rect
 
 
 class Grid:
