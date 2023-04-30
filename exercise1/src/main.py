@@ -36,11 +36,10 @@ def main() -> None:
 
     step_count: int = 0
 
-    # Initialize the clock and elapsed time variables
-    clock = pygame.time.Clock()
-    elapsed_time = 0
     # Define a custom event
     TIMER_EVENT = pygame.USEREVENT + 1
+
+    elapsed_time = 0
 
     # Set the timer to generate the custom event every 5000 milliseconds (5 seconds)
     pygame.time.set_timer(TIMER_EVENT, 200)
@@ -84,6 +83,10 @@ def main() -> None:
                     # Check if buttons are clicked
                     if toggle_loop_button.is_clicked(event.pos):
                         loop_flag = not loop_flag
+
+                        # Initialize the clock and elapsed time variables
+                        clock = pygame.time.Clock()
+
                         if loop_flag:
                             toggle_loop_button.set_text("Pause")
                         else:
@@ -95,7 +98,8 @@ def main() -> None:
         screen.fill(BACKGROUND_COLOR)
 
         # Update the elapsed time
-        elapsed_time += clock.tick(60) / 1000.0
+        if loop_flag:
+            elapsed_time += clock.tick(60) / 1000.0
 
         if choose_scenario_button.choosing_scenario:
             file_dialog.draw()
