@@ -25,19 +25,26 @@ class FileDialog:
         self.file_extension: str = file_extension
         self.screen: pygame.Surface = screen
         self.background_color: tuple[int, int, int] = background_color
-        self.files: list[str] = self._get_files()
+        self.folder_stack: list[str] = [self.directory]
         self.font: pygame.font.Font = pygame.font.Font(
             pygame.font.get_default_font(), 20
         )
+        self.items: list[str] = self._get_files()
 
     def _get_files(self) -> list[str]:
         """
-        Get a list of files in the specified directory with the specified file extension.
-        :return: A list of file names.
+        Get a list of files and folders in the specified directory.
+        :return: A list of file and folder names.
         """
-        return [
-            f for f in os.listdir(self.directory) if f.endswith(self.file_extension)
+        current_directory = self.folder_stack[-1]
+        files = [
+            f
+            for f in os.listdir(current_directory)
+            if f.endswith(self.file_extension) or os.path.isdir(os.path.join(current_directory, f))
         ]
+        if len(self.folder_stack) > 1:
+            files.insert(0, "..")
+        return files
 
     def draw(self) -> None:
         """
@@ -45,19 +52,32 @@ class FileDialog:
         """
         self.screen.fill(self.background_color)
 
-        for i, file in enumerate(self.files):
-            text_render: pygame.Surface = self.font.render(file, True, (0, 0, 0))
+        for i, item in enumerate(self.items):
+            text_render: pygame.Surface = self.font.render(item, True, (0, 0, 0))
             text_rect: pygame.rect = text_render.get_rect()
             text_rect.topleft: tuple[int, int] = (10, 10 + i * 25)
             self.screen.blit(text_render, text_rect)
 
     def get_clicked_file(self, pos: tuple[int, int]) -> str:
         """
-        Get the file that was clicked, given the mouse position.
+        Get the file or folder that was clicked, given the mouse position.
         :param pos: A tuple containing the x and y coordinates of the mouse position.
         :return: The file path of the clicked file or None if no file was clicked.
         """
-        for i, file in enumerate(self.files):
+        for i, item in enumerate(self.items):
             if pygame.Rect(10, 10 + i * 25, 500, 20).collidepoint(pos):
-                return os.path.join(self.directory, file)
+                current_directory = self.folder_stack[-1]
+                clicked_path = os.path.join(current_directory, item)
+
+                if os.path.isfile(clicked_path) and item.endswith(self.file_extension):
+                    return clicked_path
+                elif os.path.isdir(clicked_path):
+                    self.folder_stack.append(clicked_path)
+                    self.items = self._get_files()
+                    return None
+                elif item == "..":
+                    self.folder_stack.pop()
+                    self.items = self._get_files()
+                    return None
+
         return None
