@@ -20,7 +20,7 @@ class Grid:
     has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
     """
 
-    def __init__(self, grid_height: int, grid_width: int, cell_size: int) -> None:
+    def __init__(self, grid_height: int, grid_width: int, cell_size: int, measure_start: int, measure_stop: tuple[int, int]) -> None:
         """
         Initialize the Grid.
 
@@ -36,6 +36,9 @@ class Grid:
         ]
         self.target_positions: list = []
         self.pedestrians: list = []
+        self.measure_start_step: int = measure_start # Point where we want to start the measurement 
+        self.measure_stop_step: tuple[int, int] = measure_stop # Point where we want to stop measuring
+        self.measure_x_positions: list[float] = [] # Distance of run by each pedestrian during the measurement 
 
     def add_pedestrian(self, pedestrian) -> None:
         """
@@ -167,3 +170,40 @@ class Grid:
                         best_move: tuple[int, int] = (new_i, new_j)
 
         return best_move
+
+
+    def measure_start(self):
+        print("Starting measurement! Saving x pos of each pedestrian at step 35 which represents 10 seconds")
+        
+        self.measure_x_positions = []
+        for ped in self.pedestrians:
+            self.measure_x_positions.append(ped.x)
+
+    def measure_stop(self, chosen_file: str, stop_time_index: int):
+        average_speeds_measured = []
+        average_speeds = []
+        
+        for i, ped in enumerate(self.pedestrians):
+            average_speed = (ped.x - self.measure_x_positions[i]) / (self.measure_stop_step[stop_time_index] - self.measure_start_step)
+            average_speeds_measured.append(average_speed * 3.5 * 0.4)
+            average_speeds.append(ped.speed * 3.5 * 0.4)
+     
+        if(stop_time_index == 0):
+            print(f"\t{chosen_file}:")
+            print(f"\t\tAverage speed at the first measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
+        if(stop_time_index == 1):    
+            print(f"\t\tAverage speed at the second measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
+            print(f"\t\tAverage of the speed values from all pedestrians = {sum(average_speeds) / len(average_speeds)}")
+            
+            
+    def has_valid_measure_parameters(self) -> bool:
+        return (self.measure_start_step < self.measure_stop_step[0]
+                and self.measure_start_step < self.measure_stop_step[1]
+                and self.measure_start_step != -1 
+                and self.measure_stop_step[0] != -1
+                and self.measure_stop_step[1] != -1
+                )
+            
+    
+
+

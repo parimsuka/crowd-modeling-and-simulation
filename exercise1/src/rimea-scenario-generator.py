@@ -76,6 +76,8 @@ def scenario_4():
     scenario_data["grid_width"] = 540
     scenario_data["grid_height"] = 25
     scenario_data["cell_size"] = 5
+    scenario_data["measure_start"] = 35 # This represents waiting 10 seconds at the beginning
+    scenario_data["measure_stop"] = (205, 228) # This represents the measuring points in time. After 205 and 228 steps
     
     scenario_data["obstacles"] = []
     
@@ -101,7 +103,6 @@ def scenario_4():
             speed = rd.uniform(MIN_SPEED, MAX_SPEED) / MAX_SPEED
             
             color = PedestrianColors.P_GRAY
-           
             if(speed < 0.88):
                 color = PedestrianColors.P_BLUE
             elif(speed < 0.91):
@@ -123,7 +124,7 @@ def scenario_4():
             scenario_data["pedestrians"].append(ped)
          
         # Dump as a json file
-        with open(f"scenarios/scenario_4_density={density}_minSpeed={MIN_SPEED}_maxSpeed={MAX_SPEED}.json", "w") as f:
+        with open(f"scenarios/scenario_4_density={density}_minSpeed={1.2}_maxSpeed={1.4}.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
 
 def rimea_bottleneck_scenario(dijkstra):

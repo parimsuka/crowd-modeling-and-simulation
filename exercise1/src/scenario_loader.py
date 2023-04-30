@@ -30,9 +30,18 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
                 width_limit / scenario["grid_width"],
             )
         )
+        
+    measure_start = -1    
+    if "measure_start" in scenario:
+        measure_start = scenario["measure_start"]
+        
+    measure_stop = (-1, -1)   
+    if "measure_stop" in scenario:
+        measure_stop = scenario["measure_stop"]
+
 
     grid: Grid = Grid(
-        scenario["grid_height"], scenario["grid_width"], scenario["cell_size"]
+        scenario["grid_height"], scenario["grid_width"], scenario["cell_size"], measure_start, measure_stop
     )
 
     # Add pedestrians
@@ -51,7 +60,6 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
         grid_color = PedestrianColors.P_BLUE
         if "color" in ped:
             grid_color = PedestrianColors.get_color_by_name(ped["color"])
-            print(grid_color)
 
         grid.add_pedestrian(
             Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed, grid_color)
