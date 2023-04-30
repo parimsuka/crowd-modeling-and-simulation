@@ -82,17 +82,16 @@ def scenario_4():
     scenario_data["obstacles"] = []
     
     scenario_data["targets"] = []
-    for i in range(24) :
+    for i in range(25) :
         scenario_data["targets"].append({"x": 539, "y": i, "absorbable": False})
     
-    max_cell_count = 1000 # 40 * 25 
-    max_possible_density = 6.25 # 0.4m * 0.4m = 0.16m^2 and then 1m^2 / 0.16m^2 = 6.25 
-    
-    densities = [0.5, 1, 2, 3, 4, 5, 6]
-    # densities = [0.5, 1]
-    for density in densities:
+    MAX_CELL_COUNT = 1000 # 40 * 25 
+    MAX_POSSIBLE_DENSITY = 6.25 # 0.4m * 0.4m = 0.16m^2 and then 1m^2 / 0.16m^2 = 6.25 
+    DENSITIES = [0.5, 1, 2, 3, 4, 5, 6]
+
+    for density in DENSITIES:
         # pedestrians can spawn in a 25x40 area at the start of the corridor
-        num_ped_for_density = max_cell_count * (density / max_possible_density)
+        num_ped_for_density = MAX_CELL_COUNT * (density / MAX_POSSIBLE_DENSITY)
         
         print(num_ped_for_density)
     
@@ -124,7 +123,7 @@ def scenario_4():
             scenario_data["pedestrians"].append(ped)
          
         # Dump as a json file
-        with open(f"scenarios/scenario_4_density={density}_minSpeed={1.2}_maxSpeed={1.4}.json", "w") as f:
+        with open(f"scenarios/rimea_4_density={density}_minSpeed={1.2}_maxSpeed={1.4}.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
 
 def rimea_bottleneck_scenario(dijkstra):
