@@ -36,9 +36,13 @@ class Grid:
         ]
         self.target_positions: list = []
         self.pedestrians: list = []
-        self.measure_start_step: int = measure_start # Point where we want to start the measurement 
-        self.measure_stop_step: tuple[int, int] = measure_stop # Point where we want to stop measuring
-        self.measure_x_positions: list[float] = [] # Distance of run by each pedestrian during the measurement 
+        # Point where we want to start the measurement
+        self.measure_start_step: int = measure_start
+        # Point where we want to stop measuring
+        self.measure_stop_step: tuple[int, int] = measure_stop
+        # Distance of run by each pedestrian during the measurement
+        self.measure_x_positions: list[float] = []
+        self.dijkstra_distance = None
 
     def add_pedestrian(self, pedestrian) -> None:
         """
@@ -121,7 +125,8 @@ class Grid:
             # calculate the best pedestrian move and update its internal position
             new_x: float
             new_y: float
-            new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid)
+            new_x, new_y = ped.move_to_closest_target(
+                self.target_positions, self.grid, self.dijkstra_distance)
             # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = ped.color.trace_name
 
@@ -170,6 +175,74 @@ class Grid:
                         best_move: tuple[int, int] = (new_i, new_j)
 
         return best_move
+
+    def dijkstra(self, target_x, target_y):
+        '''
+        Dijkstra algorithm to create the distance map from the target to all other cells in the grid.
+        :param target_x: x-coordinate of the target cell
+        :param target_y: y-coordinate of the target cell
+        '''
+        # Initialize the distance map
+        self.dijkstra_distance = [[float('inf') for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
+
+        # Initialize costs for each cell in the grid
+        cost_grid = [[1 for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
+        # Obstacles have infinite cost (we don't want to go through them)
+
+        for x in range (len(self.grid)):
+            for y in range (len(self.grid[0])):
+                if self.grid[x][y] == 'O':
+                    cost_grid[x][y] = 10**5
+
+        # Initialize the visited cells
+        visited = [[False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
+
+        # Mark obstacles as visited
+        '''for x in range (len(self.grid)):
+            for y in range (len(self.grid[0])):
+                if self.grid[x][y] == 'O':
+                    visited[x][y] = True
+        '''
+        # Begin the search from the target cell
+        self.dijkstra_distance[target_x][target_y] = 0
+        current_cell = [target_x, target_y]
+        while True:
+
+            # Get the neighbors of the current cell
+            for i, j in [
+                [1, 0], [0, 1], [-1, 0], [0, -1]
+                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+            ]:
+                neighbor_cell = [current_cell[0] + i, current_cell[1] + j]
+                if (0 <= neighbor_cell[0] < len(self.grid) and 0 <= neighbor_cell[1] < len(self.grid[0])): # Check if the neighbor cell is within the grid
+                    if not visited[neighbor_cell[0]][neighbor_cell[1]]: # Check if the neighbor cell has not been visited
+                        # Update distance to neighbor
+                        distance = self.dijkstra_distance[current_cell[0]][ current_cell[1]] + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
+                        if abs(i+j) != 1:
+                            distance += 0.414
+                        # Update distance if it is smaller than the current distance
+                        if distance < self.dijkstra_distance[neighbor_cell[0]][neighbor_cell[1]]:
+                            self.dijkstra_distance[neighbor_cell[0]][neighbor_cell[1]] = distance
+
+            # Mark current cell as visited
+            visited[current_cell[0]][current_cell[1]] = True
+
+            # Choose the next cell to visit
+            min_distance = float('inf')
+            for i in range(len(self.grid)):
+                for j in range(len(self.grid[0])):
+                    if not visited[i][j] and self.dijkstra_distance[i][j] < min_distance:
+                        min_distance = self.dijkstra_distance[i][j]
+                        current_cell = [i,j]
+
+            # Stop if all cells have been visited
+            stop = True
+            for i in range(len(self.grid)):
+                if not all(visited[i]):
+                    stop = False
+                    break
+            if stop:
+                break
 
 
     def measure_start(self):
