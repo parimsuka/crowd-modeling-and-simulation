@@ -90,7 +90,7 @@ def main() -> None:
                         if loop_flag:
                             toggle_loop_button.set_text("Pause")
                         else:
-                            toggle_loop_button.set_text("Play")
+                            toggle_loop_button.set_text("Simulate")
                         
                     choose_scenario_button.on_click(event)
 
