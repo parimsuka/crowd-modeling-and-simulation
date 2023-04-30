@@ -1,4 +1,5 @@
 import numpy as np
+
 from constants import PEDESTRIAN_COLOR
 
 
@@ -83,7 +84,7 @@ class Pedestrian:
 
         # iterate over all possible targets to find the closest target
         for target in targets:
-            target_vector = [target[0]+0.5 - self.x, target[1]+0.5 - self.y]
+            target_vector = [target[0] + 0.5 - self.x, target[1] + 0.5 - self.y]
             target_distance = np.linalg.norm(target_vector)
             if target_distance < closest_target_distance:
                 closest_target_distance = target_distance
@@ -101,7 +102,7 @@ class Pedestrian:
         :param grid: The grid containing the environment. Used to avoid pathing into certain cell types.
         :return: New position (x,y) of the pedestrian.
         """
-        
+
         closest_target = self.find_closest_target(targets)
         if closest_target is None:
             return 0, 0
@@ -152,15 +153,15 @@ class Pedestrian:
         """
 
         if self.dijkstra_used and dijkstra_used:
-            
-            
+
+
             if (self.x - int(self.x) > 0.98 and grid[int(self.x)+1][int(self.y)] == 'O') or (self.y - int(self.y) > 0.98 and grid[int(self.x)][int(self.y)+1] == 'O'):
                 self.x= int(self.x) + 0.5
                 self.y = int(self.y) + 0.5
 
             if not self.check_obstacles(target_x, target_y, grid):
                 return self.find_best_move_cell(target_x, target_y, walking_distance, grid, dijkstra_distance, dijkstra_used=False)
-            
+
             # Initialize variables
             current_x = int(self.x)
             current_y = int(self.y)
@@ -180,7 +181,7 @@ class Pedestrian:
 
                     if dijkstra_distance[cell_x][cell_y] == 0 and grid[cell_x][cell_y] == 'Tn' : # Check if cell is target (non-absorbable)
                         return 0, 0
-                    
+
                     if dijkstra_distance[cell_x][cell_y] < min_dijkstra_score: # Check if cell has smaller dijkstra score
                         new_x = cell_x
                         new_y = cell_y
@@ -191,7 +192,7 @@ class Pedestrian:
             # Calculate dx and dy to move the pedestrian `distance` towards the target
             dx, dy, _ = self.get_move_deltas(new_x + 0.5, new_y + 0.5, walking_distance)
             return dx, dy
-        
+
         else:
             # calculate the possible new position of the pedestrian, moving directly towards the target
             dx, dy, target_vector_norm = self.get_move_deltas(target_x, target_y, walking_distance)
@@ -258,7 +259,6 @@ class Pedestrian:
         int_x = int(self.x)
         int_y = int(self.y)
 
-        
         # Variable containing all neighboring cells, starting with the current cell
         neighbor_cells = [[int_x, int_y, "current"]]
 
@@ -318,9 +318,9 @@ class Pedestrian:
     def check_obstacles(self, target_x, target_y, grid):
         '''
         Checks if there are obstacles between the pedestrian and the target.
-        Implements the Bresenham algorithm. The algorithm is from: 
+        Implements the Bresenham algorithm. The algorithm is from:
         https://pypi.org/project/bresenham/, the github page:
-        https://github.com/encukou/bresenham 
+        https://github.com/encukou/bresenham
         '''
 
         current_x = int(self.x)
@@ -328,7 +328,7 @@ class Pedestrian:
         target_x = int(target_x)
         target_y= int(target_y)
 
-    
+
         dx = target_x - current_x
         dy = target_y - current_y
 
@@ -354,5 +354,5 @@ class Pedestrian:
                 y += 1
                 D -= 2*dx
             D += 2*dy
-        
+
         return False

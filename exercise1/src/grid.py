@@ -14,12 +14,13 @@ from utils import draw_rounded_rect
 
 class Grid:
     """
-      A class representing the grid.
+    A class representing the grid.
 
-      The grid consists of a number of rows and columns, and each cell in the grid
-      has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
+    The grid consists of a number of rows and columns, and each cell in the grid
+    has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
     """
-    def __init__(self, grid_height: int, grid_width: int, cell_size: int) -> None:
+
+    def __init__(self, grid_height: int, grid_width: int, cell_size: int, measure_start: int, measure_stop: tuple[int, int]) -> None:
         """
         Initialize the Grid.
 
@@ -30,11 +31,18 @@ class Grid:
         self.grid_height: int = grid_width
         self.grid_width: int = grid_width
         self.cell_size: int = cell_size
-        self.grid: list[list[str]] = [["E" for _ in range(grid_height)] for _ in range(grid_width)]
+        self.grid: list[list[str]] = [
+            ["E" for _ in range(grid_height)] for _ in range(grid_width)
+        ]
         self.target_positions: list = []
         self.pedestrians: list = []
+        # Point where we want to start the measurement
+        self.measure_start_step: int = measure_start
+        # Point where we want to stop measuring
+        self.measure_stop_step: tuple[int, int] = measure_stop
+        # Distance of run by each pedestrian during the measurement
+        self.measure_x_positions: list[float] = []
         self.dijkstra_distance = None
-
 
     def add_pedestrian(self, pedestrian) -> None:
         """
@@ -54,9 +62,9 @@ class Grid:
         :param absorbable: If the target should absorb pedestrians
         """
         if absorbable:
-            self.grid[x][y] = 'Ta'
+            self.grid[x][y] = "Ta"
         else:
-            self.grid[x][y] = 'Tn'
+            self.grid[x][y] = "Tn"
         # self.grid[x][y] = "T"
         self.target_positions.append((x, y))
 
@@ -88,21 +96,21 @@ class Grid:
                     color: tuple = EMPTY_CELL_COLOR
                 if cell.startswith("P"):
                     grid_color = PedestrianColors.get_color_by_name(cell)
-                    
+
                     # Draw the pedestrian as a circle
                     pygame.draw.ellipse(win, grid_color.main_color, rect)
                     pygame.draw.ellipse(win, (0, 0, 0), rect, 1)
                     continue
                 elif cell == "O":
                     color: tuple = OBSTACLE_COLOR
-                elif cell == "T" or cell == 'Ta' or cell == 'Tn':
+                elif cell == "T" or cell == "Ta" or cell == "Tn":
                     color: tuple = TARGET_COLOR
                 elif cell.startswith("R"):
                     grid_color = PedestrianColors.get_color_by_name(cell)
                     color: tuple = grid_color.main_color
-                    
+
                 draw_rounded_rect(win, color, rect, corner_radius)
-                pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
+                # pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
 
     def update(self) -> None:
         """
@@ -117,18 +125,21 @@ class Grid:
             # calculate the best pedestrian move and update its internal position
             new_x: float
             new_y: float
-            new_x, new_y = ped.move_to_closest_target(self.target_positions, self.grid, self.dijkstra_distance)
+            new_x, new_y = ped.move_to_closest_target(
+                self.target_positions, self.grid, self.dijkstra_distance)
             # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = ped.color.trace_name
 
             # If new position is absorbable target: remove pedestrian
-            if self.grid[int(new_x)][int(new_y)] == 'Ta':
+            if self.grid[int(new_x)][int(new_y)] == "Ta":
                 self.pedestrians.remove(ped)
             else:
                 # Otherwise: Move the Pedestrian
                 self.grid[int(new_x)][int(new_y)] = ped.color.name
 
-    def find_best_move(self, i: int, j: int, target_positions: list[tuple[int, int]]) -> tuple[int, int]:
+    def find_best_move(
+        self, i: int, j: int, target_positions: list[tuple[int, int]]
+    ) -> tuple[int, int]:
         """
         Find the best move for a pedestrian at position (i, j) based on the shortest distance to a target.
 
@@ -164,7 +175,6 @@ class Grid:
                         best_move: tuple[int, int] = (new_i, new_j)
 
         return best_move
-    
 
     def dijkstra(self, target_x, target_y):
         '''
@@ -187,13 +197,13 @@ class Grid:
         # Initialize the visited cells
         visited = [[False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
 
-        #Mark obstacles as visited
+        # Mark obstacles as visited
         '''for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
                     visited[x][y] = True
         '''
-        #Begin the search from the target cell
+        # Begin the search from the target cell
         self.dijkstra_distance[target_x][target_y] = 0
         current_cell = [target_x, target_y]
         while True:
@@ -233,4 +243,40 @@ class Grid:
                     break
             if stop:
                 break
+
+
+    def measure_start(self):
+        print("Starting measurement! Saving x pos of each pedestrian at step 35 which represents 10 seconds")
+        
+        self.measure_x_positions = []
+        for ped in self.pedestrians:
+            self.measure_x_positions.append(ped.x)
+
+    def measure_stop(self, chosen_file: str, stop_time_index: int):
+        average_speeds_measured = []
+        average_speeds = []
+        
+        for i, ped in enumerate(self.pedestrians):
+            average_speed = (ped.x - self.measure_x_positions[i]) / (self.measure_stop_step[stop_time_index] - self.measure_start_step)
+            average_speeds_measured.append(average_speed * 3.5 * 0.4)
+            average_speeds.append(ped.speed * 3.5 * 0.4)
+     
+        if(stop_time_index == 0):
+            print(f"\t{chosen_file}:")
+            print(f"\t\tAverage speed at the first measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
+        if(stop_time_index == 1):    
+            print(f"\t\tAverage speed at the second measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
+            print(f"\t\tAverage of the speed values from all pedestrians = {sum(average_speeds) / len(average_speeds)}")
             
+            
+    def has_valid_measure_parameters(self) -> bool:
+        return (self.measure_start_step < self.measure_stop_step[0]
+                and self.measure_start_step < self.measure_stop_step[1]
+                and self.measure_start_step != -1 
+                and self.measure_stop_step[0] != -1
+                and self.measure_stop_step[1] != -1
+                )
+            
+    
+
+
