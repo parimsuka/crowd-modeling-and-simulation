@@ -49,7 +49,7 @@ def main() -> None:
     chosen_file = "scenarios/scenario-default.json"
 
     pygame.init()
-    screen: pygame.Surface = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((max(width, 700), max(height, 500)))
     pygame.display.set_caption("Crowd Simulation")
 
     # Initialize buttons
@@ -91,7 +91,7 @@ def main() -> None:
                     if chosen_file is not None:
                         # Load the chosen scenario and reset step count
                         width, height, grid = load_scenario(chosen_file)
-                        screen = pygame.display.set_mode((width, height))
+                        screen = pygame.display.set_mode((max(width, 700), max(height, 500)))
                         pygame.display.set_caption("Crowd Simulation")
 
                         # Initialize buttons
@@ -125,14 +125,13 @@ def main() -> None:
         elapsed_time += clock.tick(60) / 1000.0
 
         if choose_scenario_button.choosing_scenario:
-            screen = pygame.display.set_mode((1000, 700)) # TODO Tali fix this? Screen is fluckering
             file_dialog.draw()
         else:
             grid.draw(screen)
             next_step_button.draw(screen)
             choose_scenario_button.draw(screen)
             toggle_loop_button.draw(screen)
-            draw_step_counter(screen, step_count, width - 10, height - 10)
+            draw_step_counter(screen, step_count, max(700, width) - 10, max(500, height) - 10)
             draw_elapsed_time(screen, elapsed_time, 0, height - 5)
 
         # Update the display
