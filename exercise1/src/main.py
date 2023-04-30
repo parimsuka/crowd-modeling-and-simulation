@@ -28,7 +28,7 @@ def main() -> None:
     height: int
     grid: Grid
     width, height, grid = load_scenario("scenarios/scenario-default.json")
-
+    
     pygame.init()
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Crowd Simulation")
