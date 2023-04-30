@@ -3,10 +3,10 @@
     "grid_height": 9,
     "cell_size": 50,
     "pedestrians": [
-        { "x": 4, "y": 1, "dijkstra": true }
+        { "x": 4, "y": 1, "dijkstra": true, "speed": 1 }
     ],
     "targets": [
-        { "y": 8, "x": 4 }
+        { "y": 8, "x": 4, "absorbable": false }
     ],
     "obstacles": [
         { "x": 2, "y": 4 },

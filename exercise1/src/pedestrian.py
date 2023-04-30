@@ -1,5 +1,4 @@
 import numpy as np
-
 from constants import PEDESTRIAN_COLOR
 
 
@@ -138,7 +137,7 @@ class Pedestrian:
         return dx, dy, target_vector_norm
 
     def find_best_move_cell(
-        self, target_x: float, target_y: float, walking_distance: float, grid: list[list[str]], dijkstra_distance: list[list[float]]
+        self, target_x: float, target_y: float, walking_distance: float, grid: list[list[str]], dijkstra_distance: list[list[float]], dijkstra_used: bool = True
     ) -> (float, float):
         """
         Calculates the best move for the pedestrian to reach a certain target, taking into account that the pedestrian
@@ -151,8 +150,17 @@ class Pedestrian:
         :return: A tuple containing delta-x and delta-y, the distances that the pedestrian will move in the
             x- and y-direction
         """
-       
-        if self.dijkstra_used:
+
+        if self.dijkstra_used and dijkstra_used:
+            
+            
+            if (self.x - int(self.x) > 0.98 and grid[int(self.x)+1][int(self.y)] == 'O') or (self.y - int(self.y) > 0.98 and grid[int(self.x)][int(self.y)+1] == 'O'):
+                self.x= int(self.x) + 0.5
+                self.y = int(self.y) + 0.5
+
+            if not self.check_obstacles(target_x, target_y, grid):
+                return self.find_best_move_cell(target_x, target_y, walking_distance, grid, dijkstra_distance, dijkstra_used=False)
+            
             # Initialize variables
             current_x = int(self.x)
             current_y = int(self.y)
@@ -232,6 +240,8 @@ class Pedestrian:
             dx, dy, _ = self.get_move_deltas(
                 best_neighbor_cell[0], best_neighbor_cell[1], best_neighbor_cell[2]
             )
+            if dx == 0 and dy == 0:
+                dijkstra_used = True
             return dx, dy
 
     def get_reachable_cells(self, grid: list[list[str]]) -> list[list[int, int, str, float, float, float]]:
@@ -248,6 +258,7 @@ class Pedestrian:
         int_x = int(self.x)
         int_y = int(self.y)
 
+        
         # Variable containing all neighboring cells, starting with the current cell
         neighbor_cells = [[int_x, int_y, "current"]]
 
@@ -304,4 +315,44 @@ class Pedestrian:
         return reachable_cells
     
 
+    def check_obstacles(self, target_x, target_y, grid):
+        '''
+        Checks if there are obstacles between the pedestrian and the target.
+        Implements the Bresenham algorithm. The algorithm is from: 
+        https://pypi.org/project/bresenham/, the github page:
+        https://github.com/encukou/bresenham 
+        '''
+
+        current_x = int(self.x)
+        current_y = int(self.y)
+        target_x = int(target_x)
+        target_y= int(target_y)
+
+    
+        dx = target_x - current_x
+        dy = target_y - current_y
+
+        xsign = 1 if dx > 0 else -1
+        ysign = 1 if dy > 0 else -1
+
+        dx = abs(dx)
+        dy = abs(dy)
+
+        if dx > dy:
+            xx, xy, yx, yy = xsign, 0, 0, ysign
+        else:
+            dx, dy = dy, dx
+            xx, xy, yx, yy = 0, ysign, xsign, 0
+
+        D = 2*dy - dx
+        y = 0
+
+        for x in range(dx + 1):
+            if grid[current_x + x*xx + y*yx][current_y + x*xy + y*yy] == "O":
+                return True
+            if D >= 0:
+                y += 1
+                D -= 2*dx
+            D += 2*dy
         
+        return False
