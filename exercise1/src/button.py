@@ -6,7 +6,9 @@ class Button:
     A simple button class with text to be used in a Pygame application.
     """
 
-    def __init__(self, x: int, y: int, width: int, height: int, text: str, color: tuple):
+    def __init__(
+        self, x: int, y: int, width: int, height: int, text: str, color: tuple
+    ):
         """
         Initialize a Button instance.
         :param x: The x-coordinate of the top-left corner of the button.
@@ -29,10 +31,15 @@ class Button:
         :param screen: The surface to draw the button on.
         """
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
-        font: pygame.font.FontType = pygame.font.Font(pygame.font.get_default_font(), 20)
+        font: pygame.font.FontType = pygame.font.Font(
+            pygame.font.get_default_font(), 20
+        )
         text_render: pygame.Surface = font.render(self.text, True, (0, 0, 0))
         text_rect: pygame.Rect = text_render.get_rect()
-        text_rect.center: tuple[int, int] = (self.x + self.width // 2, self.y + self.height // 2)
+        text_rect.center: tuple[int, int] = (
+            self.x + self.width // 2,
+            self.y + self.height // 2,
+        )
         screen.blit(text_render, text_rect)
 
     def is_clicked(self, pos: tuple) -> bool:
@@ -47,6 +54,9 @@ class Button:
         return (
             self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
         )
+        
+    def set_text(self, new_text: str) -> None:    
+       self.text = new_text
 
 
 class ChooseScenarioButton(Button):
@@ -54,7 +64,9 @@ class ChooseScenarioButton(Button):
     A subclass of the Button class that includes a callback function to be executed when the button is clicked.
     """
 
-    def __init__(self, x: int, y: int, width: int, height: int, text: str, color: tuple):
+    def __init__(
+        self, x: int, y: int, width: int, height: int, text: str, color: tuple
+    ):
         """
         Initialize a ChooseScenarioButton instance.
         :param x: The x-coordinate of the top-left corner of the button.

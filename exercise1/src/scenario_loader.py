@@ -20,39 +20,48 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     with open(scenario_path, "r") as f:
         scenario: dict = json.load(f)
 
-    if 'cell_size' not in scenario:
+    if "cell_size" not in scenario:
         # Choose an appropriate cell size
         height_limit: int = 900  # height limit of 900px
         width_limit: int = 1600  # width limit of 1600px
-        scenario['cell_size'] = int(np.minimum(height_limit/scenario['grid_height'], width_limit/scenario['grid_width']))
+        scenario["cell_size"] = int(
+            np.minimum(
+                height_limit / scenario["grid_height"],
+                width_limit / scenario["grid_width"],
+            )
+        )
 
-    grid: Grid = Grid(scenario["grid_height"], scenario["grid_width"], scenario["cell_size"])
+    grid: Grid = Grid(
+        scenario["grid_height"], scenario["grid_width"], scenario["cell_size"]
+    )
 
     # Add pedestrians
     for ped in scenario["pedestrians"]:
         x = ped["x"]
         y = ped["y"]
-        
+
         dijkstra_used = False
         if "dijkstra" in ped:
             dijkstra_used = ped["dijkstra"]
-            
+
         speed = 1
         if "speed" in ped:
             speed = ped["speed"]
-            
+
         grid_color = PedestrianColors.P_BLUE
         if "color" in ped:
             grid_color = PedestrianColors.get_color_by_name(ped["color"])
             print(grid_color)
-        
-        grid.add_pedestrian(Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed, grid_color))
+
+        grid.add_pedestrian(
+            Pedestrian(x + 0.5, y + 0.5, dijkstra_used, speed, grid_color)
+        )
 
     # Add targets
     if "targets" in scenario:
         for tgt in scenario["targets"]:
-            if 'absorbable' in tgt:
-                grid.add_target(tgt['x'], tgt['y'], tgt['absorbable'])
+            if "absorbable" in tgt:
+                grid.add_target(tgt["x"], tgt["y"], tgt["absorbable"])
             else:
                 grid.add_target(tgt["x"], tgt["y"])
     else:

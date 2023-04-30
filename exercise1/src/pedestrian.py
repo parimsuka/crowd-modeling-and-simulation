@@ -10,7 +10,9 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, dijkstra_used=False, speed=1, color=PEDESTRIAN_COLOR):
+    def __init__(
+        self, x: float, y: float, dijkstra_used=False, speed=1, color=PEDESTRIAN_COLOR
+    ):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -84,7 +86,7 @@ class Pedestrian:
 
         # iterate over all possible targets to find the closest target
         for target in targets:
-            target_vector = [target[0]+0.5 - self.x, target[1]+0.5 - self.y]
+            target_vector = [target[0] + 0.5 - self.x, target[1] + 0.5 - self.y]
             target_distance = np.linalg.norm(target_vector)
             if target_distance < closest_target_distance:
                 closest_target_distance = target_distance
@@ -102,22 +104,25 @@ class Pedestrian:
         :param grid: The grid containing the environment. Used to avoid pathing into certain cell types.
         :return: New position (x,y) of the pedestrian.
         """
-        
+
         closest_target = self.find_closest_target(targets)
         if closest_target is None:
             return 0, 0
 
         if self.dijkstra_used:
-
-            #Call dijsktra to find the shortest path
+            # Call dijsktra to find the shortest path
             path = self.dijkstra(closest_target[0], closest_target[1], grid)
-            #print(path)
+            # print(path)
 
-            #Make the resulting path the only available cells for the pedestrian
-            new_grid = [['O' for _ in range(len(grid[0]))] for _ in range(len(grid))]
+            # Make the resulting path the only available cells for the pedestrian
+            new_grid = [["O" for _ in range(len(grid[0]))] for _ in range(len(grid))]
             for cell in path:
-                if not (grid[cell[0]][cell[1]] == 'Ta' or grid[cell[0]][cell[1]] == 'Tn' or grid[cell[0]][cell[1]].startswith("P")):
-                    new_grid[cell[0]][cell[1]] = 'E'
+                if not (
+                    grid[cell[0]][cell[1]] == "Ta"
+                    or grid[cell[0]][cell[1]] == "Tn"
+                    or grid[cell[0]][cell[1]].startswith("P")
+                ):
+                    new_grid[cell[0]][cell[1]] = "E"
 
             return self.move_target_direction(
                 closest_target[0] + 0.5, closest_target[1] + 0.5, self.speed, new_grid
@@ -154,7 +159,11 @@ class Pedestrian:
         return dx, dy, target_vector_norm
 
     def find_best_move_cell(
-        self, target_x: float, target_y: float, walking_distance: float, grid: list[list[str]]
+        self,
+        target_x: float,
+        target_y: float,
+        walking_distance: float,
+        grid: list[list[str]],
     ) -> (float, float):
         """
         Calculates the best move for the pedestrian to reach a certain target, taking into account that the pedestrian
@@ -168,7 +177,9 @@ class Pedestrian:
             x- and y-direction
         """
         # calculate the possible new position of the pedestrian, moving directly towards the target
-        dx, dy, target_vector_norm = self.get_move_deltas(target_x, target_y, walking_distance)
+        dx, dy, target_vector_norm = self.get_move_deltas(
+            target_x, target_y, walking_distance
+        )
         x_new = self.x + dx
         y_new = self.y + dy
 
@@ -185,7 +196,7 @@ class Pedestrian:
             return dx, dy
 
         # If target cell is empty (but there is a trace): Move to new target position
-        if grid[int(x_new)][int(y_new)] == "R":
+        if grid[int(x_new)][int(y_new)].startswith("R"):
             return dx, dy
 
         # If we are here, Target cell is neither current cell nor empty nor a trace cell
@@ -197,11 +208,26 @@ class Pedestrian:
         # Initial comparison: our current distance to our current target
         best_neighbor_cell_distance = target_vector_norm
 
-        for rc_x, rc_y, rc_value, rc_contact_x, rc_contact_y, rc_distance in reachable_cells:
-            if rc_value == "E" or rc_value == "R" or rc_value == "Ta" or rc_value == "current":
+        for (
+            rc_x,
+            rc_y,
+            rc_value,
+            rc_contact_x,
+            rc_contact_y,
+            rc_distance,
+        ) in reachable_cells:
+            if (
+                rc_value == "E"
+                or rc_value.startswith("R")
+                or rc_value == "Ta"
+                or rc_value == "current"
+            ):
                 # Cell is empty or Trace or absorbableTarget or current
                 # -> Calculate which of these cells is closest to our target (with respect to the distance to us)
-                distance_cell_target = [target_x - (rc_x+0.5), target_y - (rc_y+0.5)]
+                distance_cell_target = [
+                    target_x - (rc_x + 0.5),
+                    target_y - (rc_y + 0.5),
+                ]
                 distance_cell_target_norm = np.linalg.norm(distance_cell_target)
 
                 # If the new cell has a smaller distance to the target: update the best neighbor cell (and distance)
@@ -218,7 +244,9 @@ class Pedestrian:
         )
         return dx, dy
 
-    def get_reachable_cells(self, grid: list[list[str]]) -> list[list[int, int, str, float, float, float]]:
+    def get_reachable_cells(
+        self, grid: list[list[str]]
+    ) -> list[list[int, int, str, float, float, float]]:
         """
         Searches all neighboring cells to find the reachable cells for a pedestrian with a respective speed.
 
@@ -236,11 +264,17 @@ class Pedestrian:
         neighbor_cells = [[int_x, int_y, "current"]]
 
         for i, j in [
-            [1, 0], [0, 1], [-1, 0], [0, -1],
-            [-1, -1], [-1, 1], [1, -1], [1, 1]
+            [1, 0],
+            [0, 1],
+            [-1, 0],
+            [0, -1],
+            [-1, -1],
+            [-1, 1],
+            [1, -1],
+            [1, 1],
         ]:
-            cell_x = int_x+i
-            cell_y = int_y+j
+            cell_x = int_x + i
+            cell_y = int_y + j
             if 0 <= cell_x < len(grid) and 0 <= cell_y < len(grid[0]):
                 neighbor_cells.append([cell_x, cell_y, grid[cell_x][cell_y]])
 
@@ -248,23 +282,25 @@ class Pedestrian:
         reachable_cells = []
         for x, y, val in neighbor_cells:
             # calculate where the pedestrian is with respect to the corner
-            dx_s = x - self.x       # Distance to the smaller (left) side in x-direction
-            dx_l = self.x - (x+c)   # Distance to the larger (right) side in x-direction
-            dy_s = y - self.y       # Distance to the smaller (up)  side in y-direction
-            dy_l = self.y - (y+c)   # Distance to the larger (down) side in y-direction
+            dx_s = x - self.x  # Distance to the smaller (left) side in x-direction
+            dx_l = self.x - (
+                x + c
+            )  # Distance to the larger (right) side in x-direction
+            dy_s = y - self.y  # Distance to the smaller (up)  side in y-direction
+            dy_l = self.y - (y + c)  # Distance to the larger (down) side in y-direction
 
             # calculate the closest point of the cell to the pedestrian
             if dx_s > 0:
                 contact_point_x = x
             elif dx_l > 0:
-                contact_point_x = x+c
+                contact_point_x = x + c
             else:
                 contact_point_x = self.x
 
             if dy_s > 0:
                 contact_point_y = y
             elif dy_l > 0:
-                contact_point_y = y+c
+                contact_point_y = y + c
             else:
                 contact_point_y = self.y
 
@@ -275,27 +311,28 @@ class Pedestrian:
             # Contact point for our current cell: middle of our current cell
             # Ensures that the pedestrian can reach all surrounding cells after this move
             if val == "current":
-                contact_point_x = x+0.5
-                contact_point_y = y+0.5
+                contact_point_x = x + 0.5
+                contact_point_y = y + 0.5
                 dx = contact_point_x - self.x
                 dy = contact_point_y - self.y
 
-            distance = np.sqrt(dx*dx + dy*dy)
+            distance = np.sqrt(dx * dx + dy * dy)
 
             if distance <= self.speed:
-                reachable_cells.append([x, y, val, contact_point_x, contact_point_y, distance])
+                reachable_cells.append(
+                    [x, y, val, contact_point_x, contact_point_y, distance]
+                )
 
         return reachable_cells
-    
 
     def backtrack(self, target_x, target_y, distances):
-        '''
+        """
         Backtrack from the target cell to the start cell using the distance matrix
         :param target_x: x-coordinate of the target cell
         :param target_y: y-coordinate of the target cell
         :param distances: distance matrix
         :return: path from the target cell to the start cell
-        '''
+        """
 
         # Start from the last cell and backtrack to the first cell with the lowest cost cells
         path = [[target_x, target_y]]
@@ -306,13 +343,23 @@ class Pedestrian:
             neighbor_cells = []
 
             for i, j in [
-                [1, 0], [0, 1], [-1, 0], [0, -1]
-                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+                [1, 0],
+                [0, 1],
+                [-1, 0],
+                [0, -1],
+                [-1, -1],
+                [-1, 1],
+                [1, -1],
+                [1, 1],
             ]:
                 neighbor_cell = [path[-1][0] + i, path[-1][1] + j]
-                if 0 <= neighbor_cell[0] < len(distances) and 0 <= neighbor_cell[1] < len(distances[0]):
+                if 0 <= neighbor_cell[0] < len(distances) and 0 <= neighbor_cell[
+                    1
+                ] < len(distances[0]):
                     neighbor_cells.append(neighbor_cell)
-                    neighbor_distances.append(distances[neighbor_cell[0]][neighbor_cell[1]])
+                    neighbor_distances.append(
+                        distances[neighbor_cell[0]][neighbor_cell[1]]
+                    )
 
             path.append(neighbor_cells[np.argmin(neighbor_distances)])
 
@@ -321,24 +368,23 @@ class Pedestrian:
 
         return list(reversed(path))
 
-
     def dijkstra(self, target_x, target_y, grid):
-        '''
+        """
         Dijkstra algorithm to find the shortest path from the target cell to the start cell
         :param target_x: x-coordinate of the target cell
         :param target_y: y-coordinate of the target cell
         :param grid: the grid
         :return: the shortest path from the target cell to the start cell
-        '''
+        """
 
         # Initialize costs for each cell in the grid
         cost_grid = [[1 for _ in range(len(grid[0]))] for _ in range(len(grid))]
 
         # Obstacles have infinite cost (we don't want to go through them)
-        for x in range (len(grid)):
-            for y in range (len(grid[0])):
-                if grid[x][y] == 'O':
-                    cost_grid[x][y] = float('inf')
+        for x in range(len(grid)):
+            for y in range(len(grid[0])):
+                if grid[x][y] == "O":
+                    cost_grid[x][y] = float("inf")
 
         # Target and pedestrian's initial cell have 0 costs
         cost_grid[target_x][target_y] = 0
@@ -348,23 +394,38 @@ class Pedestrian:
         visited = [[False for _ in range(len(grid[0]))] for _ in range(len(grid))]
 
         # Initialize the distance from each cell to pedestrian, the distance for its own position is 0
-        distances = [[float('inf') for _ in range(len(grid[0]))] for _ in range(len(grid))]
+        distances = [
+            [float("inf") for _ in range(len(grid[0]))] for _ in range(len(grid))
+        ]
         distances[int(self.x)][int(self.y)] = 0
 
-        #Begin the search
+        # Begin the search
         current_cell = [int(self.x), int(self.y)]
         while True:
             # Get the neighbors of the current cell
             for i, j in [
-                [1, 0], [0, 1], [-1, 0], [0, -1]
-                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+                [1, 0],
+                [0, 1],
+                [-1, 0],
+                [0, -1],
+                [-1, -1],
+                [-1, 1],
+                [1, -1],
+                [1, 1],
             ]:
                 neighbor_cell = [current_cell[0] + i, current_cell[1] + j]
-                if (0 <= neighbor_cell[0] < len(grid) and 0 <= neighbor_cell[1] < len(grid[0])): # Check if the neighbor cell is within the grid
-                    if not visited[neighbor_cell[0]][neighbor_cell[1]]: # Check if the neighbor cell has not been visited
+                if 0 <= neighbor_cell[0] < len(grid) and 0 <= neighbor_cell[1] < len(
+                    grid[0]
+                ):  # Check if the neighbor cell is within the grid
+                    if not visited[neighbor_cell[0]][
+                        neighbor_cell[1]
+                    ]:  # Check if the neighbor cell has not been visited
                         # Update distance to neighbor
-                        distance = distances[current_cell[0]][ current_cell[1]] + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
-                        if abs(i+j) != 1:
+                        distance = (
+                            distances[current_cell[0]][current_cell[1]]
+                            + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
+                        )
+                        if abs(i + j) != 1:
                             distance += 0.41
                         # Update distance if it is smaller than the current distance
                         if distance < distances[neighbor_cell[0]][neighbor_cell[1]]:
@@ -374,12 +435,12 @@ class Pedestrian:
             visited[current_cell[0]][current_cell[1]] = True
 
             # Choose the next cell to visit
-            min_distance = float('inf')
+            min_distance = float("inf")
             for i in range(len(grid)):
                 for j in range(len(grid[0])):
                     if not visited[i][j] and distances[i][j] < min_distance:
                         min_distance = distances[i][j]
-                        current_cell = [i,j]
+                        current_cell = [i, j]
 
             # Stop if we have reached the target cell
             if current_cell[0] == target_x and current_cell[1] == target_y:
@@ -387,8 +448,3 @@ class Pedestrian:
 
         # Backtrack for the path
         return self.backtrack(target_x, target_y, distances)
-
-        
-
-        
-

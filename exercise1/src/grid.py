@@ -14,11 +14,12 @@ from utils import draw_rounded_rect
 
 class Grid:
     """
-      A class representing the grid.
+    A class representing the grid.
 
-      The grid consists of a number of rows and columns, and each cell in the grid
-      has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
+    The grid consists of a number of rows and columns, and each cell in the grid
+    has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
     """
+
     def __init__(self, grid_height: int, grid_width: int, cell_size: int) -> None:
         """
         Initialize the Grid.
@@ -30,7 +31,9 @@ class Grid:
         self.grid_height: int = grid_width
         self.grid_width: int = grid_width
         self.cell_size: int = cell_size
-        self.grid: list[list[str]] = [["E" for _ in range(grid_height)] for _ in range(grid_width)]
+        self.grid: list[list[str]] = [
+            ["E" for _ in range(grid_height)] for _ in range(grid_width)
+        ]
         self.target_positions: list = []
         self.pedestrians: list = []
 
@@ -52,9 +55,9 @@ class Grid:
         :param absorbable: If the target should absorb pedestrians
         """
         if absorbable:
-            self.grid[x][y] = 'Ta'
+            self.grid[x][y] = "Ta"
         else:
-            self.grid[x][y] = 'Tn'
+            self.grid[x][y] = "Tn"
         # self.grid[x][y] = "T"
         self.target_positions.append((x, y))
 
@@ -86,21 +89,21 @@ class Grid:
                     color: tuple = EMPTY_CELL_COLOR
                 if cell.startswith("P"):
                     grid_color = PedestrianColors.get_color_by_name(cell)
-                    
+
                     # Draw the pedestrian as a circle
                     pygame.draw.ellipse(win, grid_color.main_color, rect)
                     pygame.draw.ellipse(win, (0, 0, 0), rect, 1)
                     continue
                 elif cell == "O":
                     color: tuple = OBSTACLE_COLOR
-                elif cell == "T" or cell == 'Ta' or cell == 'Tn':
+                elif cell == "T" or cell == "Ta" or cell == "Tn":
                     color: tuple = TARGET_COLOR
                 elif cell.startswith("R"):
                     grid_color = PedestrianColors.get_color_by_name(cell)
                     color: tuple = grid_color.main_color
-                    
+
                 draw_rounded_rect(win, color, rect, corner_radius)
-                pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
+                # pygame.draw.rect(win, (0, 0, 0), rect, 1, border_radius=corner_radius)
 
     def update(self) -> None:
         """
@@ -120,13 +123,15 @@ class Grid:
             self.grid[int(old_x)][int(old_y)] = ped.color.trace_name
 
             # If new position is absorbable target: remove pedestrian
-            if self.grid[int(new_x)][int(new_y)] == 'Ta':
+            if self.grid[int(new_x)][int(new_y)] == "Ta":
                 self.pedestrians.remove(ped)
             else:
                 # Otherwise: Move the Pedestrian
                 self.grid[int(new_x)][int(new_y)] = ped.color.name
 
-    def find_best_move(self, i: int, j: int, target_positions: list[tuple[int, int]]) -> tuple[int, int]:
+    def find_best_move(
+        self, i: int, j: int, target_positions: list[tuple[int, int]]
+    ) -> tuple[int, int]:
         """
         Find the best move for a pedestrian at position (i, j) based on the shortest distance to a target.
 

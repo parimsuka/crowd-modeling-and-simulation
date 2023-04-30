@@ -1,5 +1,6 @@
 import pygame
 
+
 def draw_rounded_rect(surface, color, rect, corner_radius):
     """
     Draw a rounded rectangle on the given surface with the specified color, rectangular dimensions, and corner radius.
@@ -26,6 +27,7 @@ def draw_step_counter(screen: pygame.Surface, step_count: int, x: int, y: int) -
     text_rect.bottomright: tuple[int, int] = (x, y)
     screen.blit(text_render, text_rect)
 
+
 def draw_elapsed_time(screen, elapsed_time, x, y):
     """
     Draw the step counter text on the screen at the given position.
@@ -36,7 +38,7 @@ def draw_elapsed_time(screen, elapsed_time, x, y):
     """
     # Render the elapsed time as text
     font = pygame.font.Font(None, 20)
-    text = 'Elapsed Time: {:.2f} seconds'.format(elapsed_time)
+    text = "Elapsed Time: {:.2f} seconds".format(elapsed_time)
     text_render = font.render(text, True, (0, 0, 0))
     text_rect = text_render.get_rect()
     text_rect.bottomleft = (x, y)

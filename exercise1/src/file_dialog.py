@@ -6,8 +6,13 @@ class FileDialog:
     """
     A simple file dialog class to display and select files.
     """
+
     def __init__(
-        self, directory: str, file_extension: str, screen: pygame.Surface, background_color: tuple[int, int, int] = (200, 200, 200)
+        self,
+        directory: str,
+        file_extension: str,
+        screen: pygame.Surface,
+        background_color: tuple[int, int, int] = (200, 200, 200),
     ) -> None:
         """
         Initialize a FileDialog instance.
@@ -21,7 +26,9 @@ class FileDialog:
         self.screen: pygame.Surface = screen
         self.background_color: tuple[int, int, int] = background_color
         self.files: list[str] = self._get_files()
-        self.font: pygame.font.Font = pygame.font.Font(pygame.font.get_default_font(), 20)
+        self.font: pygame.font.Font = pygame.font.Font(
+            pygame.font.get_default_font(), 20
+        )
 
     def _get_files(self) -> list[str]:
         """
