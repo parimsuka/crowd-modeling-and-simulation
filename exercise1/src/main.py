@@ -12,7 +12,7 @@ from utils import draw_step_counter, draw_elapsed_time
 def increment_time_step_by_one(grid: Grid, step_count: int, chosen_file: str):
     grid.update()
     step_count += 1
-
+    
     if grid.has_valid_measure_parameters:
         if step_count == grid.measure_start_step:
             grid.measure_start()
@@ -69,7 +69,7 @@ def main() -> None:
     TIMER_EVENT = pygame.USEREVENT + 1
 
     # Set the timer to generate the custom event every 5000 milliseconds (5 seconds)
-    pygame.time.set_timer(TIMER_EVENT, 75)
+    pygame.time.set_timer(TIMER_EVENT, 200)
 
     # Main game loop
     while True:

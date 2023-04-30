@@ -29,11 +29,11 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
 
     measure_start = -1
     if "measure_start" in scenario:
-        speed = scenario["measure_start"]
+        measure_start = scenario["measure_start"]
 
     measure_stop = (-1, -1)
     if "measure_stop" in scenario:
-        speed = scenario["measure_stop"]
+        measure_stop = scenario["measure_stop"]
 
     compute_dijkstra_distance = False
     grid: Grid = Grid(
@@ -58,7 +58,6 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
         grid_color = PedestrianColors.P_BLUE
         if "color" in ped:
             grid_color = PedestrianColors.get_color_by_name(ped["color"])
-            print(grid_color)
 
         grid.add_pedestrian(Pedestrian(
             x + 0.5, y + 0.5, dijkstra_used, speed, grid_color))
