@@ -46,6 +46,7 @@ def main() -> None:
     height: int
     grid: Grid
     width, height, grid = load_scenario("scenarios/scenario-default.json")
+    chosen_file = "scenarios/scenario-default.json"
 
     pygame.init()
     screen: pygame.Surface = pygame.display.set_mode((width, height))
