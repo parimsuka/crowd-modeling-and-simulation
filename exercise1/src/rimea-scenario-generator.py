@@ -172,10 +172,10 @@ def rimea_bottleneck_scenario(dijkstra):
 
     # Save scenario
     if dijkstra:
-        with open("scenarios/rimea-task4-bottleneck-w-dijkstra.json", "w") as f:
+        with open("scenarios/Task 5/rimea_4/rimea-task4-bottleneck-w-dijkstra.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
     else:
-        with open("scenarios/rimea-task4-bottleneck-wo-dijkstra.json", "w") as f:
+        with open("scenarios/Task 5/rimea_4/rimea-task4-bottleneck-wo-dijkstra.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
 
 
