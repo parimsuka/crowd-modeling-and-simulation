@@ -59,7 +59,6 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
             else:
                 grid.add_target(tgt["x"], tgt["y"])
             
-
     else:
         raise ValueError("No targets found in the scenario")
 
@@ -67,8 +66,10 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     for obs in scenario["obstacles"]:
         grid.add_obstacle(obs["x"], obs["y"])
 
-    for tgt in scenario["targets"]:
-        grid.dijkstra(tgt["x"], tgt["y"])
+    if compute_dijkstra_distance:
+        for tgt in scenario["targets"]:
+            grid.dijkstra(tgt["x"], tgt["y"])
+
 
     # Compute dijkstra distance grid considering all targets
     if compute_dijkstra_distance:

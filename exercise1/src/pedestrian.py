@@ -170,7 +170,7 @@ class Pedestrian:
 
                 if 0 <= cell_x < len(grid) and 0 <= cell_y < len(grid[0]): # Check if cell is in grid
 
-                    if dijkstra_distance[cell_x][cell_y] == 0 and grid[cell_x][cell_y] == 'Tn': # Check if cell is target (non-absorbable)
+                    if dijkstra_distance[cell_x][cell_y] == 0 and grid[cell_x][cell_y] == 'Tn' : # Check if cell is target (non-absorbable)
                         return 0, 0
                     
                     if dijkstra_distance[cell_x][cell_y] < min_dijkstra_score: # Check if cell has smaller dijkstra score
@@ -178,6 +178,8 @@ class Pedestrian:
                         new_y = cell_y
                         min_dijkstra_score = dijkstra_distance[cell_x][cell_y] # Update min_dijkstra_score
 
+            if grid[new_x][new_y].startswith('P'):
+                return 0, 0
             # Calculate dx and dy to move the pedestrian `distance` towards the target
             dx, dy, _ = self.get_move_deltas(new_x + 0.5, new_y + 0.5, walking_distance)
             return dx, dy
@@ -200,7 +202,7 @@ class Pedestrian:
                 return dx, dy
 
             # If target cell is empty (but there is a trace): Move to new target position
-            if grid[int(x_new)][int(y_new)] == "R":
+            if grid[int(x_new)][int(y_new)].startswith("R"):
                 return dx, dy
 
             # If we are here, Target cell is neither current cell nor empty nor a trace cell
@@ -212,7 +214,7 @@ class Pedestrian:
             best_neighbor_cell_distance = target_vector_norm
 
             for rc_x, rc_y, rc_value, rc_contact_x, rc_contact_y, rc_distance in reachable_cells:
-                if rc_value == "E" or rc_value == "R" or rc_value == "Ta" or rc_value == "current":
+                if rc_value == "E" or rc_value.startswith("R") or rc_value == "Ta" or rc_value == "current":
                     # Cell is empty or Trace or absorbableTarget or current
                     # -> Calculate which of these cells is closest to our target (with respect to the distance to us)
                     distance_cell_target = [target_x - (rc_x+0.5), target_y - (rc_y+0.5)]
@@ -226,11 +228,11 @@ class Pedestrian:
                         if rc_value == "current":
                             best_neighbor_cell[2] = rc_distance
 
-        # calculate the new move deltas to move the pedestrian towards the (new) target best_neighbor_cell
-        dx, dy, _ = self.get_move_deltas(
-            best_neighbor_cell[0], best_neighbor_cell[1], best_neighbor_cell[2]
-        )
-        return dx, dy
+            # calculate the new move deltas to move the pedestrian towards the (new) target best_neighbor_cell
+            dx, dy, _ = self.get_move_deltas(
+                best_neighbor_cell[0], best_neighbor_cell[1], best_neighbor_cell[2]
+            )
+            return dx, dy
 
     def get_reachable_cells(self, grid: list[list[str]]) -> list[list[int, int, str, float, float, float]]:
         """
@@ -300,3 +302,6 @@ class Pedestrian:
                 reachable_cells.append([x, y, val, contact_point_x, contact_point_y, distance])
 
         return reachable_cells
+    
+
+        

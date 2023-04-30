@@ -178,26 +178,26 @@ class Grid:
         # Initialize costs for each cell in the grid
         cost_grid = [[1 for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
         # Obstacles have infinite cost (we don't want to go through them)
-        a = 0
+
         for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
-                    cost_grid[x][y] = float('inf')
+                    cost_grid[x][y] = 10**5
 
         # Initialize the visited cells
         visited = [[False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
 
         #Mark obstacles as visited
-        for x in range (len(self.grid)):
+        '''for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
                     visited[x][y] = True
-
+        '''
         #Begin the search from the target cell
         self.dijkstra_distance[target_x][target_y] = 0
         current_cell = [target_x, target_y]
         while True:
-            
+
             # Get the neighbors of the current cell
             for i, j in [
                 [1, 0], [0, 1], [-1, 0], [0, -1]
