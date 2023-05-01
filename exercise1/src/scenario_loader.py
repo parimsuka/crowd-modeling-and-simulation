@@ -80,8 +80,9 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
         raise ValueError("No targets found in the scenario")
 
     # Add obstacles
-    for obs in scenario["obstacles"]:
-        grid.add_obstacle(obs["x"], obs["y"])
+    if "obstacles" in scenario:
+        for obs in scenario["obstacles"]:
+            grid.add_obstacle(obs["x"], obs["y"])
 
     if compute_dijkstra_distance:
         for tgt in scenario["targets"]:
