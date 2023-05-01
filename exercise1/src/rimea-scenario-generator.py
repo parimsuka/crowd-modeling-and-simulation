@@ -1,17 +1,18 @@
 import json
+import math
 import random as rd
 
 import numpy as np
 from constants import SPEED_TABLE
 from pedestriancolors import PedestrianColors
-from pyparsing import col
 
 
 def normalize_pedestrian_speeds(pedestrian_speeds):
     """
     Normalize the pedestrian speeds based on the maximum speed.
     :param pedestrian_speeds: A list of pedestrian speeds.
-    :return: A list of normalized and rounded pedestrian speeds."""
+    :return: A list of normalized and rounded pedestrian speeds.
+    """
 
     # Get the maximum speed from the pedestrian speeds
     max_speed = max(pedestrian_speeds)
@@ -39,13 +40,15 @@ def distribute_age_groups(num_pedestrians):
 
 
 def rimea_test_scenario():
-    """Generates a test scenario for the Rimea scenarios.
+    """
+    Generates a test scenario for the Rimea scenarios.
     To do:
     1) Initialize the dictionary (scenario_data)
     2) Add the grid parameters (grid_width, grid_height, cell_size)
     3) Add the pedestrians (x, y, dijkstra, speed) as a pedestrian list
     4) Add the targets (x, y, absorbable) as a target list
-    5) Add the obstacles (x, y) as an obstacle list)"""
+    5) Add the obstacles (x, y) as an obstacle list
+    """
 
     scenario_data = {}
 
@@ -67,9 +70,107 @@ def rimea_test_scenario():
     with open("scenarios/test.json", "w") as f:
         json.dump(scenario_data, f, indent=4)
 
+def rimea_bottleneck_scenario(dijkstra):
+    """
+    Generates a scenario for the Rimea bottleneck scenario.
+    """
+
+    scenario_data = {}
+    num_pedestrians = 50
+    pedestrian_speeds = distribute_age_groups(num_pedestrians)
+    normalized_speeds = normalize_pedestrian_speeds(pedestrian_speeds)
+
+    # Grid parameters
+    scenario_data["grid_width"] = 25
+    scenario_data["grid_height"] = 10
+    scenario_data["cell_size"] = 30
+
+    scenario_data["pedestrians"] = []
+    scenario_data["targets"] = []
+    scenario_data["obstacles"] = []
+
+    # Add pedestrians
+    x_val = 0
+    y_val = 0
+
+    for i in range(1, num_pedestrians + 1):
+        scenario_data["pedestrians"].append(
+            {
+                "x": x_val,
+                "y": y_val,
+                "dijkstra": dijkstra,
+                "speed": 1,
+                "color": "P-Yellow",
+            }
+        )
+        if i % 5 == 0:
+            y_val += 1
+            x_val = 0
+        else:
+            x_val += 1
+
+    # Add targets
+    scenario_data["targets"].append({"x": 24, "y": 0, "absorbable": True})
+
+    # Add obstacles
+    for i in range(0, 5):
+        scenario_data["obstacles"].append({"x": 10, "y": i})
+        scenario_data["obstacles"].append({"x": 15, "y": i})
+        scenario_data["obstacles"].append({"x": i + 10, "y": 4})
+        scenario_data["obstacles"].append({"x": i + 10, "y": 6})
+        if i + 6 < 10:
+            scenario_data["obstacles"].append({"x": 10, "y": i + 6})
+            scenario_data["obstacles"].append({"x": 15, "y": i + 6})
+
+    # Save scenario
+    if dijkstra:
+        with open(
+            "scenarios/Task 5/rimea_4/rimea-task4-bottleneck-w-dijkstra.json", "w"
+        ) as f:
+            json.dump(scenario_data, f, indent=4)
+    else:
+        with open(
+            "scenarios/Task 5/rimea_4/rimea-task4-bottleneck-wo-dijkstra.json", "w"
+        ) as f:
+            json.dump(scenario_data, f, indent=4)
+
 
 MIN_SPEED = 3.0  # 1.2m/s / 0.4m/cell (cell width) = 3.0 cells/s
 MAX_SPEED = 3.5  # 1.4m/s / 0.4m/cell (cell width) = 3.5 cells/s
+
+def scenario_1():
+    """
+    Generates the json files that are used for RiMEA scenario 1 simulations.
+    """
+    scenario_data = {}
+
+    scenario_data["grid_width"] = 100
+    scenario_data["grid_height"] = 5
+    scenario_data["cell_size"] = 11
+
+    scenario_data["pedestrians"] = []
+    scenario_data["targets"] = []
+    scenario_data["obstacles"] = []
+
+    #Add pedestrian
+    scenario_data["pedestrians"].append({"x": 1, "y": 2, "dijkstra": False})
+
+    #Add target
+    scenario_data["targets"].append({"x": 99, "y": 2 , "absorbable": True})
+
+    #Add obstacles
+    for i in range(100):
+        scenario_data["obstacles"].append({"x": i, "y": 0})
+
+    for i in range(100):
+        scenario_data["obstacles"].append({"x": i, "y": 4})
+
+    for i in range(5):
+        scenario_data["obstacles"].append({"x": 0, "y": i})
+
+
+    with open(f"scenarios/scenario-task5-rimea-test1.json", "w") as f:
+        json.dump(scenario_data, f, indent=4)
 
 
 def scenario_4():
@@ -157,69 +258,6 @@ def scenario_4():
             json.dump(scenario_data, f, indent=4)
 
 
-def rimea_bottleneck_scenario(dijkstra):
-    """Generates a scenario for the Rimea bottleneck scenario."""
-
-    scenario_data = {}
-    num_pedestrians = 50
-    pedestrian_speeds = distribute_age_groups(num_pedestrians)
-    normalized_speeds = normalize_pedestrian_speeds(pedestrian_speeds)
-
-    # Grid parameters
-    scenario_data["grid_width"] = 25
-    scenario_data["grid_height"] = 10
-    scenario_data["cell_size"] = 30
-
-    scenario_data["pedestrians"] = []
-    scenario_data["targets"] = []
-    scenario_data["obstacles"] = []
-
-    # Add pedestrians
-    x_val = 0
-    y_val = 0
-
-    for i in range(1, num_pedestrians + 1):
-        scenario_data["pedestrians"].append(
-            {
-                "x": x_val,
-                "y": y_val,
-                "dijkstra": dijkstra,
-                "speed": 1,
-                "color": "P-Yellow",
-            }
-        )
-        if i % 5 == 0:
-            y_val += 1
-            x_val = 0
-        else:
-            x_val += 1
-
-    # Add targets
-    scenario_data["targets"].append({"x": 24, "y": 0, "absorbable": True})
-
-    # Add obstacles
-    for i in range(0, 5):
-        scenario_data["obstacles"].append({"x": 10, "y": i})
-        scenario_data["obstacles"].append({"x": 15, "y": i})
-        scenario_data["obstacles"].append({"x": i + 10, "y": 4})
-        scenario_data["obstacles"].append({"x": i + 10, "y": 6})
-        if i + 6 < 10:
-            scenario_data["obstacles"].append({"x": 10, "y": i + 6})
-            scenario_data["obstacles"].append({"x": 15, "y": i + 6})
-
-    # Save scenario
-    if dijkstra:
-        with open(
-            "scenarios/Task 5/rimea_4/rimea-task4-bottleneck-w-dijkstra.json", "w"
-        ) as f:
-            json.dump(scenario_data, f, indent=4)
-    else:
-        with open(
-            "scenarios/Task 5/rimea_4/rimea-task4-bottleneck-wo-dijkstra.json", "w"
-        ) as f:
-            json.dump(scenario_data, f, indent=4)
-
-
 def scenario_6():
     """
     Generates the json files that are used for RiMEA scenario 6 simulations.
@@ -290,6 +328,68 @@ def scenario_6():
         f"scenarios/scenario-task5-rimea-test6_dijkstra=False_speed={SPEED}_N={NUM_PEDESTRIANS}.json",
         "w",
     ) as f:
+        json.dump(scenario_data, f, indent=4)
+
+def scenario_7():
+    """
+    Generates the json files that are used for RiMEA scenario 7 simulations.
+
+    Speeds are taken from SPEED_TABLE in constants.py and are normalized to our simulation.
+    Colors of the pedestrians are given based on the rolled speed.
+    Pedestrian spawning positions are in the bottom horizontal line of the grid.
+    """
+    scenario_data = {}
+
+    scenario_data["grid_width"] = 50
+    scenario_data["grid_height"] = 50
+    scenario_data["cell_size"] = 9
+
+    scenario_data["pedestrians"] = []
+    scenario_data["targets"] = []
+    scenario_data["obstacles"] = []
+
+    nr_pedestrians = 50
+    values_to_distribute = len(SPEED_TABLE)
+    MIN_SPEED = 1.75  # 0.7m/s / 0.4m/cell (cell width) = 1.75 cells/s
+    MAX_SPEED = 4  # 1.6m/s / 0.4m/cell (cell width) = 4 cells/s
+
+    for i in range(50):
+        scenario_data["targets"].append({"x": i, "y": 0})
+
+
+    step_size = math.ceil(nr_pedestrians / values_to_distribute)
+
+    # Initialize the array with 0 values
+    speed_arr = np.zeros(nr_pedestrians)
+    keys = list(SPEED_TABLE.keys())
+
+    # Fill the array with the values from SPEED_TABLE using the step size
+    for i in range(0, nr_pedestrians, step_size):
+        for j in range(step_size):
+            if i + j < nr_pedestrians:
+                speed_arr[i + j] = SPEED_TABLE[keys[i // step_size]]
+
+    speed_arr = [(speed / 0.4) / MAX_SPEED for speed in speed_arr]
+
+    for i, speed in enumerate(speed_arr):
+        color = PedestrianColors.P_GRAY
+        if (speed < 0.75):
+            color = PedestrianColors.P_BLUE
+        elif (speed < 0.88):
+            color = PedestrianColors.P_GREEN
+        elif (speed < 0.91):
+            color = PedestrianColors.P_YELLOW
+        elif (speed < 0.94):
+            color = PedestrianColors.P_ORANGE
+        elif (speed <= 1.0):
+            color = PedestrianColors.P_RED
+        else:
+            raise ValueError(f"Speed should be between {0} and {1}, including borders")
+
+        ped = {"x": i, "y": 49, "speed": speed, "color": color.name}
+        scenario_data["pedestrians"].append(ped)
+
+    with open(f"scenarios/Task 5/scenario-task5-rimea-test7.json", "w") as f:
         json.dump(scenario_data, f, indent=4)
 
 
