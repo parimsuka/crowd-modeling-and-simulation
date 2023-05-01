@@ -1,3 +1,9 @@
+"""
+Main module for running the simulation and managing GUI.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
 import sys
 
 import pygame

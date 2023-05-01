@@ -1,3 +1,10 @@
+"""
+Module that contains constants used in the project.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 from grid import Grid
 from visualisation import Button, ChooseScenarioButton
 

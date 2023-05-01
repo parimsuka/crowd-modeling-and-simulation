@@ -1,3 +1,10 @@
+"""
+Module that contains constants used in the project.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 # Constants for the crowd simulation
 BACKGROUND_COLOR: tuple[int, int, int] = (
     220,

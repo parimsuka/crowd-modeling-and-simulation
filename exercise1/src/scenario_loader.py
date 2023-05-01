@@ -1,3 +1,10 @@
+"""
+JSON scenario loading module.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 import json
 
 import numpy as np

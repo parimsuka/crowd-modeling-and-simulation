@@ -1,3 +1,10 @@
+"""
+Grid management module for simulation.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 import pygame
 from constants import (EMPTY_CELL_COLOR, OBSTACLE_COLOR, PEDESTRIAN_COLOR,
                        TARGET_COLOR, TRACE_COLOR)

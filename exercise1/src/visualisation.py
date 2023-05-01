@@ -1,3 +1,10 @@
+"""
+Simulation visualization and GUI module.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 import pygame
 
 

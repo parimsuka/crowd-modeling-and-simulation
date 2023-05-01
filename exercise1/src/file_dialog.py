@@ -1,3 +1,9 @@
+"""
+File and folder dialog management module.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
 import os
 
 import pygame

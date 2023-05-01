@@ -1,3 +1,9 @@
+"""
+Pedestrian color management module.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
 import random as rd
 from enum import Enum
 

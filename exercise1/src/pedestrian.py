@@ -1,3 +1,10 @@
+"""
+Pedestrian movement logic module.
+
+author: Sena Korkut, PaRim Suka, Simon Blöchinger, Ricardo Kraft, Talwinder Singh
+"""
+
+
 import numpy as np
 from constants import PEDESTRIAN_COLOR
 
@@ -9,7 +16,9 @@ class Pedestrian:
     The class contains methods to choose a movement target for the pedestrian and methods to move the pedestrian.
     """
 
-    def __init__(self, x: float, y: float, dijkstra_used=False, speed=1, color=PEDESTRIAN_COLOR):
+    def __init__(
+        self, x: float, y: float, dijkstra_used=False, speed=1, color=PEDESTRIAN_COLOR
+    ):
         """
 
         :param x: x-coordinate of the pedestrian.
@@ -57,9 +66,14 @@ class Pedestrian:
         self.y += dy
         return self.x, self.y
 
-    def move_target_direction(self, target_x: float, target_y: float, distance: float,
-                              grid: list[list[str]], dijkstra_distance: list[list[float]]
-                              ) -> (float, float):
+    def move_target_direction(
+        self,
+        target_x: float,
+        target_y: float,
+        distance: float,
+        grid: list[list[str]],
+        dijkstra_distance: list[list[float]],
+    ) -> (float, float):
         """
         Moves the pedestrian in the direction of a target for a distance. Only enters Empty, Trace and Target Cells.
 
@@ -95,8 +109,12 @@ class Pedestrian:
 
         return closest_target
 
-    def move_to_closest_target(self, targets: list[tuple[int, int]],
-                               grid: list[list[str]], dijkstra_distance: list[list[float]]) -> (float, float):
+    def move_to_closest_target(
+        self,
+        targets: list[tuple[int, int]],
+        grid: list[list[str]],
+        dijkstra_distance: list[list[float]],
+    ) -> (float, float):
         """
         Moves the pedestrian to the closest target.
 
@@ -118,7 +136,9 @@ class Pedestrian:
             dijkstra_distance,
         )
 
-    def get_move_deltas(self, target_x: float, target_y: float, distance: float) -> (float, float, float):
+    def get_move_deltas(
+        self, target_x: float, target_y: float, distance: float
+    ) -> (float, float, float):
         """
         Calculates delta-x and delta-y to move the pedestrian a certain distance towards the target.
         Also calculates the distance between the pedestrian and the target.
@@ -142,9 +162,15 @@ class Pedestrian:
 
         return dx, dy, target_vector_norm
 
-    def find_best_move_cell(self, target_x: float, target_y: float, walking_distance: float,
-                            grid: list[list[str]], dijkstra_distance: list[list[float]], dijkstra_used: bool = True,
-                           ) -> (float, float):
+    def find_best_move_cell(
+        self,
+        target_x: float,
+        target_y: float,
+        walking_distance: float,
+        grid: list[list[str]],
+        dijkstra_distance: list[list[float]],
+        dijkstra_used: bool = True,
+    ) -> (float, float):
         """
         Calculates the best move for the pedestrian to reach a certain target, taking into account that the pedestrian
         only enters Empty, Target or Trace cells.
@@ -158,9 +184,8 @@ class Pedestrian:
         :return: A tuple containing delta-x and delta-y, the distances that the pedestrian will move in the
             x- and y-direction
         """
-        #If dijkstra is used for the scenario and it is needed in the current state i.e. there is an obstacle in the way
+        # If dijkstra is used for the scenario and it is needed in the current state i.e. there is an obstacle in the way
         if self.dijkstra_used and dijkstra_used:
-
             # Use euclidean distance if there is no obstacle in the way
             if not self.check_obstacles(target_x, target_y, grid):
                 return self.find_best_move_cell(
@@ -193,16 +218,16 @@ class Pedestrian:
                 cell_y = current_y + j
 
                 if 0 <= cell_x < len(grid) and 0 <= cell_y < len(
-                        grid[0]
+                    grid[0]
                 ):  # Check if cell is in grid
                     if (
-                            dijkstra_distance[cell_x][cell_y] == 0
-                            and grid[cell_x][cell_y] == "Tn"
+                        dijkstra_distance[cell_x][cell_y] == 0
+                        and grid[cell_x][cell_y] == "Tn"
                     ):  # Check if cell is target (non-absorbable)
                         return 0, 0
 
                     if (
-                            dijkstra_distance[cell_x][cell_y] < min_dijkstra_score
+                        dijkstra_distance[cell_x][cell_y] < min_dijkstra_score
                     ):  # Check if cell has smaller dijkstra score
                         new_x = cell_x
                         new_y = cell_y
@@ -218,18 +243,18 @@ class Pedestrian:
                 min_dijkstra_score = dijkstra_distance[current_x][current_y]
 
                 for (
-                        rc_x,
-                        rc_y,
-                        rc_value,
-                        rc_contact_x,
-                        rc_contact_y,
-                        rc_distance,
+                    rc_x,
+                    rc_y,
+                    rc_value,
+                    rc_contact_x,
+                    rc_contact_y,
+                    rc_distance,
                 ) in reachable_cells:
                     if (
-                            rc_value == "E"
-                            or rc_value.startswith("R")
-                            or rc_value == "Ta"
-                            or rc_value == "current"
+                        rc_value == "E"
+                        or rc_value.startswith("R")
+                        or rc_value == "Ta"
+                        or rc_value == "current"
                     ):
                         # If the new cell has a smaller distance to the target: update the best neighbor cell (and distance)
                         if dijkstra_distance[rc_x][rc_y] < min_dijkstra_score:
@@ -249,7 +274,7 @@ class Pedestrian:
                 return dx, dy
 
             if (
-                    abs(new_x - int(self.x)) + abs(new_y - int(self.y)) == 2
+                abs(new_x - int(self.x)) + abs(new_y - int(self.y)) == 2
             ):  # If it is a diagonal cell
                 self.x = new_x - 0.5
                 self.y = new_y - 0.5
@@ -292,18 +317,18 @@ class Pedestrian:
             better_cell_found = False
 
             for (
-                    rc_x,
-                    rc_y,
-                    rc_value,
-                    rc_contact_x,
-                    rc_contact_y,
-                    rc_distance,
+                rc_x,
+                rc_y,
+                rc_value,
+                rc_contact_x,
+                rc_contact_y,
+                rc_distance,
             ) in reachable_cells:
                 if (
-                        rc_value == "E"
-                        or rc_value.startswith("R")
-                        or rc_value == "Ta"
-                        or rc_value == "current"
+                    rc_value == "E"
+                    or rc_value.startswith("R")
+                    or rc_value == "Ta"
+                    or rc_value == "current"
                 ):
                     # Cell is empty or Trace or absorbableTarget or current
                     # -> Calculate which of these cells is closest to our target (with respect to the distance to us)
@@ -345,9 +370,9 @@ class Pedestrian:
                     if 0 <= pmt_x < len(grid) and 0 <= pmt_y < len(grid[0]):
                         # find the best free cell that we cannot reach but should move towards to
                         if (
-                                grid[pmt_x][pmt_y] == "E"
-                                or grid[pmt_x][pmt_y].startswith("R")
-                                or grid[pmt_x][pmt_y] == "Ta"
+                            grid[pmt_x][pmt_y] == "E"
+                            or grid[pmt_x][pmt_y].startswith("R")
+                            or grid[pmt_x][pmt_y] == "Ta"
                         ):
                             distance_cell_target = [
                                 target_x - (pmt_x + 0.5),
@@ -374,7 +399,9 @@ class Pedestrian:
                 dijkstra_used = True
             return dx, dy
 
-    def get_reachable_cells(self, grid: list[list[str]]) -> list[list[int, int, str, float, float, float]]:
+    def get_reachable_cells(
+        self, grid: list[list[str]]
+    ) -> list[list[int, int, str, float, float, float]]:
         """
         Searches all neighboring cells to find the reachable cells for a pedestrian with a respective speed.
 
@@ -410,7 +437,7 @@ class Pedestrian:
             # calculate where the pedestrian is with respect to the corner
             dx_s = x - self.x  # Distance to the smaller (left) side in x-direction
             dx_l = self.x - (
-                    x + c
+                x + c
             )  # Distance to the larger (right) side in x-direction
             dy_s = y - self.y  # Distance to the smaller (up)  side in y-direction
             dy_l = self.y - (y + c)  # Distance to the larger (down) side in y-direction
