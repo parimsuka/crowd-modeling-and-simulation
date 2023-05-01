@@ -15,7 +15,7 @@ from scenario_loader import load_scenario
 from visualisation import draw_elapsed_time, draw_step_counter
 
 # Variable for Play/Pause button
-DO_STEP_EVERY_X_MILLISECONDS = 200
+DO_STEP_EVERY_X_MILLISECONDS = 300
 
 
 def main() -> None:
