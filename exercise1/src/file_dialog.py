@@ -25,6 +25,10 @@ class FileDialog:
         self.file_extension: str = file_extension
         self.screen: pygame.Surface = screen
         self.background_color: tuple[int, int, int] = background_color
+        self.icon_size: tuple[int, int] = (20, 20)
+        self.folder_icon: pygame.Surface = pygame.transform.scale(
+            pygame.image.load("../Folder.png").convert_alpha(),
+            self.icon_size)
         self.folder_stack: list[str] = [self.directory]
         self.font: pygame.font.Font = pygame.font.Font(
             pygame.font.get_default_font(), 20
@@ -57,10 +61,15 @@ class FileDialog:
             item_path = os.path.join(current_directory, item)
             is_folder = os.path.isdir(item_path) or item == ".."
 
+            if is_folder and self.folder_icon:
+                icon_rect = self.folder_icon.get_rect()
+                icon_rect.topleft = (10, 10 + i * 25)
+                self.screen.blit(self.folder_icon, icon_rect)
+
             text_color = (0, 0, 255) if is_folder else (0, 0, 0)
             text_render: pygame.Surface = self.font.render(item, True, text_color)
             text_rect: pygame.rect = text_render.get_rect()
-            text_rect.topleft: tuple[int, int] = (10 if is_folder else 15, 10 + i * 25)
+            text_rect.topleft: tuple[int, int] = (40 if is_folder else 10, 10 + i * 25)
             self.screen.blit(text_render, text_rect)
 
     def get_clicked_file(self, pos: tuple[int, int]) -> str:
