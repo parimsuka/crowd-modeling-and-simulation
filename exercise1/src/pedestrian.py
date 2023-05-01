@@ -154,17 +154,14 @@ class Pedestrian:
         :param walking_distance: The distance which the pedestrian will be moved.
         :param grid: The grid containing the environment. Used to avoid pathing into certain cell types.
         :param dijkstra_distance: A grid containing the distance of the cells to the closest target. Computed using Dijkstra's Algorithm.
-        :param dijkstra_used: TODO Sena
+        :param dijkstra_used: Whether or not Dijkstra's Algorithm was used for the current state.
         :return: A tuple containing delta-x and delta-y, the distances that the pedestrian will move in the
             x- and y-direction
         """
-
+        #If dijkstra is used for the scenario and it is needed in the current state i.e. there is an obstacle in the way
         if self.dijkstra_used and dijkstra_used:
-            """
-            if (self.x - int(self.x) > 0.98 and grid[int(self.x)+1][int(self.y)] == 'O') or (self.y - int(self.y) > 0.98 and grid[int(self.x)][int(self.y)+1] == 'O'):
-                self.x= int(self.x) + 0.5
-                self.y = int(self.y) + 0.5
-            """
+
+            # Use euclidean distance if there is no obstacle in the way
             if not self.check_obstacles(target_x, target_y, grid):
                 return self.find_best_move_cell(
                     target_x,
@@ -213,6 +210,7 @@ class Pedestrian:
                             cell_y
                         ]  # Update min_dijkstra_score
 
+            # If there is a pedestrian on the best path
             if grid[new_x][new_y].startswith("P"):
                 reachable_cells = self.get_reachable_cells(grid)
                 # Initial target position: our current position -> No better position: No movement
