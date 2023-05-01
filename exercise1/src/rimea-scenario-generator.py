@@ -178,8 +178,59 @@ def rimea_bottleneck_scenario(dijkstra):
         with open("scenarios/Task 5/rimea_4/rimea-task4-bottleneck-wo-dijkstra.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
 
+def scenario_6():
+    scenario_data = {}
+
+    scenario_data["grid_width"] = 25
+    scenario_data["grid_height"] = 25
+    scenario_data["cell_size"] = 17
+
+    scenario_data["pedestrians"] = []
+    scenario_data["targets"] = []
+    scenario_data["obstacles"] = []
+
+    for i in range(25) :
+        scenario_data["obstacles"].append({"x": i, "y": 24})
+
+    for i in range(25) :
+        scenario_data["obstacles"].append({"x": 24, "y": i})
+
+    for i in range(21) :
+        scenario_data["obstacles"].append({"x": i, "y": 20})
+
+    for i in range(21) :
+        scenario_data["obstacles"].append({"x": 20, "y": i})
+
+    for i in range(3) :
+        scenario_data["targets"].append({"x": 24 - i - 1, "y": 0, "absorbable": False})
+
+    x_min, x_max = 0, 15
+    y_min, y_max = 21, 23
+
+    # Set the number of points to generate
+    num_points = 20
+
+    # Uniform distribution of pedestrians
+    for i in range(20):
+        # Generate random x and y coordinates using uniform distribution
+        x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
+        y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
+        ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+        while (scenario_data["pedestrians"].__contains__(ped)):
+            print("Miss")
+            x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
+            y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
+            ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+
+        scenario_data["pedestrians"].append(ped)
+
+    print(scenario_data["pedestrians"])
+
+    with open(f"scenarios/scenario-task5-rimea-test6.json", "w") as f:
+        json.dump(scenario_data, f, indent=4)
 
 # rimea_bottleneck_scenario(dijkstra=False)
 # rimea_bottleneck_scenario(dijkstra=True)
 # rimea_test_scenario()
-scenario_4()
+# scenario_4()
+scenario_6()
