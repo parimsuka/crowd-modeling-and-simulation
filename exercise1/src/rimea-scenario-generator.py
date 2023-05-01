@@ -73,6 +73,19 @@ MIN_SPEED = 3.0 # 1.2m/s / 0.4m/cell (cell width) = 3.0 cells/s
 MAX_SPEED = 3.5 # 1.4m/s / 0.4m/cell (cell width) = 3.5 cells/s
 
 def scenario_4():
+    """
+    Generates the json files that are used for RiMEA scenario 4 simulations.
+    
+    Generates for every density value in DENSITIES a json file which resembles one scenario.
+    Speeds are taken from a random uniform distribution.
+    Colors of the pedestrians are given based on the rolled speed.
+    Pedestrian spawning positions are randomly distributed in the spawning area.
+    The measurement values measure_start and measure_stop are set accordingly. 
+    """
+    DENSITIES: list[float] = [0.5, 1, 2, 3, 4, 5, 6]
+    MAX_POSSIBLE_DENSITY: float = 6.25 # 0.4m * 0.4m = 0.16m^2 and then 1m^2 / 0.16m^2 = 6.25
+    MAX_CELL_COUNT: int = 1000 # = 40 * 25
+    
     scenario_data = {}
 
     scenario_data["grid_width"] = 540
@@ -80,21 +93,15 @@ def scenario_4():
     scenario_data["cell_size"] = 5
     scenario_data["measure_start"] = 35 # This represents waiting 10 seconds at the beginning
     scenario_data["measure_stop"] = (205, 228) # This represents the measuring points in time. After 205 and 228 steps
-
     scenario_data["obstacles"] = []
-
     scenario_data["targets"] = []
+    
     for i in range(25) :
         scenario_data["targets"].append({"x": 539, "y": i, "absorbable": False})
 
-    MAX_CELL_COUNT = 1000 # 40 * 25
-    MAX_POSSIBLE_DENSITY = 6.25 # 0.4m * 0.4m = 0.16m^2 and then 1m^2 / 0.16m^2 = 6.25
-    DENSITIES = [0.5, 1, 2, 3, 4, 5, 6]
-
     for density in DENSITIES:
-        # pedestrians can spawn in a 25x40 area at the start of the corridor
-        num_ped_for_density = MAX_CELL_COUNT * (density / MAX_POSSIBLE_DENSITY)
 
+        num_ped_for_density = MAX_CELL_COUNT * (density / MAX_POSSIBLE_DENSITY)
         print(num_ped_for_density)
 
         scenario_data["pedestrians"] = []
@@ -117,11 +124,11 @@ def scenario_4():
             else:
                 raise ValueError(f"Speed should be between {0} and {1}, including borders")
 
+            # pedestrians can spawn in a 40x25 area at the start of the corridor. If we hit a spot that is already taken we reroll the position.
             ped = {"x": rd.randint(0, 39), "y": rd.randint(0, 24), "speed": speed, "color": color.name}
             while(scenario_data["pedestrians"].__contains__(ped)):
                 print("Miss")
                 ped = {"x": rd.randint(0, 39), "y": rd.randint(0, 24), "speed": speed, "color": color.name}
-
             scenario_data["pedestrians"].append(ped)
 
         # Dump as a json file
@@ -181,6 +188,9 @@ def rimea_bottleneck_scenario(dijkstra):
             json.dump(scenario_data, f, indent=4)
 
 def scenario_6():
+    '''
+    Generates the json files that are used for RiMEA scenario 6 simulations.
+    '''
     scenario_data = {}
 
     scenario_data["grid_width"] = 25

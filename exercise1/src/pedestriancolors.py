@@ -4,6 +4,15 @@ import random as rd
 
 
 class PedestrianColors(Enum):
+    """
+    A enum for the different pedestrian and trace colors on the grid.
+    The PedestrianColor has attributes for its name, main_color and its trace_name = a reference to a trace color of this class.
+    The name of the PedestrianColors start with P when its for an pedestrian and with R when its for a trace. 
+    Every pedestrian color has a defined trace_name. Every trace color has no trace so its = None.
+    
+    At the moment the trace color of a pedestrian is always a lighter version of the original color e.g. blue and light blue. 
+    """
+    
     P_BLUE = ("P-Blue", (30, 144, 255), "R-Blue")
     R_BLUE = ("R-Blue", (135, 206, 250), None)
 
@@ -47,6 +56,10 @@ class PedestrianColors(Enum):
 
     @classmethod
     def get_color_by_name(cls, name: str) -> "PedestrianColors":
+        '''
+        Returns an PedestrianColor whose name attribute is equal to the input parameter name. If not found it throws an error.
+        :param target_x: x-coordinate of the target cell
+        '''
         for color in cls:
             if color.name == name:
                 return color
@@ -54,6 +67,9 @@ class PedestrianColors(Enum):
     
     @classmethod
     def get_random_p_color(cls) -> "PedestrianColors":
+        '''
+        Returns a randomly chosen PedestrianColor whose name attribute starts with 'P'.
+        '''
         p_colors = [color for color in cls if color.name.startswith("P")]
-        color = rd.choice(p_colors)
-        return color
+        return rd.choice(p_colors)
+  

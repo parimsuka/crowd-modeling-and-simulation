@@ -3,6 +3,14 @@ from visualisation import Button, ChooseScenarioButton
 
 
 def increment_time_step_by_one(grid: Grid, step_count: int, chosen_file: str):
+    '''
+    Goes one time step further in the simulation. It upgrades the grid state, the step_counter and checks for possible measurement events.
+    
+    :param grid: Simulation grid where the current state is saved.
+    :param step_count: Current step count of the simulation.
+    :param chosen_file: Name of the json file that is currently run.
+    :return: the input_count incremented by 1
+    '''
     grid.update()
     step_count += 1
 

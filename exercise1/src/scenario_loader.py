@@ -6,6 +6,7 @@ from pedestriancolors import *
 from grid import Grid
 from pedestrian import Pedestrian
 
+CELL_CENTER_OFFSET: float = 0.5 # offset used to make pedestrians start in the middle of the cell
 
 def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
     """
@@ -36,9 +37,11 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
         measure_stop = scenario["measure_stop"]
 
     compute_dijkstra_distance = False
-    grid: Grid = Grid(
-        scenario["grid_height"], scenario["grid_width"], scenario["cell_size"], measure_start, measure_stop
-    )
+    grid: Grid = Grid(scenario["grid_height"],
+                      scenario["grid_width"],
+                      scenario["cell_size"],
+                      measure_start,
+                      measure_stop)
 
     # Add pedestrians
     for ped in scenario["pedestrians"]:
@@ -59,8 +62,11 @@ def load_scenario(scenario_path: str) -> tuple[int, int, Grid]:
         if "color" in ped:
             grid_color = PedestrianColors.get_color_by_name(ped["color"])
 
-        grid.add_pedestrian(Pedestrian(
-            x + 0.5, y + 0.5, dijkstra_used, speed, grid_color))
+        grid.add_pedestrian(Pedestrian(x + CELL_CENTER_OFFSET, 
+                                       y + CELL_CENTER_OFFSET, 
+                                       dijkstra_used, 
+                                       speed, 
+                                       grid_color))
 
     # Add targets
     if "targets" in scenario:

@@ -245,14 +245,24 @@ class Grid:
                 break
 
 
-    def measure_start(self):
-        print("Starting measurement! Saving x pos of each pedestrian at step 35 which represents 10 seconds")
+    def measure_start(self) -> None:
+        '''
+        Saves the current x pos of the pedestrians in self.measure_x_positions and prints info about it at the console.
+        '''
+        print("Starting measurement!")
         
         self.measure_x_positions = []
         for ped in self.pedestrians:
             self.measure_x_positions.append(ped.x)
 
-    def measure_stop(self, chosen_file: str, stop_time_index: int):
+    def measure_stop(self, chosen_file: str, stop_time_index: int) -> None:
+        '''
+        Calculates the average speed of the pedestrians by using the step count as time and the x distance between the current position of the pedestrians
+        and the x positions saved in self.measure_x_position which was set by an earlier method call of measure_start().
+        
+        :param chosen_file: name of the scenario file so that we know which file is analyzed in the console output
+        :param stop_time_index: this methods prints different measurement texts on the console depending if its the first = 0 or second = 1 measurement.
+        '''
         average_speeds_measured = []
         average_speeds = []
         
@@ -264,12 +274,16 @@ class Grid:
         if(stop_time_index == 0):
             print(f"\t{chosen_file}:")
             print(f"\t\tAverage speed at the first measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
-        if(stop_time_index == 1):    
+        elif(stop_time_index == 1):    
             print(f"\t\tAverage speed at the second measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
             print(f"\t\tAverage of the speed values from all pedestrians = {sum(average_speeds) / len(average_speeds)}")
             
-            
+       
     def has_valid_measure_parameters(self) -> bool:
+        '''
+        Returns true if all measurement values for the scenario are valid or false otherwise. This is used to prevent measuring scenarios with invalid
+        input values.
+        '''  
         return (self.measure_start_step < self.measure_stop_step[0]
                 and self.measure_start_step < self.measure_stop_step[1]
                 and self.measure_start_step != -1 
