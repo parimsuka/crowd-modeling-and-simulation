@@ -1,0 +1,22 @@
+{
+    "grid_width": 9,
+    "grid_height": 9,
+    "cell_size": 50,
+    "pedestrians": [
+        { "x": 4, "y": 1, "dijkstra": true, "color": "P-Yellow" }
+    ],
+    "targets": [{
+        "x": 4,
+        "y": 8,
+        "absorbable": true
+    }],
+    "obstacles": [
+        { "x": 2, "y": 4 },
+        { "x": 2, "y": 5 },
+        { "x": 3, "y": 5 },
+        { "x": 4, "y": 5 },
+        { "x": 5, "y": 5 },
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 4 }
+    ]
+}
