@@ -6,358 +6,358 @@
         {
             "x": 0,
             "y": 0,
-            "dijkstra": true,
-            "speed": 0.9375,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 0,
-            "dijkstra": true,
-            "speed": 0.6875,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 0,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 0,
-            "dijkstra": true,
-            "speed": 0.43749999999999994,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 4,
-            "y": 0,
-            "dijkstra": true,
-            "speed": 0.8125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 1,
-            "dijkstra": true,
+            "dijkstra": false,
             "speed": 0.95,
             "color": "P-Yellow"
         },
         {
             "x": 1,
-            "y": 1,
-            "dijkstra": true,
+            "y": 0,
+            "dijkstra": false,
             "speed": 0.8749999999999999,
             "color": "P-Yellow"
         },
         {
             "x": 2,
-            "y": 1,
-            "dijkstra": true,
-            "speed": 1.0,
+            "y": 0,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
             "color": "P-Yellow"
         },
         {
             "x": 3,
-            "y": 1,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
+            "y": 0,
+            "dijkstra": false,
+            "speed": 0.95,
             "color": "P-Yellow"
         },
         {
             "x": 4,
-            "y": 1,
-            "dijkstra": true,
-            "speed": 0.78125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 2,
-            "dijkstra": true,
+            "y": 0,
+            "dijkstra": false,
             "speed": 0.6875,
             "color": "P-Yellow"
         },
         {
+            "x": 0,
+            "y": 1,
+            "dijkstra": false,
+            "speed": 0.8749999999999999,
+            "color": "P-Yellow"
+        },
+        {
             "x": 1,
-            "y": 2,
-            "dijkstra": true,
+            "y": 1,
+            "dijkstra": false,
             "speed": 0.91875,
             "color": "P-Yellow"
         },
         {
             "x": 2,
+            "y": 1,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 1,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 4,
+            "y": 1,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 0,
             "y": 2,
-            "dijkstra": true,
-            "speed": 1.0,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 2,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 2,
+            "dijkstra": false,
+            "speed": 0.9375,
             "color": "P-Yellow"
         },
         {
             "x": 3,
             "y": 2,
-            "dijkstra": true,
-            "speed": 0.96875,
+            "dijkstra": false,
+            "speed": 0.6875,
             "color": "P-Yellow"
         },
         {
             "x": 4,
             "y": 2,
-            "dijkstra": true,
+            "dijkstra": false,
             "speed": 0.8749999999999999,
             "color": "P-Yellow"
         },
         {
             "x": 0,
             "y": 3,
-            "dijkstra": true,
-            "speed": 0.95,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 3,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 3,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 3,
-            "dijkstra": true,
+            "dijkstra": false,
             "speed": 0.9375,
             "color": "P-Yellow"
         },
         {
-            "x": 4,
+            "x": 1,
             "y": 3,
-            "dijkstra": true,
-            "speed": 0.9375,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 4,
-            "dijkstra": true,
-            "speed": 0.43749999999999994,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 4,
-            "dijkstra": true,
-            "speed": 0.91875,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 4,
-            "dijkstra": true,
-            "speed": 0.43749999999999994,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 4,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 4,
-            "y": 4,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 5,
-            "dijkstra": true,
-            "speed": 0.96875,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 5,
-            "dijkstra": true,
+            "dijkstra": false,
             "speed": 0.8125,
             "color": "P-Yellow"
         },
         {
             "x": 2,
-            "y": 5,
-            "dijkstra": true,
-            "speed": 0.95,
+            "y": 3,
+            "dijkstra": false,
+            "speed": 0.6875,
             "color": "P-Yellow"
         },
         {
             "x": 3,
-            "y": 5,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 4,
-            "y": 5,
-            "dijkstra": true,
-            "speed": 0.9375,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 6,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 6,
-            "dijkstra": true,
-            "speed": 0.96875,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 6,
-            "dijkstra": true,
-            "speed": 0.43749999999999994,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 6,
-            "dijkstra": true,
+            "y": 3,
+            "dijkstra": false,
             "speed": 0.96875,
             "color": "P-Yellow"
         },
         {
             "x": 4,
-            "y": 6,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
-            "y": 7,
-            "dijkstra": true,
-            "speed": 0.78125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 7,
-            "dijkstra": true,
-            "speed": 0.78125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 7,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 7,
-            "dijkstra": true,
+            "y": 3,
+            "dijkstra": false,
             "speed": 0.5625,
             "color": "P-Yellow"
         },
         {
+            "x": 0,
+            "y": 4,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 4,
+            "dijkstra": false,
+            "speed": 0.5625,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 4,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 4,
+            "dijkstra": false,
+            "speed": 1.0,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 4,
+            "y": 4,
+            "dijkstra": false,
+            "speed": 1.0,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 0,
+            "y": 5,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 5,
+            "dijkstra": false,
+            "speed": 1.0,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 5,
+            "dijkstra": false,
+            "speed": 0.5625,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 5,
+            "dijkstra": false,
+            "speed": 0.95,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 4,
+            "y": 5,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 0,
+            "y": 6,
+            "dijkstra": false,
+            "speed": 0.8749999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 6,
+            "dijkstra": false,
+            "speed": 0.8749999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 6,
+            "dijkstra": false,
+            "speed": 0.43749999999999994,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 6,
+            "dijkstra": false,
+            "speed": 1.0,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 4,
+            "y": 6,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 0,
+            "y": 7,
+            "dijkstra": false,
+            "speed": 0.96875,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 7,
+            "dijkstra": false,
+            "speed": 0.5625,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 7,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 7,
+            "dijkstra": false,
+            "speed": 0.91875,
+            "color": "P-Yellow"
+        },
+        {
             "x": 4,
             "y": 7,
-            "dijkstra": true,
+            "dijkstra": false,
+            "speed": 0.7499999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 0,
+            "y": 8,
+            "dijkstra": false,
+            "speed": 0.91875,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 1,
+            "y": 8,
+            "dijkstra": false,
+            "speed": 0.9062499999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 2,
+            "y": 8,
+            "dijkstra": false,
+            "speed": 0.91875,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 3,
+            "y": 8,
+            "dijkstra": false,
+            "speed": 0.8749999999999999,
+            "color": "P-Yellow"
+        },
+        {
+            "x": 4,
+            "y": 8,
+            "dijkstra": false,
             "speed": 0.96875,
             "color": "P-Yellow"
         },
         {
             "x": 0,
-            "y": 8,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
+            "y": 9,
+            "dijkstra": false,
+            "speed": 0.9375,
             "color": "P-Yellow"
         },
         {
             "x": 1,
-            "y": 8,
-            "dijkstra": true,
-            "speed": 0.91875,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 8,
-            "dijkstra": true,
+            "y": 9,
+            "dijkstra": false,
             "speed": 0.7499999999999999,
             "color": "P-Yellow"
         },
         {
+            "x": 2,
+            "y": 9,
+            "dijkstra": false,
+            "speed": 0.91875,
+            "color": "P-Yellow"
+        },
+        {
             "x": 3,
-            "y": 8,
-            "dijkstra": true,
+            "y": 9,
+            "dijkstra": false,
             "speed": 0.43749999999999994,
             "color": "P-Yellow"
         },
         {
             "x": 4,
-            "y": 8,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 0,
             "y": 9,
-            "dijkstra": true,
-            "speed": 0.8749999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 1,
-            "y": 9,
-            "dijkstra": true,
+            "dijkstra": false,
             "speed": 0.8125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 2,
-            "y": 9,
-            "dijkstra": true,
-            "speed": 0.7499999999999999,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 3,
-            "y": 9,
-            "dijkstra": true,
-            "speed": 0.8125,
-            "color": "P-Yellow"
-        },
-        {
-            "x": 4,
-            "y": 9,
-            "dijkstra": true,
-            "speed": 0.9062499999999999,
             "color": "P-Yellow"
         }
     ],
     "targets": [
         {
             "x": 24,
-            "y": 5,
+            "y": 0,
             "absorbable": true
         }
     ],
