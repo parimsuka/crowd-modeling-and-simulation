@@ -222,6 +222,8 @@ class Pedestrian:
             best_neighbor_cell = self.x, self.y, 0
             # Initial comparison: our current distance to our current target
             best_neighbor_cell_distance = target_vector_norm
+            # Variable to log if we found a better cell than our current cell
+            better_cell_found = False
 
             for rc_x, rc_y, rc_value, rc_contact_x, rc_contact_y, rc_distance in reachable_cells:
                 if rc_value == "E" or rc_value.startswith("R") or rc_value == "Ta" or rc_value == "current":
@@ -237,6 +239,29 @@ class Pedestrian:
                         # Make sure we don't overshoot if we want to stay inside our cell.
                         if rc_value == "current":
                             best_neighbor_cell[2] = rc_distance
+                        else:
+                            better_cell_found = True
+
+            # Code to check how we can move towards a neighboring cell, if we cannot reach it in one step
+            best_neighbor_cell_distance = np.linalg.norm([target_x - (int(self.x)+0.5), target_y - (int(self.y)+0.5)])
+            if not better_cell_found:
+                # No better cell than our current cell was found -> Move inside our cell
+                # check 4 horizontal/vertical cells, diagonal cells could cause overstepping into another cell
+                possible_movement_targets = [[int(self.x)-1, int(self.y)], [int(self.x), int(self.y)-1],
+                                             [int(self.x)+1, int(self.y)], [int(self.x), int(self.y)+1]]
+                np.random.shuffle(possible_movement_targets)
+                for pmt_x, pmt_y in possible_movement_targets:
+                    if 0 <= pmt_x < len(grid) and 0 <= pmt_y < len(grid[0]):
+                        # find the best free cell that we cannot reach but should move towards to
+                        if grid[pmt_x][pmt_y] == "E" or grid[pmt_x][pmt_y].startswith("R") or grid[pmt_x][pmt_y] == "Ta":
+                            distance_cell_target = [target_x - (pmt_x + 0.5), target_y - (pmt_y + 0.5)]
+                            distance_cell_target_norm = np.linalg.norm(distance_cell_target)
+
+                            # If the new cell has a smaller distance to the target: update the best neighbor cell (and distance)
+                            if distance_cell_target_norm < best_neighbor_cell_distance:
+                                best_neighbor_cell_distance = distance_cell_target_norm
+                                best_neighbor_cell = [pmt_x+0.5, pmt_y+0.5, walking_distance]
+
 
             # calculate the new move deltas to move the pedestrian towards the (new) target best_neighbor_cell
             dx, dy, _ = self.get_move_deltas(
@@ -277,6 +302,7 @@ class Pedestrian:
 
         c = 1  # edge size of one cell, probably will always stay 1
         reachable_cells = []
+        unreachable_cells = []
         for x, y, val in neighbor_cells:
             # calculate where the pedestrian is with respect to the corner
             dx_s = x - self.x       # Distance to the smaller (left) side in x-direction
