@@ -1,2 +1,11 @@
 **/venv*/
 **/__pycache__/
+exercise1/src/scenarios/rimea_4_density2_minSpeed1.2_maxSpeed1.4.json
+.gitignore
+exercise1/src/scenarios/rimea-task4-bottleneck-w-dijkstra-t.json
+exercise1/src/scenarios/rimea-task4-bottleneck-wo-dijkstr-t.json
+exercise1/src/scenarios/rimea-task4-bottleneck-wo-dijkstra.json
+exercise1/src/scenarios/scenario-task4-chicken-test-w-dijkstra.json
+exercise1/src/scenarios/scenario-task4-chicken-test-wo-dijkstra.json
+exercise1/src/scenarios/rimea-task4-bottleneck-w-dijkstra-corner.json
+exercise1/src/scenarios/scenario-task5-rimea-test6.json

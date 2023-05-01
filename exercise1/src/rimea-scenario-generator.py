@@ -2,6 +2,8 @@ import json
 import numpy as np
 import random as rd
 
+from pyparsing import col
+
 
 from pedestriancolors import PedestrianColors
 from constants import SPEED_TABLE
@@ -136,8 +138,8 @@ def rimea_bottleneck_scenario(dijkstra):
     normalized_speeds = normalize_pedestrian_speeds(pedestrian_speeds)
 
     # Grid parameters
-    scenario_data["grid_width"] = 10
-    scenario_data["grid_height"] = 25
+    scenario_data["grid_width"] = 25
+    scenario_data["grid_height"] = 10
     scenario_data["cell_size"] = 30
 
     scenario_data["pedestrians"] = []
@@ -150,25 +152,25 @@ def rimea_bottleneck_scenario(dijkstra):
 
     for i in range(1,num_pedestrians+1):
         
-        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": normalized_speeds[i-1]})
+        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": 1, "color": "P-Yellow"})
         if i % 5 == 0:
-            x_val += 1
-            y_val = 0
-        else:
             y_val += 1
+            x_val = 0
+        else:
+            x_val += 1
 
     # Add targets
-    scenario_data["targets"].append({"x": 5, "y": 24})
+    scenario_data["targets"].append({"x": 24, "y": 0, "absorbable": True})
 
     # Add obstacles
     for i in range(0,5):
-        scenario_data["obstacles"].append({"x": i, "y": 10})
-        scenario_data["obstacles"].append({"x": i, "y": 15})
-        scenario_data["obstacles"].append({"x": 4, "y": i+10})
-        scenario_data["obstacles"].append({"x": 6, "y": i+10})
+        scenario_data["obstacles"].append({"x": 10, "y": i})
+        scenario_data["obstacles"].append({"x": 15, "y": i})
+        scenario_data["obstacles"].append({"x": i+10, "y": 4})
+        scenario_data["obstacles"].append({"x": i+10, "y": 6})
         if i + 6 < 10:
-            scenario_data["obstacles"].append({"x": i+6, "y": 10})
-            scenario_data["obstacles"].append({"x": i+6, "y": 15})
+            scenario_data["obstacles"].append({"x": 10, "y": i+6})
+            scenario_data["obstacles"].append({"x": 15, "y": i+6})
 
     # Save scenario
     if dijkstra:
@@ -207,30 +209,33 @@ def scenario_6():
     x_min, x_max = 0, 15
     y_min, y_max = 21, 23
 
-    # Set the number of points to generate
-    num_points = 20
+    # Set the number of pedestrians to generate
+    NUM_PEDESTRIANS = 30
+    SPEED = 0.95
 
     # Uniform distribution of pedestrians
-    for i in range(20):
+    for i in range(NUM_PEDESTRIANS):
+        color = PedestrianColors.get_random_p_color()
+        
         # Generate random x and y coordinates using uniform distribution
         x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
         y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
-        ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+        ped = {"x": int(x_coord), "y": int(y_coord), "speed": SPEED, "dijkstra": False, "color": color.name}
         while (scenario_data["pedestrians"].__contains__(ped)):
             print("Miss")
             x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
             y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
-            ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+            ped = {"x": int(x_coord), "y": int(y_coord), "speed": SPEED, "dijkstra": False, "color": color.name}
 
         scenario_data["pedestrians"].append(ped)
 
-    print(scenario_data["pedestrians"])
-
-    with open(f"scenarios/scenario-task5-rimea-test6.json", "w") as f:
+    # print(scenario_data["pedestrians"])
+    
+    with open(f"scenarios/scenario-task5-rimea-test6_dijkstra=False_speed={SPEED}_N={NUM_PEDESTRIANS}.json", "w") as f:
         json.dump(scenario_data, f, indent=4)
 
-# rimea_bottleneck_scenario(dijkstra=False)
-# rimea_bottleneck_scenario(dijkstra=True)
+rimea_bottleneck_scenario(dijkstra=False)
+rimea_bottleneck_scenario(dijkstra=True)
 # rimea_test_scenario()
 # scenario_4()
-scenario_6()
+#scenario_6()

@@ -1,5 +1,7 @@
 from enum import Enum
 
+import random as rd
+
 
 class PedestrianColors(Enum):
     P_BLUE = ("P-Blue", (30, 144, 255), "R-Blue")
@@ -49,3 +51,9 @@ class PedestrianColors(Enum):
             if color.name == name:
                 return color
         raise ValueError(f"No PedestrianColor found with name {name}")
+    
+    @classmethod
+    def get_random_p_color(cls) -> "PedestrianColors":
+        p_colors = [color for color in cls if color.name.startswith("P")]
+        color = rd.choice(p_colors)
+        return color

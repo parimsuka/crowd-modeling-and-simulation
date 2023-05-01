@@ -1,0 +1,16 @@
+{
+    "grid_width": 101,
+    "grid_height": 101,
+    "cell_size": 9,
+    "pedestrians": [
+        { "x": 100, "y": 50, "speed": 0.7, "dijkstra": true },
+        { "x": 65, "y": 98 },
+        { "x": 10, "y": 79 },
+        { "x": 10, "y": 21 },
+        { "x": 65, "y": 2, "speed": 0.5, "dijkstra": true }
+    ],
+    "targets": [
+        { "x": 50, "y": 50, "absorbable": true }
+    ],
+    "obstacles": []
+}
