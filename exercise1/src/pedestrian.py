@@ -16,6 +16,7 @@ class Pedestrian:
         :param x: x-coordinate of the pedestrian.
         :param y: y-coordinate of the pedestrian.
         :param speed: The speed of the pedestrian.
+        :param color: The color that the pedestrian is rendered in on the grid.
             Note: in order to prevent skipping cells, a speed >1 is not supported.
         """
         self.x = x
@@ -262,10 +263,13 @@ class Pedestrian:
         # Variable containing all neighboring cells, starting with the current cell
         neighbor_cells = [[int_x, int_y, "current"]]
 
-        for i, j in [
-            [1, 0], [0, 1], [-1, 0], [0, -1],
-            [-1, -1], [-1, 1], [1, -1], [1, 1]
-        ]:
+        horizontal_vertical_cells = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+        diagonal_cells = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+
+        np.random.shuffle(horizontal_vertical_cells)
+        np.random.shuffle(diagonal_cells)
+
+        for i, j in horizontal_vertical_cells + diagonal_cells:
             cell_x = int_x+i
             cell_y = int_y+j
             if 0 <= cell_x < len(grid) and 0 <= cell_y < len(grid[0]):
