@@ -54,9 +54,9 @@ class Button:
         return (
             self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
         )
-        
-    def set_text(self, new_text: str) -> None:    
-       self.text = new_text
+
+    def set_text(self, new_text: str) -> None:
+        self.text = new_text
 
 
 class ChooseScenarioButton(Button):

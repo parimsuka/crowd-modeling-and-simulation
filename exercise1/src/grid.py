@@ -1,13 +1,6 @@
 import pygame
-
-from constants import (
-    EMPTY_CELL_COLOR,
-    PEDESTRIAN_COLOR,
-    OBSTACLE_COLOR,
-    TARGET_COLOR,
-    TRACE_COLOR,
-)
-
+from constants import (EMPTY_CELL_COLOR, OBSTACLE_COLOR, PEDESTRIAN_COLOR,
+                       TARGET_COLOR, TRACE_COLOR)
 from pedestriancolors import PedestrianColors
 from visualisation import draw_rounded_rect
 
@@ -20,7 +13,14 @@ class Grid:
     has a cell_size in pixels. The grid can contain targets, obstacle and pedestrians.
     """
 
-    def __init__(self, grid_height: int, grid_width: int, cell_size: int, measure_start: int, measure_stop: tuple[int, int]) -> None:
+    def __init__(
+        self,
+        grid_height: int,
+        grid_width: int,
+        cell_size: int,
+        measure_start: int,
+        measure_stop: tuple[int, int],
+    ) -> None:
         """
         Initialize the Grid.
 
@@ -126,7 +126,8 @@ class Grid:
             new_x: float
             new_y: float
             new_x, new_y = ped.move_to_closest_target(
-                self.target_positions, self.grid, self.dijkstra_distance)
+                self.target_positions, self.grid, self.dijkstra_distance
+            )
             # Update trace of pedestrian path (removing old pedestrian position)
             self.grid[int(old_x)][int(old_y)] = ped.color.trace_name
 
@@ -177,63 +178,92 @@ class Grid:
         return best_move
 
     def dijkstra(self, target_x, target_y):
-        '''
+        """
         Dijkstra algorithm to create the distance map from the target to all other cells in the grid.
         :param target_x: x-coordinate of the target cell
         :param target_y: y-coordinate of the target cell
-        '''
+        """
         # Initialize the distance map
-        self.dijkstra_distance = [[float('inf') for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
+        self.dijkstra_distance = [
+            [float("inf") for _ in range(len(self.grid[0]))]
+            for _ in range(len(self.grid))
+        ]
 
         # Initialize costs for each cell in the grid
-        cost_grid = [[1 for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
+        cost_grid = [
+            [1 for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))
+        ]
         # Obstacles have infinite cost (we don't want to go through them)
 
-        for x in range (len(self.grid)):
-            for y in range (len(self.grid[0])):
-                if self.grid[x][y] == 'O':
+        for x in range(len(self.grid)):
+            for y in range(len(self.grid[0])):
+                if self.grid[x][y] == "O":
                     cost_grid[x][y] = 1e10
 
         # Initialize the visited cells
-        visited = [[False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
-        '''
+        visited = [
+            [False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))
+        ]
+        """
         # Mark obstacles as visited
         for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
                     visited[x][y] = True
-        '''
+        """
         # Begin the search from the target cell
         self.dijkstra_distance[target_x][target_y] = 0
         current_cell = [target_x, target_y]
         while True:
-
             # Get the neighbors of the current cell
             for i, j in [
-                [1, 0], [0, 1], [-1, 0], [0, -1]
-                ,[-1, -1], [-1, 1], [1, -1], [1, 1]
+                [1, 0],
+                [0, 1],
+                [-1, 0],
+                [0, -1],
+                [-1, -1],
+                [-1, 1],
+                [1, -1],
+                [1, 1],
             ]:
                 neighbor_cell = [current_cell[0] + i, current_cell[1] + j]
-                if (0 <= neighbor_cell[0] < len(self.grid) and 0 <= neighbor_cell[1] < len(self.grid[0])): # Check if the neighbor cell is within the grid
-                    if not visited[neighbor_cell[0]][neighbor_cell[1]]: # Check if the neighbor cell has not been visited
+                if 0 <= neighbor_cell[0] < len(self.grid) and 0 <= neighbor_cell[
+                    1
+                ] < len(
+                    self.grid[0]
+                ):  # Check if the neighbor cell is within the grid
+                    if not visited[neighbor_cell[0]][
+                        neighbor_cell[1]
+                    ]:  # Check if the neighbor cell has not been visited
                         # Update distance to neighbor
-                        distance = self.dijkstra_distance[current_cell[0]][ current_cell[1]] + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
-                        if abs(i+j) != 1:
+                        distance = (
+                            self.dijkstra_distance[current_cell[0]][current_cell[1]]
+                            + cost_grid[neighbor_cell[0]][neighbor_cell[1]]
+                        )
+                        if abs(i + j) != 1:
                             distance += 0.414
                         # Update distance if it is smaller than the current distance
-                        if distance < self.dijkstra_distance[neighbor_cell[0]][neighbor_cell[1]]:
-                            self.dijkstra_distance[neighbor_cell[0]][neighbor_cell[1]] = distance
+                        if (
+                            distance
+                            < self.dijkstra_distance[neighbor_cell[0]][neighbor_cell[1]]
+                        ):
+                            self.dijkstra_distance[neighbor_cell[0]][
+                                neighbor_cell[1]
+                            ] = distance
 
             # Mark current cell as visited
             visited[current_cell[0]][current_cell[1]] = True
 
             # Choose the next cell to visit
-            min_distance = float('inf')
+            min_distance = float("inf")
             for i in range(len(self.grid)):
                 for j in range(len(self.grid[0])):
-                    if not visited[i][j] and self.dijkstra_distance[i][j] < min_distance:
+                    if (
+                        not visited[i][j]
+                        and self.dijkstra_distance[i][j] < min_distance
+                    ):
                         min_distance = self.dijkstra_distance[i][j]
-                        current_cell = [i,j]
+                        current_cell = [i, j]
 
             # Stop if all cells have been visited
             stop = True
@@ -244,53 +274,56 @@ class Grid:
             if stop:
                 break
 
-
     def measure_start(self) -> None:
-        '''
+        """
         Saves the current x pos of the pedestrians in self.measure_x_positions and prints info about it at the console.
-        '''
+        """
         print("Starting measurement!")
-        
+
         self.measure_x_positions = []
         for ped in self.pedestrians:
             self.measure_x_positions.append(ped.x)
 
     def measure_stop(self, chosen_file: str, stop_time_index: int) -> None:
-        '''
+        """
         Calculates the average speed of the pedestrians by using the step count as time and the x distance between the current position of the pedestrians
         and the x positions saved in self.measure_x_position which was set by an earlier method call of measure_start().
-        
+
         :param chosen_file: name of the scenario file so that we know which file is analyzed in the console output
         :param stop_time_index: this methods prints different measurement texts on the console depending if its the first = 0 or second = 1 measurement.
-        '''
+        """
         average_speeds_measured = []
         average_speeds = []
-        
+
         for i, ped in enumerate(self.pedestrians):
-            average_speed = (ped.x - self.measure_x_positions[i]) / (self.measure_stop_step[stop_time_index] - self.measure_start_step)
+            average_speed = (ped.x - self.measure_x_positions[i]) / (
+                self.measure_stop_step[stop_time_index] - self.measure_start_step
+            )
             average_speeds_measured.append(average_speed * 3.5 * 0.4)
             average_speeds.append(ped.speed * 3.5 * 0.4)
-     
-        if(stop_time_index == 0):
+
+        if stop_time_index == 0:
             print(f"\t{chosen_file}:")
-            print(f"\t\tAverage speed at the first measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
-        elif(stop_time_index == 1):    
-            print(f"\t\tAverage speed at the second measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}")
-            print(f"\t\tAverage of the speed values from all pedestrians = {sum(average_speeds) / len(average_speeds)}")
-            
-       
+            print(
+                f"\t\tAverage speed at the first measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}"
+            )
+        elif stop_time_index == 1:
+            print(
+                f"\t\tAverage speed at the second measuring point = {sum(average_speeds_measured) / len(average_speeds_measured)}"
+            )
+            print(
+                f"\t\tAverage of the speed values from all pedestrians = {sum(average_speeds) / len(average_speeds)}"
+            )
+
     def has_valid_measure_parameters(self) -> bool:
-        '''
+        """
         Returns true if all measurement values for the scenario are valid or false otherwise. This is used to prevent measuring scenarios with invalid
         input values.
-        '''  
-        return (self.measure_start_step < self.measure_stop_step[0]
-                and self.measure_start_step < self.measure_stop_step[1]
-                and self.measure_start_step != -1 
-                and self.measure_stop_step[0] != -1
-                and self.measure_stop_step[1] != -1
-                )
-            
-    
-
-
+        """
+        return (
+            self.measure_start_step < self.measure_stop_step[0]
+            and self.measure_start_step < self.measure_stop_step[1]
+            and self.measure_start_step != -1
+            and self.measure_stop_step[0] != -1
+            and self.measure_stop_step[1] != -1
+        )

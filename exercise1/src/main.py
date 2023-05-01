@@ -1,16 +1,16 @@
 import sys
 
 import pygame
-
-from visualisation import Button, ChooseScenarioButton, draw_step_counter, draw_elapsed_time
 from constants import BACKGROUND_COLOR
 from file_dialog import FileDialog
-from scenario_loader import load_scenario
 from grid import Grid
 from helper_functions import increment_time_step_by_one, initialize_buttons
+from scenario_loader import load_scenario
+from visualisation import draw_elapsed_time, draw_step_counter
 
 # Variable for Play/Pause button
 DO_STEP_EVERY_X_MILLISECONDS = 200
+
 
 def main() -> None:
     """
@@ -57,7 +57,7 @@ def main() -> None:
             if event.type == TIMER_EVENT and loop_flag:
                 # Call your function here
                 step_count = increment_time_step_by_one(grid, step_count, chosen_file)
-                
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the file dialog is open and a file is clicked
                 if choose_scenario_button.choosing_scenario:
@@ -65,7 +65,9 @@ def main() -> None:
                     if chosen_file is not None:
                         # Load the chosen scenario and reset step count
                         width, height, grid = load_scenario(chosen_file)
-                        screen = pygame.display.set_mode((max(width, 700), max(height, 500)))
+                        screen = pygame.display.set_mode(
+                            (max(width, 700), max(height, 500))
+                        )
                         pygame.display.set_caption("Crowd Simulation")
 
                         # Initialize buttons
@@ -81,7 +83,9 @@ def main() -> None:
                 else:
                     # Check if buttons are clicked
                     if next_step_button.is_clicked(event.pos):
-                        step_count = increment_time_step_by_one(grid, step_count, chosen_file)
+                        step_count = increment_time_step_by_one(
+                            grid, step_count, chosen_file
+                        )
                     # Check if buttons are clicked
                     if toggle_loop_button.is_clicked(event.pos):
                         loop_flag = not loop_flag
@@ -93,7 +97,7 @@ def main() -> None:
                             toggle_loop_button.set_text("Pause")
                         else:
                             toggle_loop_button.set_text("Simulate")
-                        
+
                     choose_scenario_button.on_click(event)
 
         # Draw elements on the screen
@@ -110,7 +114,9 @@ def main() -> None:
             next_step_button.draw(screen)
             choose_scenario_button.draw(screen)
             toggle_loop_button.draw(screen)
-            draw_step_counter(screen, step_count, max(700, width) - 10, max(500, height) - 10)
+            draw_step_counter(
+                screen, step_count, max(700, width) - 10, max(500, height) - 10
+            )
             draw_elapsed_time(screen, elapsed_time, 0, height - 5)
 
         # Update the display

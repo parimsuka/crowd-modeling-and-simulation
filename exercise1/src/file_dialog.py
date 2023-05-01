@@ -1,4 +1,5 @@
 import os
+
 import pygame
 
 
@@ -27,8 +28,8 @@ class FileDialog:
         self.background_color: tuple[int, int, int] = background_color
         self.icon_size: tuple[int, int] = (20, 20)
         self.folder_icon: pygame.Surface = pygame.transform.scale(
-            pygame.image.load("../Folder.png").convert_alpha(),
-            self.icon_size)
+            pygame.image.load("../Folder.png").convert_alpha(), self.icon_size
+        )
         self.folder_stack: list[str] = [self.directory]
         self.font: pygame.font.Font = pygame.font.Font(
             pygame.font.get_default_font(), 20
@@ -44,7 +45,8 @@ class FileDialog:
         files = [
             f
             for f in os.listdir(current_directory)
-            if f.endswith(self.file_extension) or os.path.isdir(os.path.join(current_directory, f))
+            if f.endswith(self.file_extension)
+            or os.path.isdir(os.path.join(current_directory, f))
         ]
         if len(self.folder_stack) > 1:
             files.insert(0, "..")
