@@ -16,6 +16,7 @@ class Pedestrian:
         :param x: x-coordinate of the pedestrian.
         :param y: y-coordinate of the pedestrian.
         :param speed: The speed of the pedestrian.
+        :param color: The color that the pedestrian is rendered in on the grid.
             Note: in order to prevent skipping cells, a speed >1 is not supported.
         """
         self.x = x
