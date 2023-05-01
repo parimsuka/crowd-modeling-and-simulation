@@ -155,11 +155,11 @@ class Pedestrian:
 
         if self.dijkstra_used and dijkstra_used:
 
-
+            '''
             if (self.x - int(self.x) > 0.98 and grid[int(self.x)+1][int(self.y)] == 'O') or (self.y - int(self.y) > 0.98 and grid[int(self.x)][int(self.y)+1] == 'O'):
                 self.x= int(self.x) + 0.5
                 self.y = int(self.y) + 0.5
-
+            '''
             if not self.check_obstacles(target_x, target_y, grid):
                 return self.find_best_move_cell(target_x, target_y, walking_distance, grid, dijkstra_distance, dijkstra_used=False)
 
@@ -167,10 +167,9 @@ class Pedestrian:
             current_x = int(self.x)
             current_y = int(self.y)
             min_dijkstra_score = dijkstra_distance[current_x][current_y]
-            new_x = current_x
-            new_y = current_y
 
             # Get the neighboring cell with smallest dijkstra score
+            
             for i, j in [
             [1, 0], [0, 1], [-1, 0], [0, -1],
             [-1, -1], [-1, 1], [1, -1], [1, 1]
@@ -189,7 +188,30 @@ class Pedestrian:
                         min_dijkstra_score = dijkstra_distance[cell_x][cell_y] # Update min_dijkstra_score
 
             if grid[new_x][new_y].startswith('P'):
-                return 0, 0
+
+                reachable_cells = self.get_reachable_cells(grid)
+                # Initial target position: our current position -> No better position: No movement
+                best_neighbor_cell = self.x, self.y, 0
+                min_dijkstra_score = dijkstra_distance[current_x][current_y]
+
+                for rc_x, rc_y, rc_value, rc_contact_x, rc_contact_y, rc_distance in reachable_cells:
+                    if rc_value == "E" or rc_value.startswith("R") or rc_value == "Ta" or rc_value == "current":
+
+                        # If the new cell has a smaller distance to the target: update the best neighbor cell (and distance)
+                        if dijkstra_distance[rc_x][rc_y] < min_dijkstra_score:
+                            min_dijkstra_score = dijkstra_distance[rc_x][rc_y]
+                            best_neighbor_cell = [rc_contact_x, rc_contact_y, walking_distance]
+                            # Make sure we don't overshoot if we want to stay inside our cell.
+                            if rc_value == "current":
+                                best_neighbor_cell[2] = rc_distance
+
+                dx, dy, _ = self.get_move_deltas(best_neighbor_cell[0], best_neighbor_cell[1], best_neighbor_cell[2])
+                return dx, dy
+            
+            if abs(new_x- int(self.x)) + abs(new_y - int(self.y)) == 2: #If it is a diagonal cell
+                    self.x = new_x - 0.5
+                    self.y = new_y - 0.5
+            
             # Calculate dx and dy to move the pedestrian `distance` towards the target
             dx, dy, _ = self.get_move_deltas(new_x + 0.5, new_y + 0.5, walking_distance)
             return dx, dy
