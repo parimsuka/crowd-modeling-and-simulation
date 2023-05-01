@@ -9,6 +9,8 @@ from scenario_loader import load_scenario
 from grid import Grid
 from helper_functions import increment_time_step_by_one, initialize_buttons
 
+# Variable for Play/Pause button
+DO_STEP_EVERY_X_MILLISECONDS = 200
 
 def main() -> None:
     """
@@ -41,8 +43,8 @@ def main() -> None:
 
     elapsed_time = 0
 
-    # Set the timer to generate the custom event every 5000 milliseconds (5 seconds)
-    pygame.time.set_timer(TIMER_EVENT, 200)
+    # Set the timer to generate the custom event every x milliseconds (1 second = 1000 milliseconds)
+    pygame.time.set_timer(TIMER_EVENT, DO_STEP_EVERY_X_MILLISECONDS)
 
     # Main game loop
     while True:
