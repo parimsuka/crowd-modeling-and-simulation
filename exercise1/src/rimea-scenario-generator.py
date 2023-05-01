@@ -150,7 +150,7 @@ def rimea_bottleneck_scenario(dijkstra):
 
     for i in range(1,num_pedestrians+1):
         
-        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": normalized_speeds[i-1], "color": "P-Yellow"})
+        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": 1, "color": "P-Yellow"})
         if i % 5 == 0:
             y_val += 1
             x_val = 0
@@ -233,4 +233,4 @@ rimea_bottleneck_scenario(dijkstra=False)
 rimea_bottleneck_scenario(dijkstra=True)
 # rimea_test_scenario()
 # scenario_4()
-scenario_6()
+#scenario_6()
