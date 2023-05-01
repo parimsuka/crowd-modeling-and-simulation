@@ -2,6 +2,8 @@ import json
 import numpy as np
 import random as rd
 
+from pyparsing import col
+
 
 from pedestriancolors import PedestrianColors
 from constants import SPEED_TABLE
@@ -207,26 +209,29 @@ def scenario_6():
     x_min, x_max = 0, 15
     y_min, y_max = 21, 23
 
-    # Set the number of points to generate
-    num_points = 20
+    # Set the number of pedestrians to generate
+    NUM_PEDESTRIANS = 30
+    SPEED = 0.95
 
     # Uniform distribution of pedestrians
-    for i in range(20):
+    for i in range(NUM_PEDESTRIANS):
+        color = PedestrianColors.get_random_p_color()
+        
         # Generate random x and y coordinates using uniform distribution
         x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
         y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
-        ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+        ped = {"x": int(x_coord), "y": int(y_coord), "speed": SPEED, "dijkstra": False, "color": color.name}
         while (scenario_data["pedestrians"].__contains__(ped)):
             print("Miss")
             x_coord = np.round(np.random.uniform(x_min, x_max)).astype(int)
             y_coord = np.round(np.random.uniform(y_min, y_max)).astype(int)
-            ped = {"x": int(x_coord), "y": int(y_coord), "speed": 0.95, "dijkstra": True}
+            ped = {"x": int(x_coord), "y": int(y_coord), "speed": SPEED, "dijkstra": False, "color": color.name}
 
         scenario_data["pedestrians"].append(ped)
 
-    print(scenario_data["pedestrians"])
-
-    with open(f"scenarios/scenario-task5-rimea-test6.json", "w") as f:
+    # print(scenario_data["pedestrians"])
+    
+    with open(f"scenarios/scenario-task5-rimea-test6_dijkstra=False_speed={SPEED}_N={NUM_PEDESTRIANS}.json", "w") as f:
         json.dump(scenario_data, f, indent=4)
 
 # rimea_bottleneck_scenario(dijkstra=False)
