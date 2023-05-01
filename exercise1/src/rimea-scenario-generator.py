@@ -136,8 +136,8 @@ def rimea_bottleneck_scenario(dijkstra):
     normalized_speeds = normalize_pedestrian_speeds(pedestrian_speeds)
 
     # Grid parameters
-    scenario_data["grid_width"] = 10
-    scenario_data["grid_height"] = 25
+    scenario_data["grid_width"] = 25
+    scenario_data["grid_height"] = 10
     scenario_data["cell_size"] = 30
 
     scenario_data["pedestrians"] = []
@@ -150,36 +150,36 @@ def rimea_bottleneck_scenario(dijkstra):
 
     for i in range(1,num_pedestrians+1):
         
-        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": normalized_speeds[i-1]})
+        scenario_data["pedestrians"].append({"x": x_val, "y": y_val, "dijkstra": dijkstra, "speed": normalized_speeds[i-1], "color": "P-Yellow"})
         if i % 5 == 0:
-            x_val += 1
-            y_val = 0
-        else:
             y_val += 1
+            x_val = 0
+        else:
+            x_val += 1
 
     # Add targets
-    scenario_data["targets"].append({"x": 5, "y": 24})
+    scenario_data["targets"].append({"x": 24, "y": 0, "absorbable": True})
 
     # Add obstacles
     for i in range(0,5):
-        scenario_data["obstacles"].append({"x": i, "y": 10})
-        scenario_data["obstacles"].append({"x": i, "y": 15})
-        scenario_data["obstacles"].append({"x": 4, "y": i+10})
-        scenario_data["obstacles"].append({"x": 6, "y": i+10})
+        scenario_data["obstacles"].append({"x": 10, "y": i})
+        scenario_data["obstacles"].append({"x": 15, "y": i})
+        scenario_data["obstacles"].append({"x": i+10, "y": 4})
+        scenario_data["obstacles"].append({"x": i+10, "y": 6})
         if i + 6 < 10:
-            scenario_data["obstacles"].append({"x": i+6, "y": 10})
-            scenario_data["obstacles"].append({"x": i+6, "y": 15})
+            scenario_data["obstacles"].append({"x": 10, "y": i+6})
+            scenario_data["obstacles"].append({"x": 15, "y": i+6})
 
     # Save scenario
     if dijkstra:
-        with open("scenarios/rimea-task4-bottleneck-w-dijkstra.json", "w") as f:
+        with open("scenarios/rimea-task4-bottleneck-w-dijkstra-corner.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
     else:
-        with open("scenarios/rimea-task4-bottleneck-wo-dijkstra.json", "w") as f:
+        with open("scenarios/rimea-task4-bottleneck-wo-dijkstra-corner.json", "w") as f:
             json.dump(scenario_data, f, indent=4)
 
 
-# rimea_bottleneck_scenario(dijkstra=False)
-# rimea_bottleneck_scenario(dijkstra=True)
+rimea_bottleneck_scenario(dijkstra=False)
+rimea_bottleneck_scenario(dijkstra=True)
 # rimea_test_scenario()
-scenario_4()
+# scenario_4()

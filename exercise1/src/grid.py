@@ -192,13 +192,13 @@ class Grid:
         for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
-                    cost_grid[x][y] = 10**5
+                    cost_grid[x][y] = 1e10
 
         # Initialize the visited cells
         visited = [[False for _ in range(len(self.grid[0]))] for _ in range(len(self.grid))]
-
+        '''
         # Mark obstacles as visited
-        '''for x in range (len(self.grid)):
+        for x in range (len(self.grid)):
             for y in range (len(self.grid[0])):
                 if self.grid[x][y] == 'O':
                     visited[x][y] = True
