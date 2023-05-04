@@ -2,6 +2,7 @@
   "name" : "RiMEA-test-6",
   "description" : "",
   "release" : "2.4",
+  "commithash" : "df7e76b17703aa18bb7fe2a7ff30d4398dad28d8",
   "processWriters" : {
     "files" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.EventtimePedestrianIdOutputFile",
@@ -154,9 +155,9 @@
         "id" : 2,
         "shape" : {
           "x" : 10.5,
-          "y" : 12.0,
+          "y" : 11.5,
           "width" : 2.0,
-          "height" : 0.5,
+          "height" : 1.0,
           "type" : "RECTANGLE"
         },
         "visible" : true,
