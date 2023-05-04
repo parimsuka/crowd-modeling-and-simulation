@@ -2,6 +2,15 @@ import json
 import typing
 
 
+def update_dict_smart(dictionary: dict, update_tuple: tuple):
+    key, value = update_tuple
+    if type(value) is tuple:
+        update_dict_smart(dictionary[key], value)
+    else:
+        dictionary[key] = value
+        # dictionary.update((key, value))
+
+
 class VadereScenarioEditor:
     def __init__(self, scenario_file_path: str, allow_overwriting: bool = False) -> None:
         self.scenario_file_path = scenario_file_path
@@ -18,6 +27,7 @@ class VadereScenarioEditor:
         return json.dumps(self.scenario, indent=2)
 
     def save_scenario(self, save_file_path: typing.Optional[str] = None) -> None:
+
         if save_file_path is None:
             if self.allow_overwriting:
                 save_file_path = self.scenario_file_path
@@ -38,13 +48,15 @@ class VadereScenarioEditor:
             scenario = json.load(open_file)
         self.scenario = scenario
 
+    def edit_scenario(self, key_word_args):
+        update_dict_smart(self.scenario, key_word_args)
+
     def insert_pedestrian(self, x: float, y: float, target_ids: list[int] = None,
                           identifier: int = -1, width: float = 1,
-                          height: float = 1):
+                          height: float = 1,
+                          key_word_args: typing.Optional[list[tuple[str, any]]] = None):
         if target_ids is None:
             target_ids = []
-
-        # current_dynamic_elements = self.scenario['scenario']['topography']['dynamicElements']
 
         pedestrian_object = {
             "attributes": {
@@ -112,5 +124,9 @@ class VadereScenarioEditor:
             "modelPedestrianMap": None,
             "type": "PEDESTRIAN"
         }
+
+        if key_word_args is not None:
+            for kwa in key_word_args:
+                update_dict_smart(pedestrian_object, kwa)
 
         self.scenario['scenario']['topography']['dynamicElements'].append(pedestrian_object)
