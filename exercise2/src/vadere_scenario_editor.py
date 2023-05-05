@@ -28,28 +28,6 @@ def get_values_for_key(search_object: any, search_key: str) -> list:
 
     return r
 
-def get_values_for_key2(search_object: any, search_key: str) -> list:
-    r = []
-
-    # Try: search_object is List
-    try:
-        for list_item in search_object:
-            r += get_values_for_key(list_item, search_key)
-    except TypeError:
-        pass
-
-    # Try: search_object is Dictionary
-    try:
-        for key, value in search_object.items():
-            if key == search_key:
-                r.append(value)
-            r += get_values_for_key(value, search_key)
-    except TypeError:
-        pass
-
-    print(r)
-    return r
-
 
 class VadereScenarioEditor:
     def __init__(self, scenario_file_path: str, allow_overwriting: bool = False) -> None:
