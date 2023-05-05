@@ -2,13 +2,53 @@ import json
 import typing
 
 
-def update_dict_smart(dictionary: dict, update_tuple: tuple):
+def update_dict_smart(dictionary: dict, update_tuple: tuple) -> None:
     key, value = update_tuple
-    if type(value) is tuple:
+    if isinstance(value, tuple):
         update_dict_smart(dictionary[key], value)
     else:
         dictionary[key] = value
         # dictionary.update((key, value))
+
+
+def get_values_for_key(search_object: any, search_key: str) -> list:
+    r = []
+
+    # Test: search_object is List
+    if isinstance(search_object, list):
+        for list_item in search_object:
+            r += get_values_for_key(list_item, search_key)
+
+    # Test: search_object is Dictionary
+    if isinstance(search_object, dict):
+        for key, value in search_object.items():
+            if key == search_key:
+                r.append(value)
+            r += get_values_for_key(value, search_key)
+
+    return r
+
+def get_values_for_key2(search_object: any, search_key: str) -> list:
+    r = []
+
+    # Try: search_object is List
+    try:
+        for list_item in search_object:
+            r += get_values_for_key(list_item, search_key)
+    except TypeError:
+        pass
+
+    # Try: search_object is Dictionary
+    try:
+        for key, value in search_object.items():
+            if key == search_key:
+                r.append(value)
+            r += get_values_for_key(value, search_key)
+    except TypeError:
+        pass
+
+    print(r)
+    return r
 
 
 class VadereScenarioEditor:
@@ -52,11 +92,14 @@ class VadereScenarioEditor:
         update_dict_smart(self.scenario, key_word_args)
 
     def insert_pedestrian(self, x: float, y: float, target_ids: list[int] = None,
-                          identifier: int = -1, width: float = 1,
+                          identifier: typing.Optional[int] = None, width: float = 1,
                           height: float = 1,
                           key_word_args: typing.Optional[list[tuple[str, any]]] = None):
         if target_ids is None:
             target_ids = []
+
+        if identifier is None:
+            identifier = self._get_valid_id_for_pedestrian()
 
         pedestrian_object = {
             "attributes": {
@@ -130,3 +173,11 @@ class VadereScenarioEditor:
                 update_dict_smart(pedestrian_object, kwa)
 
         self.scenario['scenario']['topography']['dynamicElements'].append(pedestrian_object)
+
+    def _get_valid_id_for_pedestrian(self) -> int:
+        used_ids = get_values_for_key(self.scenario['scenario']['topography'], "id")
+        print(used_ids)
+        identifier = 1  # Vadere starts identifiers from 1
+        while identifier in used_ids :
+            identifier += 1
+        return identifier
