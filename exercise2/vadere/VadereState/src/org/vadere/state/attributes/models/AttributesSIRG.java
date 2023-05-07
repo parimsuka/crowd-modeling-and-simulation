@@ -10,6 +10,7 @@ import org.vadere.state.attributes.Attributes;
 public class AttributesSIRG extends Attributes {
 
 	private int infectionsAtStart = 0;
+	// The infection rate per 1s. Scaled to the elapsed time.
 	private double infectionRate = 0.01;
 	private double infectionMaxDistance = 1;
 
