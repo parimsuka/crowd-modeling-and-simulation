@@ -30,6 +30,8 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 	private Topography topography;
 	private IPotentialFieldTarget potentialFieldTarget;
 	private int totalInfected = 0;
+	// Logs the Timestamp of last step for purposes of scaling the infection rate to the elapsed time
+	private double lastStepSimTimeInSec = 0;
 
 	public SIRGroupModel() {
 		this.groupsById = new LinkedHashMap<>();
@@ -183,6 +185,12 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 	@Override
 	public void update(final double simTimeInSec) {
+
+		// Get the length of one timestep
+		// This timeStepLength is used to normalize the infection rate to the time that has elapsed
+		double timeStepLength = simTimeInSec - lastStepSimTimeInSec;
+		lastStepSimTimeInSec = simTimeInSec;
+
 		// check the positions of all pedestrians and switch groups to INFECTED (or REMOVED).
 		DynamicElementContainer<Pedestrian> c = topography.getPedestrianDynamicElements();
 
@@ -194,7 +202,7 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 				for(Pedestrian p_neighbor : neighbor_list) {
 					if(p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal())
 						continue;
-					if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
+					if (this.random.nextDouble() < (attributesSIRG.getInfectionRate() * timeStepLength)) {
 						SIRGroup g = getGroup(p);
 						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
 							elementRemoved(p);
