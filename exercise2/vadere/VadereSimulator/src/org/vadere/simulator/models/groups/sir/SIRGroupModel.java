@@ -6,11 +6,9 @@ import org.vadere.simulator.models.Model;
 import org.vadere.simulator.models.groups.AbstractGroupModel;
 import org.vadere.simulator.models.groups.Group;
 import org.vadere.simulator.models.groups.GroupSizeDeterminator;
-import org.vadere.simulator.models.groups.cgm.CentroidGroup;
 import org.vadere.simulator.models.potential.fields.IPotentialFieldTarget;
 import org.vadere.simulator.projects.Domain;
 import org.vadere.state.attributes.Attributes;
-import org.vadere.simulator.models.groups.sir.SIRGroup;
 import org.vadere.state.attributes.models.AttributesSIRG;
 import org.vadere.state.attributes.scenario.AttributesAgent;
 import org.vadere.state.scenario.DynamicElementContainer;
@@ -40,11 +38,11 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 	@Override
 	public void initialize(List<Attributes> attributesList, Domain domain,
-	                       AttributesAgent attributesPedestrian, Random random) {
+						   AttributesAgent attributesPedestrian, Random random) {
 		this.attributesSIRG = Model.findAttributes(attributesList, AttributesSIRG.class);
 		this.topography = domain.getTopography();
 		this.random = random;
-        this.totalInfected = 0;
+		this.totalInfected = 0;
 	}
 
 	@Override
@@ -63,13 +61,13 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 	private int getFreeGroupId() {
 		if(this.random.nextDouble() < this.attributesSIRG.getInfectionRate()
-        || this.totalInfected < this.attributesSIRG.getInfectionsAtStart()) {
+				|| this.totalInfected < this.attributesSIRG.getInfectionsAtStart()) {
 			if(!getGroupsById().containsKey(SIRType.ID_INFECTED.ordinal()))
 			{
 				SIRGroup g = getNewGroup(SIRType.ID_INFECTED.ordinal(), Integer.MAX_VALUE/2);
 				getGroupsById().put(SIRType.ID_INFECTED.ordinal(), g);
 			}
-            this.totalInfected += 1;
+			this.totalInfected += 1;
 			return SIRType.ID_INFECTED.ordinal();
 		}
 		else{
@@ -133,7 +131,10 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 		if (c.getElements().size() > 0) {
 			// Here you can fill in code to assign pedestrians in the scenario at the beginning (i.e., not created by a source)
-            //  to INFECTED or SUSCEPTIBLE groups. This is not required in the exercise though.
+			//  to INFECTED or SUSCEPTIBLE groups. This is not required in the exercise though.
+			for (Pedestrian p : c.getElements()) {
+				assignToGroup(p);
+			}
 		}
 	}
 
@@ -187,13 +188,13 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 		if (c.getElements().size() > 0) {
 			for(Pedestrian p : c.getElements()) {
+				//Get the neighbors of a pedestrian with LinkedCellsGrid
+				List<Pedestrian> neighbor_list = c.getCellsElements().getObjects(p.getPosition(), this.attributesSIRG.getInfectionMaxDistance());
 				// loop over neighbors and set infected if we are close
-				for(Pedestrian p_neighbor : c.getElements()) {
+				for(Pedestrian p_neighbor : neighbor_list) {
 					if(p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal())
 						continue;
-					double dist = p.getPosition().distance(p_neighbor.getPosition());
-					if (dist < attributesSIRG.getInfectionMaxDistance() &&
-							this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
+					if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
 						SIRGroup g = getGroup(p);
 						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
 							elementRemoved(p);
