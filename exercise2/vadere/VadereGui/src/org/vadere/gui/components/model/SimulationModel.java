@@ -29,7 +29,7 @@ public abstract class SimulationModel<T extends DefaultSimulationConfig> extends
 		this.colorMap = new ConcurrentHashMap<>();
 		this.colorMap.put(-1, config.getPedestrianDefaultColor());
 		this.colorMap.put(0, new Color(255,0,0)); //Infective RED
-		this.colorMap.put(1, new Color(51,204,255)); //Susceptible WHITE
+		this.colorMap.put(1, new Color(51,204,255)); //Susceptible LIGHT BLUE
 		this.colorMap.put(2, new Color(0,255,0)); //Recovered GREEN
 		this.random = new Random();
 	}
