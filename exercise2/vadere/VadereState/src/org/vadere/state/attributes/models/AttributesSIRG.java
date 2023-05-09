@@ -12,6 +12,9 @@ public class AttributesSIRG extends Attributes {
 	private int infectionsAtStart = 0;
 	// The infection rate per 1s. Scaled to the elapsed time.
 	private double infectionRate = 0.01;
+
+	// The recovery rate per 1s of infected pedestrians. Scaled to the elapsed time.
+	private double recoveryRate = 0.01;
 	private double infectionMaxDistance = 1;
 
 	public int getInfectionsAtStart() { return infectionsAtStart; }
@@ -22,6 +25,10 @@ public class AttributesSIRG extends Attributes {
 
 	public double getInfectionMaxDistance() {
 		return infectionMaxDistance;
+	}
+
+	public double getRecoveryRate() {
+		return recoveryRate;
 	}
 
 }

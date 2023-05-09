@@ -194,21 +194,46 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 		// check the positions of all pedestrians and switch groups to INFECTED (or REMOVED).
 		DynamicElementContainer<Pedestrian> c = topography.getPedestrianDynamicElements();
 
-		if (c.getElements().size() > 0) {
-			for(Pedestrian p : c.getElements()) {
+//		if (c.getElements().size() > 0) {
+//			for(Pedestrian p : c.getElements()) {
+//				//Get the neighbors of a pedestrian with LinkedCellsGrid
+//				List<Pedestrian> neighbor_list = c.getCellsElements().getObjects(p.getPosition(), this.attributesSIRG.getInfectionMaxDistance());
+//				// loop over neighbors and set infected if we are close
+//				for(Pedestrian p_neighbor : neighbor_list) {
+//					if(p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal())
+//						continue;
+//					if (this.random.nextDouble() < (attributesSIRG.getInfectionRate() * timeStepLength)) {
+//						SIRGroup g = getGroup(p);
+//						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+//							elementRemoved(p);
+//							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
+//						}
+//					}
+//				}
+//			}
+//		}
+
+		for(Pedestrian p : c.getElements()) {
+			//Skip if the pedestrian is already recovered, he is not able to infect neighbors anymore,
+			// also skip for infected pedestrians, only check if SUSCEPTIBLE pedestrians can get infected
+			if (getGroup(p).getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+
 				//Get the neighbors of a pedestrian with LinkedCellsGrid
 				List<Pedestrian> neighbor_list = c.getCellsElements().getObjects(p.getPosition(), this.attributesSIRG.getInfectionMaxDistance());
 				// loop over neighbors and set infected if we are close
-				for(Pedestrian p_neighbor : neighbor_list) {
-					if(p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal())
-						continue;
-					if (this.random.nextDouble() < (attributesSIRG.getInfectionRate() * timeStepLength)) {
-						SIRGroup g = getGroup(p);
-						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+				for (Pedestrian p_neighbor : neighbor_list) {
+					if (p != p_neighbor && getGroup(p_neighbor).getID() == SIRType.ID_INFECTED.ordinal())
+						if (this.random.nextDouble() < (attributesSIRG.getInfectionRate() * timeStepLength)) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
 						}
-					}
+				}
+
+			} else if (getGroup(p).getID() == SIRType.ID_INFECTED.ordinal()) {
+				// Probability for an “infective” person to become “recovered” at every time step
+				if (this.random.nextDouble() < (attributesSIRG.getRecoveryRate() * timeStepLength)) {
+					elementRemoved(p);
+					assignToGroup(p, SIRType.ID_REMOVED.ordinal());
 				}
 			}
 		}
