@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 
 
 def file_df_to_count_df(df,
+                        ID_REMOVED=2,
                         ID_SUSCEPTIBLE=1,
                         ID_INFECTED=0):
     """
@@ -29,7 +30,11 @@ def file_df_to_count_df(df,
                 current_state = g
                 group_counts.loc[group_counts['simTime'] > st, 'group-s'] -= 1
                 group_counts.loc[group_counts['simTime'] > st, 'group-i'] += 1
-                break
+            if g != current_state and g == ID_REMOVED and current_state == ID_INFECTED:
+                 current_state = g
+                 group_counts.loc[group_counts['simTime'] > st, 'group-i'] -= 1
+                 group_counts.loc[group_counts['simTime'] > st, 'group-r'] += 1
+                 break
     return group_counts
 
 
@@ -50,7 +55,7 @@ def create_folder_data_scatter(folder):
     ID_INFECTED = 0
     ID_REMOVED = 2
 
-    group_counts = file_df_to_count_df(data, ID_INFECTED=ID_INFECTED, ID_SUSCEPTIBLE=ID_SUSCEPTIBLE)
+    group_counts = file_df_to_count_df(data, ID_INFECTED=ID_INFECTED, ID_SUSCEPTIBLE=ID_SUSCEPTIBLE, ID_REMOVED=ID_REMOVED)
     # group_counts.plot()
     scatter_s = go.Scatter(x=group_counts['simTime'],
                            y=group_counts['group-s'],
@@ -60,4 +65,9 @@ def create_folder_data_scatter(folder):
                            y=group_counts['group-i'],
                            name='infected ' + os.path.basename(folder),
                            mode='lines')
-    return [scatter_s, scatter_i], group_counts
+    scatter_r = go.Scatter(x=group_counts['simTime'],
+                              y=group_counts['group-r'],
+                              name='removed ' + os.path.basename(folder),
+                              mode='lines')
+    print(scatter_r)
+    return [scatter_s, scatter_i, scatter_r], group_counts
