@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -69,5 +70,16 @@ def create_folder_data_scatter(folder):
                               y=group_counts['group-r'],
                               name='removed ' + os.path.basename(folder),
                               mode='lines')
-    print(scatter_r)
+
+    s_mean = np.mean(scatter_s['y'])
+    i_mean = np.mean(scatter_i['y'])
+    r_mean = np.mean(scatter_r['y'])
+
+    save_average_values(s_mean, i_mean, r_mean)
+
     return [scatter_s, scatter_i, scatter_r], group_counts
+
+def save_average_values(susceptible_average, infected_average, recovered_average, filename="average_values.txt"):
+    with open(filename, 'a') as file:
+        file.write(f"{susceptible_average}\t{infected_average}\t{recovered_average}\n")
+    print(f"Average values appended to {filename}")
