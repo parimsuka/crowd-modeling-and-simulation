@@ -192,7 +192,7 @@
           "constraintsElementsMax" : -1,
           "constraintsTimeStart" : 0.0,
           "constraintsTimeEnd" : 0.0,
-          "eventPositionRandom" : false,
+          "eventPositionRandom" : true,
           "eventPositionGridCA" : false,
           "eventPositionFreeSpace" : true,
           "eventElementCount" : 20,
