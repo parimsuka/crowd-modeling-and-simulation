@@ -18,7 +18,8 @@ def pca_forward(data_matrix: list[list[float]],
     :param data_matrix: Data matrix with rows x_i.
     :param component_count: The number of components used for the PCA.
     :param full_matrices: If the full matrices should be returned by np.linalg.svd.
-    :return: u,s,vh of the singular vector decomposition and the energy. # TODO add everything here
+    :return: u,s,vh of the singular vector decomposition, as well as the energy of this decomposition,
+        the energy of the components and the removed mean that was removed to center the matrix.
     """
     # create a copy of the data_matrix
     data_matrix_cp = np.copy(data_matrix)
@@ -47,7 +48,6 @@ def pca_forward(data_matrix: list[list[float]],
         partial_s = s
         partial_vh = vh
 
-
     # 4. Compute energy (explained variance)
 
     # calculate the energy of the pca using component_count components
@@ -61,9 +61,18 @@ def pca_forward(data_matrix: list[list[float]],
     return partial_u, partial_s, partial_vh, energy, energy_per_component, column_mean
 
 
-def pca_reverse(u, s, v, removed_mean):
+def pca_reverse(u, s, vh, removed_mean):
+    """
+    Reconstructs an original matrix using the singular value decomposition matrices U, S and V.
+
+    :param u: The singular value decomposition matrix U containing the left singular vectors.
+    :param s: The singular value decomposition matrix S containing the singular values as a list.
+    :param vh: The singular value decomposition matrix V containing the right singular vectors.
+    :param removed_mean: The mean that was removed previously, which will be added again in this step.
+    :return: The reconstructed matrix.
+    """
     # reconstruct the matrix
-    rec_matrix = u * s @ v
+    rec_matrix = u * s @ vh
 
     # re-add the mean
     # TODO: figure out if we need to recompute the mean (which will be somewhat different) or
