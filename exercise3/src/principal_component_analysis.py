@@ -38,15 +38,11 @@ def pca_forward(data_matrix: list[list[float]],
     # 3. Decompose centered matrix into singular vectors
     u, s, vh = np.linalg.svd(data_matrix_cp, full_matrices=full_matrices)
 
-    # If number of components is given: create partial__ variables with only that number of components
     if component_count:
-        partial_u = u[:, :component_count]
-        partial_s = s[:component_count]
-        partial_vh = vh[:component_count, :]
+        partial_s = np.copy(s)
+        np.put(partial_s, [i for i in range(component_count, len(partial_s))], 0)
     else:
-        partial_u = u
         partial_s = s
-        partial_vh = vh
 
     # 4. Compute energy (explained variance)
 
@@ -58,7 +54,7 @@ def pca_forward(data_matrix: list[list[float]],
     for component in s:
         energy_per_component.append(np.power(np.sum(np.square(s)), -1) * np.sum(np.square(component)))
 
-    return partial_u, partial_s, partial_vh, energy, energy_per_component, column_mean
+    return u, partial_s, vh, energy, energy_per_component, column_mean
 
 
 def pca_reverse(u, s, vh, removed_mean):
