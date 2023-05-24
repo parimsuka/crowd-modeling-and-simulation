@@ -11,7 +11,8 @@ import numpy as np
 
 def pca_forward(data_matrix: list[list[float]],
                 component_count: typing.Optional[int] = None,
-                full_matrices: bool = False):
+                full_matrices: bool = False
+                ) -> (np.ndarray, np.ndarray, np.ndarray, float, list[float], np.ndarray):
     """
     Performs principal component analysis of a data_matrix with a number of components.
 
@@ -57,7 +58,7 @@ def pca_forward(data_matrix: list[list[float]],
     return u, partial_s, vh, energy, energy_per_component, column_mean
 
 
-def pca_reverse(u, s, vh, removed_mean):
+def pca_reverse(u: np.ndarray, s: np.ndarray, vh: np.ndarray, removed_mean: np.ndarray) -> np.ndarray:
     """
     Reconstructs an original matrix using the singular value decomposition matrices U, S and V.
 
@@ -71,8 +72,6 @@ def pca_reverse(u, s, vh, removed_mean):
     rec_matrix = u * s @ vh
 
     # re-add the mean
-    # TODO: figure out if we need to recompute the mean (which will be somewhat different) or
-    # TODO:   just use the previous mean
     rec_matrix += removed_mean
 
     return rec_matrix
