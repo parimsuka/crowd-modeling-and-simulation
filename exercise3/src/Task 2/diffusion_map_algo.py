@@ -29,10 +29,10 @@ def diffusion_map_algo(
     datatree = sp.spatial.KDTree(data)
 
     # Compute sparse distance matrix according to given radius
-    sparse_D = datatree.sparse_distance_matrix(datatree, max_distance=radius)
+    sparse_D = datatree.sparse_distance_matrix(datatree, max_distance=radius).tocoo().tocsr()
 
     # Compute epsilon according to EPS and max distance in sparse_D
-    epsilon = EPS * sparse_D.max()
+    epsilon = EPS * sparse_D.data.max()
 
     # Compute zero division epsilon for numerical stability
     zero_div_eps = 1e-3 * np.median(sparse_D.data)
@@ -64,7 +64,7 @@ def diffusion_map_algo(
     # Compute L + 1 largest eigvalues and corresponding eigvectors of T_hat
     eigenvalues, eigenvectors = sp.sparse.linalg.eigsh(T_hat, k=L + 1, which="LM")
 
-    # Reverse order of eigvalues and eigvectors because they are returned in ascending
+    # Reverse order of eigvalues and eigenvectors because they are returned in ascending
     # order
     eigenvalues = eigenvalues[::-1]
     eigenvectors = eigenvectors[:, ::-1]
@@ -89,8 +89,8 @@ def create_diag_norm_matrix(mat):
     scipy.sparse.csr_matrix: The diagonal normalization matrix.
     """
 
-    row_sums = mat.sum(axis=1)
+    row_sums = np.array(mat.sum(axis=1)).ravel()
 
-    diag_norm_matrix = sp.sparse.diags(row_sums.A1)
+    diag_norm_matrix = sp.sparse.diags(row_sums)
 
     return diag_norm_matrix
