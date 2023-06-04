@@ -1,0 +1,932 @@
+{
+  "name" : "MI_Building",
+  "description" : "",
+  "release" : "2.4",
+  "processWriters" : {
+    "files" : [ {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.EventtimePedestrianIdOutputFile",
+      "filename" : "postvis.traj",
+      "processors" : [ 1, 2 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOverlapOutputFile",
+      "filename" : "overlaps.csv",
+      "processors" : [ 3 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.NoDataKeyOutputFile",
+      "filename" : "overlapCount.txt",
+      "processors" : [ 4 ]
+    } ],
+    "processors" : [ {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
+      "id" : 1
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepTargetIDProcessor",
+      "id" : 2
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianOverlapProcessor",
+      "id" : 3
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.NumberOverlapsProcessor",
+      "id" : 4,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesNumberOverlapsProcessor",
+      "attributes" : {
+        "pedestrianOverlapProcessorId" : 3
+      }
+    } ],
+    "isTimestamped" : true,
+    "isWriteMetaData" : false
+  },
+  "scenario" : {
+    "mainModel" : "org.vadere.simulator.models.osm.OptimalStepsModel",
+    "attributesModel" : {
+      "org.vadere.state.attributes.models.AttributesOSM" : {
+        "stepCircleResolution" : 4,
+        "numberOfCircles" : 1,
+        "optimizationType" : "NELDER_MEAD",
+        "varyStepDirection" : true,
+        "movementType" : "ARBITRARY",
+        "stepLengthIntercept" : 0.4625,
+        "stepLengthSlopeSpeed" : 0.2345,
+        "stepLengthSD" : 0.036,
+        "movementThreshold" : 0.0,
+        "minStepLength" : 0.1,
+        "minimumStepLength" : true,
+        "maxStepDuration" : 1.7976931348623157E308,
+        "dynamicStepLength" : true,
+        "updateType" : "EVENT_DRIVEN",
+        "seeSmallWalls" : false,
+        "targetPotentialModel" : "org.vadere.simulator.models.potential.fields.PotentialFieldTargetGrid",
+        "pedestrianPotentialModel" : "org.vadere.simulator.models.potential.PotentialFieldPedestrianCompactSoftshell",
+        "obstaclePotentialModel" : "org.vadere.simulator.models.potential.PotentialFieldObstacleCompactSoftshell",
+        "submodels" : [ ]
+      },
+      "org.vadere.state.attributes.models.AttributesPotentialCompactSoftshell" : {
+        "pedPotentialIntimateSpaceWidth" : 0.45,
+        "pedPotentialPersonalSpaceWidth" : 1.2,
+        "pedPotentialHeight" : 50.0,
+        "obstPotentialWidth" : 0.8,
+        "obstPotentialHeight" : 6.0,
+        "intimateSpaceFactor" : 1.2,
+        "personalSpacePower" : 1,
+        "intimateSpacePower" : 1
+      },
+      "org.vadere.state.attributes.models.AttributesFloorField" : {
+        "createMethod" : "HIGH_ACCURACY_FAST_MARCHING",
+        "potentialFieldResolution" : 0.1,
+        "obstacleGridPenalty" : 0.1,
+        "targetAttractionStrength" : 1.0,
+        "cacheType" : "NO_CACHE",
+        "cacheDir" : "",
+        "timeCostAttributes" : {
+          "standardDeviation" : 0.7,
+          "type" : "UNIT",
+          "obstacleDensityWeight" : 3.5,
+          "pedestrianSameTargetDensityWeight" : 3.5,
+          "pedestrianOtherTargetDensityWeight" : 3.5,
+          "pedestrianWeight" : 3.5,
+          "queueWidthLoading" : 1.0,
+          "pedestrianDynamicWeight" : 6.0,
+          "loadingType" : "CONSTANT",
+          "width" : 0.2,
+          "height" : 1.0
+        }
+      }
+    },
+    "attributesSimulation" : {
+      "finishTime" : 500.0,
+      "simTimeStepLength" : 0.4,
+      "realTimeSimTimeRatio" : 0.1,
+      "writeSimulationData" : true,
+      "visualizationEnabled" : true,
+      "printFPS" : false,
+      "digitsPerCoordinate" : 2,
+      "useFixedSeed" : true,
+      "fixedSeed" : 5051123614409116870,
+      "simulationSeed" : 0
+    },
+    "attributesPsychology" : {
+      "usePsychologyLayer" : false,
+      "psychologyLayer" : {
+        "perception" : "SimplePerceptionModel",
+        "cognition" : "SimpleCognitionModel",
+        "attributesModel" : {
+          "org.vadere.state.attributes.models.psychology.perception.AttributesSimplePerceptionModel" : {
+            "priority" : {
+              "1" : "InformationStimulus",
+              "2" : "ChangeTargetScripted",
+              "3" : "ChangeTarget",
+              "4" : "Threat",
+              "5" : "Wait",
+              "6" : "WaitInArea",
+              "7" : "DistanceRecommendation"
+            }
+          },
+          "org.vadere.state.attributes.models.psychology.cognition.AttributesSimpleCognitionModel" : { }
+        }
+      }
+    },
+    "topography" : {
+      "attributes" : {
+        "bounds" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "width" : 300.0,
+          "height" : 300.0
+        },
+        "boundingBoxWidth" : 0.5,
+        "bounded" : true,
+        "referenceCoordinateSystem" : null
+      },
+      "obstacles" : [ {
+        "id" : 20,
+        "shape" : {
+          "type" : "POLYGON",
+          "points" : [ {
+            "x" : 216.0,
+            "y" : 115.1
+          }, {
+            "x" : 216.0,
+            "y" : 150.0
+          }, {
+            "x" : 215.9839090377897,
+            "y" : 150.0
+          }, {
+            "x" : 215.98390903778952,
+            "y" : 164.0
+          }, {
+            "x" : 216.0,
+            "y" : 164.0
+          }, {
+            "x" : 216.0,
+            "y" : 165.0
+          }, {
+            "x" : 215.9839090377897,
+            "y" : 165.0
+          }, {
+            "x" : 215.0,
+            "y" : 165.0
+          }, {
+            "x" : 199.9839090377896,
+            "y" : 164.99999999999983
+          }, {
+            "x" : 199.9839090377897,
+            "y" : 187.0
+          }, {
+            "x" : 199.0,
+            "y" : 187.0
+          }, {
+            "x" : 199.0,
+            "y" : 165.0
+          }, {
+            "x" : 199.0,
+            "y" : 164.03403927556488
+          }, {
+            "x" : 199.0,
+            "y" : 164.0
+          }, {
+            "x" : 215.0,
+            "y" : 164.0
+          }, {
+            "x" : 215.0,
+            "y" : 150.0
+          }, {
+            "x" : 215.0,
+            "y" : 115.10000000000005
+          }, {
+            "x" : 200.0,
+            "y" : 115.10000000000016
+          }, {
+            "x" : 200.0,
+            "y" : 149.0
+          }, {
+            "x" : 200.0,
+            "y" : 150.0
+          }, {
+            "x" : 199.0,
+            "y" : 150.0
+          }, {
+            "x" : 181.0,
+            "y" : 150.0
+          }, {
+            "x" : 180.0,
+            "y" : 150.0
+          }, {
+            "x" : 180.0,
+            "y" : 149.0
+          }, {
+            "x" : 180.0,
+            "y" : 114.0
+          }, {
+            "x" : 165.0,
+            "y" : 114.0
+          }, {
+            "x" : 165.0,
+            "y" : 149.0
+          }, {
+            "x" : 165.0,
+            "y" : 150.0
+          }, {
+            "x" : 164.0,
+            "y" : 150.0
+          }, {
+            "x" : 146.0,
+            "y" : 150.0
+          }, {
+            "x" : 145.0,
+            "y" : 150.0
+          }, {
+            "x" : 145.0,
+            "y" : 149.0
+          }, {
+            "x" : 145.0,
+            "y" : 114.0
+          }, {
+            "x" : 130.0,
+            "y" : 114.0
+          }, {
+            "x" : 130.0,
+            "y" : 149.0
+          }, {
+            "x" : 130.0,
+            "y" : 150.0
+          }, {
+            "x" : 129.0,
+            "y" : 150.0
+          }, {
+            "x" : 111.0,
+            "y" : 150.0
+          }, {
+            "x" : 110.0,
+            "y" : 150.0
+          }, {
+            "x" : 110.0,
+            "y" : 149.0
+          }, {
+            "x" : 110.0,
+            "y" : 114.0
+          }, {
+            "x" : 95.0,
+            "y" : 114.0
+          }, {
+            "x" : 95.0,
+            "y" : 149.0
+          }, {
+            "x" : 95.0,
+            "y" : 150.0
+          }, {
+            "x" : 94.0,
+            "y" : 150.0
+          }, {
+            "x" : 76.0,
+            "y" : 150.0
+          }, {
+            "x" : 75.0,
+            "y" : 150.0
+          }, {
+            "x" : 75.0,
+            "y" : 149.0
+          }, {
+            "x" : 75.0,
+            "y" : 114.0
+          }, {
+            "x" : 60.0,
+            "y" : 114.0
+          }, {
+            "x" : 60.0,
+            "y" : 150.0
+          }, {
+            "x" : 59.98617584167532,
+            "y" : 150.0
+          }, {
+            "x" : 59.0,
+            "y" : 150.0
+          }, {
+            "x" : 27.2,
+            "y" : 150.0
+          }, {
+            "x" : 27.2,
+            "y" : 149.0
+          }, {
+            "x" : 59.0,
+            "y" : 149.00000000000006
+          }, {
+            "x" : 59.0,
+            "y" : 114.0
+          }, {
+            "x" : 59.0,
+            "y" : 113.0
+          }, {
+            "x" : 60.0,
+            "y" : 113.0
+          }, {
+            "x" : 75.0,
+            "y" : 113.0
+          }, {
+            "x" : 76.0,
+            "y" : 113.0
+          }, {
+            "x" : 76.0,
+            "y" : 114.0
+          }, {
+            "x" : 76.0,
+            "y" : 149.0
+          }, {
+            "x" : 94.0,
+            "y" : 149.0
+          }, {
+            "x" : 94.0,
+            "y" : 114.0
+          }, {
+            "x" : 94.0,
+            "y" : 113.0
+          }, {
+            "x" : 95.0,
+            "y" : 113.0
+          }, {
+            "x" : 110.0,
+            "y" : 113.0
+          }, {
+            "x" : 111.0,
+            "y" : 113.0
+          }, {
+            "x" : 111.0,
+            "y" : 114.0
+          }, {
+            "x" : 111.0,
+            "y" : 149.0
+          }, {
+            "x" : 129.0,
+            "y" : 149.0
+          }, {
+            "x" : 129.0,
+            "y" : 114.0
+          }, {
+            "x" : 129.0,
+            "y" : 113.0
+          }, {
+            "x" : 130.0,
+            "y" : 113.0
+          }, {
+            "x" : 145.0,
+            "y" : 113.0
+          }, {
+            "x" : 146.0,
+            "y" : 113.0
+          }, {
+            "x" : 146.0,
+            "y" : 114.0
+          }, {
+            "x" : 146.0,
+            "y" : 149.0
+          }, {
+            "x" : 164.0,
+            "y" : 149.0
+          }, {
+            "x" : 164.0,
+            "y" : 114.0
+          }, {
+            "x" : 164.00354735035936,
+            "y" : 113.0
+          }, {
+            "x" : 181.00354735035936,
+            "y" : 113.0
+          }, {
+            "x" : 181.0,
+            "y" : 114.0
+          }, {
+            "x" : 181.0,
+            "y" : 149.0
+          }, {
+            "x" : 199.00000000000003,
+            "y" : 149.0
+          }, {
+            "x" : 199.0,
+            "y" : 115.1
+          }, {
+            "x" : 199.0,
+            "y" : 115.0
+          }, {
+            "x" : 199.0,
+            "y" : 114.0
+          }, {
+            "x" : 216.0,
+            "y" : 114.0
+          }, {
+            "x" : 216.0,
+            "y" : 115.0
+          } ]
+        },
+        "visible" : true
+      }, {
+        "id" : 21,
+        "shape" : {
+          "type" : "POLYGON",
+          "points" : [ {
+            "x" : 20.099999999999994,
+            "y" : 164.0
+          }, {
+            "x" : 20.40909090909085,
+            "y" : 163.99999999999977
+          }, {
+            "x" : 20.499999999999993,
+            "y" : 163.5
+          }, {
+            "x" : 38.3,
+            "y" : 165.10000000000002
+          }, {
+            "x" : 38.285622623844425,
+            "y" : 165.3156606423359
+          }, {
+            "x" : 52.59761789297909,
+            "y" : 166.60213212720197
+          }, {
+            "x" : 52.49533661360531,
+            "y" : 168.13635131780873
+          }, {
+            "x" : 34.18698760569765,
+            "y" : 166.1930070097068
+          }, {
+            "x" : 34.186987605694846,
+            "y" : 166.17403779054865
+          }, {
+            "x" : 21.73425581432167,
+            "y" : 164.8522394439783
+          }, {
+            "x" : 19.099999999999994,
+            "y" : 199.0
+          }, {
+            "x" : 19.05628571428571,
+            "y" : 198.99999999999994
+          }, {
+            "x" : 18.27154639552318,
+            "y" : 209.17254672469915
+          }, {
+            "x" : 30.27150842097523,
+            "y" : 210.4112524821652
+          }, {
+            "x" : 32.9,
+            "y" : 177.70000000000002
+          }, {
+            "x" : 32.9,
+            "y" : 177.60000000000002
+          }, {
+            "x" : 32.92061855670151,
+            "y" : 177.48659793813826
+          }, {
+            "x" : 33.0,
+            "y" : 176.5
+          }, {
+            "x" : 33.099999999999994,
+            "y" : 176.5
+          }, {
+            "x" : 34.7,
+            "y" : 176.5
+          }, {
+            "x" : 34.6889816999298,
+            "y" : 176.64282981572407
+          }, {
+            "x" : 50.9,
+            "y" : 178.10000000000002
+          }, {
+            "x" : 50.8,
+            "y" : 179.60000000000002
+          }, {
+            "x" : 50.69287715909629,
+            "y" : 179.58862941912184
+          }, {
+            "x" : 48.17919973665921,
+            "y" : 212.17333674701
+          }, {
+            "x" : 60.1715084209752,
+            "y" : 213.41125248216517
+          }, {
+            "x" : 62.79459442251368,
+            "y" : 180.8100407487585
+          }, {
+            "x" : 62.7,
+            "y" : 180.8
+          }, {
+            "x" : 62.7,
+            "y" : 180.70000000000002
+          }, {
+            "x" : 62.89999999999999,
+            "y" : 179.6
+          }, {
+            "x" : 62.900000000000006,
+            "y" : 179.5
+          }, {
+            "x" : 64.60000000000001,
+            "y" : 179.5
+          }, {
+            "x" : 64.58063189440782,
+            "y" : 179.75106803545233
+          }, {
+            "x" : 79.58749999999209,
+            "y" : 181.0999999999993
+          }, {
+            "x" : 80.7,
+            "y" : 181.09999999999997
+          }, {
+            "x" : 80.7,
+            "y" : 181.20000000000002
+          }, {
+            "x" : 80.6,
+            "y" : 182.70000000000002
+          }, {
+            "x" : 80.57676171176162,
+            "y" : 182.6975333660529
+          }, {
+            "x" : 78.07840971434835,
+            "y" : 215.083577776965
+          }, {
+            "x" : 89.86435243068325,
+            "y" : 216.3001912186512
+          }, {
+            "x" : 92.60000000000001,
+            "y" : 182.3
+          }, {
+            "x" : 92.76363636363689,
+            "y" : 182.3000000000009
+          }, {
+            "x" : 92.8,
+            "y" : 182.1
+          }, {
+            "x" : 110.60000000000001,
+            "y" : 183.70000000000002
+          }, {
+            "x" : 110.60000000000001,
+            "y" : 183.8
+          }, {
+            "x" : 107.97233641783413,
+            "y" : 217.86230569474415
+          }, {
+            "x" : 120.26188129734507,
+            "y" : 219.13090387585487
+          }, {
+            "x" : 123.0,
+            "y" : 185.1
+          }, {
+            "x" : 123.28181818181588,
+            "y" : 185.09999999999994
+          }, {
+            "x" : 123.30000000000001,
+            "y" : 185.0
+          }, {
+            "x" : 124.41250000001804,
+            "y" : 185.10000000000173
+          }, {
+            "x" : 124.70000000000002,
+            "y" : 185.1
+          }, {
+            "x" : 124.69802014920731,
+            "y" : 185.12566473251314
+          }, {
+            "x" : 139.98750000002386,
+            "y" : 186.50000000000207
+          }, {
+            "x" : 141.1,
+            "y" : 186.5
+          }, {
+            "x" : 141.10000000000002,
+            "y" : 186.60000000000002
+          }, {
+            "x" : 141.0,
+            "y" : 188.10000000000002
+          }, {
+            "x" : 140.97676171176155,
+            "y" : 188.0975333660535
+          }, {
+            "x" : 138.47998975897005,
+            "y" : 220.4630957170549
+          }, {
+            "x" : 150.57150842097533,
+            "y" : 221.71125248216518
+          }, {
+            "x" : 153.3,
+            "y" : 187.8
+          }, {
+            "x" : 155.0,
+            "y" : 187.8
+          }, {
+            "x" : 152.3696700925351,
+            "y" : 221.89686917084222
+          }, {
+            "x" : 152.4,
+            "y" : 221.9
+          }, {
+            "x" : 152.3502325581381,
+            "y" : 222.14883720932175
+          }, {
+            "x" : 152.3,
+            "y" : 222.8
+          }, {
+            "x" : 152.2200000000048,
+            "y" : 222.79999999999865
+          }, {
+            "x" : 152.2,
+            "y" : 222.9
+          }, {
+            "x" : 138.4025841124942,
+            "y" : 221.46650224545388
+          }, {
+            "x" : 138.4,
+            "y" : 221.5
+          }, {
+            "x" : 138.2,
+            "y" : 221.5
+          }, {
+            "x" : 136.6,
+            "y" : 221.3
+          }, {
+            "x" : 139.28590347637834,
+            "y" : 187.91805679358194
+          }, {
+            "x" : 124.60283710400071,
+            "y" : 186.35951902221234
+          }, {
+            "x" : 122.0,
+            "y" : 220.1
+          }, {
+            "x" : 121.80000000000001,
+            "y" : 220.1
+          }, {
+            "x" : 121.74146341463432,
+            "y" : 220.09268292682822
+          }, {
+            "x" : 121.70000000000002,
+            "y" : 220.3
+          }, {
+            "x" : 106.3,
+            "y" : 218.70000000000002
+          }, {
+            "x" : 106.30740740740619,
+            "y" : 218.6259259259258
+          }, {
+            "x" : 106.1,
+            "y" : 218.60000000000002
+          }, {
+            "x" : 108.80185916210371,
+            "y" : 185.01975041385458
+          }, {
+            "x" : 94.20967655114552,
+            "y" : 183.47085952218873
+          }, {
+            "x" : 91.66280677370982,
+            "y" : 216.48583811857662
+          }, {
+            "x" : 91.80000000000001,
+            "y" : 216.5
+          }, {
+            "x" : 91.60000000000001,
+            "y" : 217.5
+          }, {
+            "x" : 78.00099388942165,
+            "y" : 216.0871162482516
+          }, {
+            "x" : 78.0,
+            "y" : 216.09999999999997
+          }, {
+            "x" : 77.8,
+            "y" : 216.09999999999997
+          }, {
+            "x" : 76.2,
+            "y" : 215.89999999999998
+          }, {
+            "x" : 78.88590347637843,
+            "y" : 182.51805679358205
+          }, {
+            "x" : 64.4850972879692,
+            "y" : 180.989479600399
+          }, {
+            "x" : 61.969670092535054,
+            "y" : 213.59686917084227
+          }, {
+            "x" : 62.000000000000014,
+            "y" : 213.6
+          }, {
+            "x" : 61.95023255814107,
+            "y" : 213.8488372092919
+          }, {
+            "x" : 61.900000000000006,
+            "y" : 214.5
+          }, {
+            "x" : 61.81999999999789,
+            "y" : 214.50000000000608
+          }, {
+            "x" : 61.80000000000001,
+            "y" : 214.6
+          }, {
+            "x" : 48.10178900095706,
+            "y" : 213.17680924685263
+          }, {
+            "x" : 48.1,
+            "y" : 213.2
+          }, {
+            "x" : 47.9,
+            "y" : 213.2
+          }, {
+            "x" : 46.300000000000004,
+            "y" : 213.0
+          }, {
+            "x" : 49.00270597223991,
+            "y" : 179.40922577358978
+          }, {
+            "x" : 34.593561103810764,
+            "y" : 177.87976346911958
+          }, {
+            "x" : 32.06967009253501,
+            "y" : 210.59686917084235
+          }, {
+            "x" : 32.1,
+            "y" : 210.6
+          }, {
+            "x" : 32.05023255814059,
+            "y" : 210.84883720929636
+          }, {
+            "x" : 32.0,
+            "y" : 211.5
+          }, {
+            "x" : 31.919999999998865,
+            "y" : 211.49999999999974
+          }, {
+            "x" : 31.9,
+            "y" : 211.6
+          }, {
+            "x" : 16.5,
+            "y" : 210.0
+          }, {
+            "x" : 16.508641975308446,
+            "y" : 209.91358024691357
+          }, {
+            "x" : 16.4,
+            "y" : 209.9
+          }, {
+            "x" : 19.199999999999996,
+            "y" : 175.1
+          } ]
+        },
+        "visible" : true
+      }, {
+        "id" : 22,
+        "shape" : {
+          "type" : "POLYGON",
+          "points" : [ {
+            "x" : 201.1,
+            "y" : 154.7
+          }, {
+            "x" : 201.1,
+            "y" : 154.6
+          }, {
+            "x" : 201.2,
+            "y" : 154.6
+          }, {
+            "x" : 201.2,
+            "y" : 154.7
+          } ]
+        },
+        "visible" : true
+      }, {
+        "id" : 23,
+        "shape" : {
+          "type" : "POLYGON",
+          "points" : [ {
+            "x" : 16.0,
+            "y" : 111.7
+          }, {
+            "x" : 16.0,
+            "y" : 98.2
+          }, {
+            "x" : 216.0,
+            "y" : 98.2
+          }, {
+            "x" : 216.0,
+            "y" : 111.7
+          } ]
+        },
+        "visible" : true
+      } ],
+      "measurementAreas" : [ ],
+      "stairs" : [ ],
+      "targets" : [ {
+        "id" : 2,
+        "shape" : {
+          "x" : 155.3,
+          "y" : 164.2,
+          "width" : 41.3,
+          "height" : 23.1,
+          "type" : "RECTANGLE"
+        },
+        "visible" : true,
+        "absorber" : {
+          "enabled" : true,
+          "deletionDistance" : 0.1
+        },
+        "waiter" : {
+          "enabled" : false,
+          "distribution" : null
+        },
+        "leavingSpeed" : 0.0,
+        "parallelEvents" : 0
+      } ],
+      "targetChangers" : [ ],
+      "absorbingAreas" : [ ],
+      "aerosolClouds" : [ ],
+      "droplets" : [ ],
+      "sources" : [ {
+        "id" : 4,
+        "shape" : {
+          "type" : "POLYGON",
+          "points" : [ {
+            "x" : 3.3000000000000003,
+            "y" : 142.0
+          }, {
+            "x" : 2.3000000000000003,
+            "y" : 165.6
+          }, {
+            "x" : 21.0,
+            "y" : 163.0
+          }, {
+            "x" : 52.99999999999999,
+            "y" : 166.2
+          }, {
+            "x" : 59.99999999999999,
+            "y" : 150.5
+          }, {
+            "x" : 27.0,
+            "y" : 150.5
+          } ]
+        },
+        "visible" : true,
+        "targetIds" : [ 2 ],
+        "spawner" : {
+          "type" : "org.vadere.state.attributes.spawner.AttributesRegularSpawner",
+          "constraintsElementsMax" : 100,
+          "constraintsTimeStart" : 0.0,
+          "constraintsTimeEnd" : 10.0,
+          "eventPositionRandom" : false,
+          "eventPositionGridCA" : false,
+          "eventPositionFreeSpace" : true,
+          "eventElementCount" : 10,
+          "eventElement" : null,
+          "distribution" : {
+            "type" : "org.vadere.state.attributes.distributions.AttributesConstantDistribution",
+            "updateFrequency" : 1.0
+          }
+        },
+        "groupSizeDistribution" : [ 1.0 ]
+      } ],
+      "dynamicElements" : [ ],
+      "attributesPedestrian" : {
+        "shape" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "width" : 1.0,
+          "height" : 1.0,
+          "type" : "RECTANGLE"
+        },
+        "visible" : true,
+        "radius" : 0.2,
+        "densityDependentSpeed" : false,
+        "speedDistributionMean" : 1.34,
+        "speedDistributionStandardDeviation" : 0.26,
+        "minimumSpeed" : 0.5,
+        "maximumSpeed" : 2.2,
+        "acceleration" : 2.0,
+        "footstepHistorySize" : 4,
+        "searchRadius" : 1.0,
+        "walkingDirectionSameIfAngleLessOrEqual" : 45.0,
+        "walkingDirectionCalculation" : "BY_TARGET_CENTER"
+      },
+      "teleporter" : null,
+      "attributesCar" : {
+        "id" : -1,
+        "shape" : {
+          "x" : 0.0,
+          "y" : 0.0,
+          "width" : 1.0,
+          "height" : 1.0,
+          "type" : "RECTANGLE"
+        },
+        "visible" : true,
+        "radius" : 0.2,
+        "densityDependentSpeed" : false,
+        "speedDistributionMean" : 1.34,
+        "speedDistributionStandardDeviation" : 0.26,
+        "minimumSpeed" : 0.5,
+        "maximumSpeed" : 2.2,
+        "acceleration" : 2.0,
+        "footstepHistorySize" : 4,
+        "searchRadius" : 1.0,
+        "walkingDirectionSameIfAngleLessOrEqual" : 45.0,
+        "walkingDirectionCalculation" : "BY_TARGET_CENTER",
+        "length" : 4.5,
+        "width" : 1.7,
+        "direction" : {
+          "x" : 1.0,
+          "y" : 0.0
+        }
+      }
+    },
+    "stimulusInfos" : [ ]
+  }
+}
