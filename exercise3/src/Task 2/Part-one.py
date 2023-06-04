@@ -1,7 +1,39 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from diffusion_map_algo import diffusion_map_algo
+from sklearn.datasets import make_swiss_roll
 
+def create_swiss_roll_data(N= 5000):
+    """
+    Create the swiss roll data for the second part of the task using make swiss roll from
+    sklearn.
+
+    Parameters:
+    N (int): The number of data points to create.
+
+    Returns:
+    Tuple[np.ndarray, np.ndarray]: A tuple of two 1D arrays
+    """
+    x_k, t_k = make_swiss_roll(N)
+    return x_k, t_k
+
+
+x, t = create_swiss_roll_data(N=1000)
+
+
+L = 10 #First 10 eigenvalues and eigenvectors
+lambda_values, phi = diffusion_map_algo(x, 0.05, L)
+for i in range(0, L + 1):
+    plt.figure()
+    plt.plot(t, phi[:, i])
+    plt.title(f"Eigenfunction φ{i} against tk")
+    plt.xlabel("tk")
+    plt.ylabel(f"φ{i}(xk)")
+    plt.grid(True)
+    plt.show()
+
+
+"""
 # Generate data set
 N = 1000
 t_k = np.linspace(0, 2 * np.pi, N, endpoint=False)  # t_k = (2πk)/(N + 1)
@@ -47,3 +79,4 @@ for i in range(5):
 
 plt.tight_layout()
 plt.show()
+"""
