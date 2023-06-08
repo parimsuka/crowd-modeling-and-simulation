@@ -123,8 +123,10 @@ def model(t, y, mu0, mu1, beta, A, d, nu, b):
     S, I, R = y
     m = mu(b, I, mu0, mu1)
     
-    dSdt = A - d * S - (beta * S * I) / (S + I + R)
-    dIdt = -(d + nu) * I - m * I + (beta * S * I) / (S + I + R)
+    beta_SIR = (beta * S * I) / (S + I + R)
+    
+    dSdt = A - d * S - beta_SIR
+    dIdt = -(d + nu) * I - m * I + beta_SIR
     dRdt = m * I - d * R
     
     return [dSdt, dIdt, dRdt]
