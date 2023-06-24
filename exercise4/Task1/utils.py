@@ -5,7 +5,7 @@ from numpy import linalg as LA
 
 from scipy.integrate import solve_ivp
 
-def plot_A_field(alpha, y0, grid_precision):
+def plot_A_field(alpha, y0, grid_precision, stop_time):
     A = np.array([
         [alpha, alpha],
         [-0.25, 0]
@@ -18,7 +18,7 @@ def plot_A_field(alpha, y0, grid_precision):
     f_ode = lambda t, y: A@y
 
     # time range
-    time = np.linspace(start=0, stop=10, num=grid_precision)
+    time = np.linspace(start=0, stop=stop_time, num=grid_precision)
 
     # Solve the system with solve_ivp
     sol = solve_ivp(f_ode, (time[0], time[-1]), y0, t_eval=time)
