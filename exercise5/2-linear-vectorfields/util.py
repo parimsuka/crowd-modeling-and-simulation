@@ -26,7 +26,7 @@ def stream_plot(x, y, u, v, sp_x, sp_y, title=None):
     """Plots a Streamplot with Trace."""
     plt.streamplot(x, y, u, v, color='cyan')
     plt.plot(sp_x, sp_y, color='red')
-    plt.xlim([x[0], x[-1]])
-    plt.ylim([y[0], y[-1]])
+    plt.xlim([x.flatten()[0], x.flatten()[-1]])
+    plt.ylim([y.flatten()[0], y.flatten()[-1]])
     plt.title(title)
 
