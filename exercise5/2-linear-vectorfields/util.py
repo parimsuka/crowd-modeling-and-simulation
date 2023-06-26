@@ -23,7 +23,7 @@ def arrow_plot(x, y, u, v, color_arrow=None, color_point=None, marker='.', title
 
 
 def stream_plot(x, y, u, v, sp_x, sp_y, title=None):
-    """Plots a Streamplot with Trace."""
+    """Plots a Streamplot with Trajectory. x,y,u,v are the streamplot parameters, sp_x,sp_y are the trajectory parameters."""
     plt.streamplot(x, y, u, v, color='cyan')
     plt.plot(sp_x, sp_y, color='red')
     plt.xlim([x.flatten()[0], x.flatten()[-1]])
