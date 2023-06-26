@@ -35,9 +35,9 @@ class LinearVectorfieldApproximation:
     def approximate_A_hat(self, use_numpy: bool = True) -> None:
         """Approximates A_hat either using the numpy lstsq solver or the closed form solution."""
         if use_numpy:
-            self.A_hat = np.linalg.lstsq(self.x0, self.v_hat, rcond=None)[0]  # rcond does not seem to impact the result
+            self.A_hat = (np.linalg.lstsq(self.x0, self.v_hat, rcond=None)[0]).T  # rcond does not seem to impact the result
         else:
-            self.A_hat = (np.linalg.inv(self.x0.T @ self.x0)) @ self.x0.T @ self.v_hat
+            self.A_hat = ((np.linalg.inv(self.x0.T @ self.x0)) @ self.x0.T @ self.v_hat).T
     
     def compute_MSE_A_hat(self) -> None:
         """Computes the MSE for our A_hat calculation."""
