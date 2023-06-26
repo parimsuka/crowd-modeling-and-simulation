@@ -7,6 +7,16 @@ import pandas as pd
 def get_manifold_data(data_path) -> np.ndarray:
     """
     Read data from file and return as numpy array
+
+    Parameters
+    ----------
+    data_path : str
+        Path to the data file
+
+    Returns
+    -------
+    numpy.ndarray
+        Data as numpy array
     """
     data = pd.read_csv(data_path,sep=" ")
     data = data.to_numpy()
@@ -23,6 +33,11 @@ def add_delay(data, delta_n):
         Data to be delayed
     delta_n : int
         Delay to be added
+
+    Returns
+    -------
+    numpy.ndarray
+        Delayed data
     """
 
     # Add delay to the data
@@ -136,6 +151,11 @@ def get_lorenz_trajectory(t_end=1000, start=[10, 10, 10], sigma=10, beta= 8 / 3,
         The value of the parameter beta (default is 2.667).
     rho : float, optional
         The value of the parameter rho (default is 28).
+
+    Returns
+    -------
+    x_list, y_list, z_list : list
+        The x, y, and z values of the trajectory.
     """
     # Set up parameters for the analysis
     iterations = int(t_end / dt)
@@ -173,6 +193,10 @@ def plot_lorenz_trajectory(x_list, y_list, z_list, linewidth, save = False, file
         Whether to save the plot (default is False).
     filename : str, optional
         The name of the file to save (default is '').
+
+    Returns
+    -------
+    None
     """
     fig = plt.figure(figsize=(9, 9))
     ax = fig.add_subplot(projection='3d')
