@@ -4,7 +4,6 @@ import torch.nn as nn
 import pytorch_lightning as pl
 
 
-
 class PedestrianNet(pl.LightningModule):
     def __init__(self,
                  k: int = 10,
@@ -21,7 +20,7 @@ class PedestrianNet(pl.LightningModule):
             nn.Linear(2*k+1, hidden_size, dtype=torch.float64),
             nn.ReLU(),
             nn.Linear(hidden_size, 1, dtype=torch.float64),
-            # nn.ReLU()  # We could use ReLU for output, as speed should be in [0, \infty), but let's try without first
+#             nn.ReLU()  # We could use ReLU for output, as speed should be in [0, \infty), but let's try without first
         )
 
     def forward(self, x):
@@ -30,7 +29,8 @@ class PedestrianNet(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         X = batch['distances']
-        y = batch['speed']
+        y = batch['speed'].unsqueeze_(1)
+        
         y_hat = self.model(X)
         loss = self._loss_function(y_hat, y)
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=len(y))
@@ -38,14 +38,16 @@ class PedestrianNet(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         X = batch['distances']
-        y = batch['speed']
+        y = batch['speed'].unsqueeze_(1)
+
         y_hat = self.model(X)
         loss = self._loss_function(y_hat, y)
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=len(y))
 
     def test_step(self, batch, batch_idx):
         X = batch['distances']
-        y = batch['speed']
+        y = batch['speed'].unsqueeze_(1)
+
         y_hat = self.model(X)
         loss = self._loss_function(y_hat, y)
         self.log("TEST_LOSS", loss)

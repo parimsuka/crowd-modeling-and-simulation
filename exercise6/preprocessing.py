@@ -9,6 +9,8 @@ import numpy as np
 import numpy.typing as npt
 import scipy
 import logging
+import torch
+from sklearn.preprocessing import MinMaxScaler
 
 
 def get_ped_paths(ped_data):
@@ -219,3 +221,24 @@ def do_preprocessing(data: npt.ArrayLike,
         return cleaned_data
     else:
         return data
+
+    
+def normalize_data(dataset):
+    
+    scaler = MinMaxScaler()
+    
+    # Normalize data
+    distances = torch.tensor(np.array([sample['distances'] for sample in dataset]))
+    speed = torch.tensor(np.array([sample['speed'] for sample in dataset]))
+
+    # Applying data normalization
+    X = scaler.fit_transform(distances.T).T
+    y = scaler.fit_transform(speed.reshape(-1, 1)).flatten()
+
+    # Create a list of dictionaries
+    data = []
+    for i in range(len(X)):
+        sample = {'distances': X[i], 'speed': y[i]}
+        data.append(sample)
+
+    return data
