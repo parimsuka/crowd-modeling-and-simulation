@@ -6,6 +6,7 @@ TODO: Finalize Docstring(s)
 """
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_ped_paths(ped_paths, title=None):
@@ -48,3 +49,28 @@ def plot_ped_speeds(ped_speeds, title=None):
     plt.title(title)
 
     plt.show()
+
+
+def plot_fd_curve(test_x, test_y, x_model, y_fit, title=None, save_fig=False, fig_name=None):
+    """
+    Plots a fundamental diagram curve.
+
+    :param fd_curve: fundamental diagram curve
+    :param title: title of plot
+    :return: None
+    """
+    # Plot the data and the curve fit
+    plt.figure(figsize=(20, 10))
+    plt.scatter(test_x, test_y, marker='o', color = (0.2, 0.5, 0.5), label='Data', s=0.3)
+    plt.plot(x_model, y_fit, label='Curve Fit', color= 'red', linewidth=2 )
+    plt.xlabel("Mean Spacing")
+    plt.ylabel("Speed")
+    plt.title(title)
+
+    plt.show()
+
+    if save_fig:
+        plt.savefig(fig_name)
+
+    return None
+

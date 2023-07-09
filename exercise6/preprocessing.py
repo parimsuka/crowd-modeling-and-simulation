@@ -7,6 +7,7 @@ TODO: Finalize Docstring(s)
 
 import numpy as np
 import numpy.typing as npt
+import math
 import scipy
 import logging
 import torch
@@ -242,3 +243,55 @@ def normalize_data(dataset):
         data.append(sample)
 
     return data
+
+
+def prepare_weidmann_data(train_dataset, test_dataset): 
+    """
+    Takes a list of train and test dataset and converts to [mean spacing, speed] for each data point.
+
+    :param ped_paths: list of pedestrian paths
+    :return: train_x, train_y, test_x, test_y
+    """
+    
+    train_x, train_y, test_x, test_y = [], [], [], []
+
+    # Get only mean spacing and speed for training 
+    for k in range(len(train_dataset)):
+        for i in range (len(train_dataset[k])):
+            distances = train_dataset[k][i]['distances']
+            speed = train_dataset[k][i]['speed']
+            distance = 0
+            for j in range(1, 21, 2):
+                distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
+            train_x.append(distance/10)
+            train_y.append(speed)
+
+    # Get only mean spacing and speed for testing 
+    for i in range (len(test_dataset)):
+        distances = test_dataset[i]['distances']
+        speed = test_dataset[i]['speed']
+        distance = 0
+        for j in range(1, 21, 2):
+            distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
+        test_x.append(distance/10)
+        test_y.append(speed)
+
+    return train_x, train_y, test_x, test_y
+
+
+
+
+'''
+import math
+mean_spaces = []
+for i in range(len(bottleneck_train_val_dataset[0])):
+        #print(c_015_train_val_datasets[0][i])
+        distance = 0
+        for j in range(1, 21, 2):
+            distance += math.sqrt((bottleneck_train_val_dataset[0][i]['distances'][j])**2 + (bottleneck_train_val_dataset[0][i]['distances'][j+1])**2)
+
+        mean_spaces.append(distance/10)
+
+print(mean_spaces)
+print(bottleneck_train_val_dataset[i]['distances'][0])
+'''
