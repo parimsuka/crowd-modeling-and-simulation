@@ -74,3 +74,19 @@ def plot_fd_curve(test_x, test_y, x_model, y_fit, title=None, save_fig=False, fi
 
     return None
 
+
+def plot_histogram(data, xlabel = None, ylabel = None, title = None):
+    """
+    Plots histograms of the data.
+
+    :return: None
+    """
+    #plot histogtam of the data
+    plt.figure(figsize=(20, 10))
+    plt.hist(data, bins=100, density=True, alpha=0.6, color='g')
+    plt.xlabel(xlabel)
+    plt.ylabel("Frequency")
+    plt.title(title)
+
+    plt.show()
+

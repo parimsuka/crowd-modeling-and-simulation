@@ -263,8 +263,8 @@ def prepare_weidmann_data(train_dataset, test_dataset):
             distance = 0
             for j in range(1, 21, 2):
                 distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
-            train_x.append(distance/10)
-            train_y.append(speed)
+            train_x.append(distance/1000)
+            train_y.append(speed/10)
 
     # Get only mean spacing and speed for testing 
     for i in range (len(test_dataset)):
@@ -273,8 +273,8 @@ def prepare_weidmann_data(train_dataset, test_dataset):
         distance = 0
         for j in range(1, 21, 2):
             distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
-        test_x.append(distance/10)
-        test_y.append(speed)
+        test_x.append(distance/1000)
+        test_y.append(speed/10)
 
     return train_x, train_y, test_x, test_y
 
