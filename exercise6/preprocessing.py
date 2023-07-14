@@ -245,11 +245,13 @@ def normalize_data(dataset):
     return data
 
 
-def prepare_weidmann_data(train_dataset, test_dataset): 
+def prepare_weidmann_data(train_dataset, test_dataset, k): 
     """
     Takes a list of train and test dataset and converts to [mean spacing, speed] for each data point.
 
-    :param ped_paths: list of pedestrian paths
+    :param train_dataset: list of train dataset
+    :param test_dataset: list of test dataset
+
     :return: train_x, train_y, test_x, test_y
     """
     
@@ -263,7 +265,8 @@ def prepare_weidmann_data(train_dataset, test_dataset):
             distance = 0
             for j in range(1, 21, 2):
                 distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
-            train_x.append(distance/1000)
+            #Adjust distance to meters and speed to m/s
+            train_x.append(distance/(100*k))
             train_y.append(speed/10)
 
     # Get only mean spacing and speed for testing 
@@ -273,7 +276,8 @@ def prepare_weidmann_data(train_dataset, test_dataset):
         distance = 0
         for j in range(1, 21, 2):
             distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
-        test_x.append(distance/1000)
+        #Adjust distance to meters and speed to m/s
+        test_x.append(distance/(100*k))
         test_y.append(speed/10)
 
     return train_x, train_y, test_x, test_y

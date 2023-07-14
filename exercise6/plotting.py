@@ -55,8 +55,14 @@ def plot_fd_curve(test_x, test_y, x_model, y_fit, title=None, save_fig=False, fi
     """
     Plots a fundamental diagram curve.
 
-    :param fd_curve: fundamental diagram curve
+    :param test_x: test data for curve fitting, mean spacing
+    :param test_y: test data for curve fitting, speed
+    :param x_model: x values for the curve fit
+    :param y_fit: y values for the curve fit
     :param title: title of plot
+    :param save_fig: save figure
+    :param fig_name: name of figure to save
+
     :return: None
     """
     # Plot the data and the curve fit
@@ -79,14 +85,18 @@ def plot_histogram(data, xlabel = None, ylabel = None, title = None):
     """
     Plots histograms of the data.
 
+    :param data: data to plot
+    :param title: title of plot
+    :param xlabel: x label of plot
+    :param ylabel: y label of plot
+
     :return: None
     """
     #plot histogtam of the data
     plt.figure(figsize=(20, 10))
-    plt.hist(data, bins=100, density=True, alpha=0.6, color='g')
+    plt.hist(data, bins=100, density=True, alpha=0.6, color='g', edgecolor='black')
     plt.xlabel(xlabel)
     plt.ylabel("Frequency")
     plt.title(title)
 
     plt.show()
-
