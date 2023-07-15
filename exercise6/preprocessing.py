@@ -35,6 +35,7 @@ def get_ped_speeds_list(ped_paths):
     """
     Takes a list of pedestrian paths and returns a list of pedestrian speeds
     TODO: Finalize Docstring
+    TODO: remove duplicate function and put both in one
 
     :param ped_paths:
     :return:
@@ -121,6 +122,7 @@ def get_ped_speeds(ped_paths):
     """
     Takes a list of pedestrian paths and returns a list of pedestrian speeds
     TODO: Finalize Docstring
+    TODO: remove duplicate function and put both in one
 
     :param ped_paths:
     :return:
