@@ -7,8 +7,11 @@ TODO: Finalize Docstring(s)
 
 import numpy as np
 import numpy.typing as npt
+import math
 import scipy
 import logging
+import torch
+from sklearn.preprocessing import MinMaxScaler
 
 
 def get_ped_paths(ped_data):
@@ -221,3 +224,80 @@ def do_preprocessing(data: npt.ArrayLike,
         return cleaned_data
     else:
         return data
+
+    
+def normalize_data(dataset):
+    
+    scaler = MinMaxScaler()
+    
+    # Normalize data
+    distances = torch.tensor(np.array([sample['distances'] for sample in dataset]))
+    speed = torch.tensor(np.array([sample['speed'] for sample in dataset]))
+
+    # Applying data normalization
+    X = scaler.fit_transform(distances.T).T
+    y = scaler.fit_transform(speed.reshape(-1, 1)).flatten()
+
+    # Create a list of dictionaries
+    data = []
+    for i in range(len(X)):
+        sample = {'distances': X[i], 'speed': y[i]}
+        data.append(sample)
+
+    return data
+
+
+def prepare_weidmann_data(train_dataset, test_dataset, k): 
+    """
+    Takes a list of train and test dataset and converts to [mean spacing, speed] for each data point.
+
+    :param train_dataset: list of train dataset
+    :param test_dataset: list of test dataset
+
+    :return: train_x, train_y, test_x, test_y
+    """
+    
+    train_x, train_y, test_x, test_y = [], [], [], []
+
+    # Get only mean spacing and speed for training 
+    for k in range(len(train_dataset)):
+        for i in range (len(train_dataset[k])):
+            distances = train_dataset[k][i]['distances']
+            speed = train_dataset[k][i]['speed']
+            distance = 0
+            for j in range(1, 21, 2):
+                distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
+            #Adjust distance to meters and speed to m/s
+            train_x.append(distance/(100*k))
+            train_y.append(speed/10)
+
+    # Get only mean spacing and speed for testing 
+    for i in range (len(test_dataset)):
+        distances = test_dataset[i]['distances']
+        speed = test_dataset[i]['speed']
+        distance = 0
+        for j in range(1, 21, 2):
+            distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
+        #Adjust distance to meters and speed to m/s
+        test_x.append(distance/(100*k))
+        test_y.append(speed/10)
+
+    return train_x, train_y, test_x, test_y
+
+
+
+
+'''
+import math
+mean_spaces = []
+for i in range(len(bottleneck_train_val_dataset[0])):
+        #print(c_015_train_val_datasets[0][i])
+        distance = 0
+        for j in range(1, 21, 2):
+            distance += math.sqrt((bottleneck_train_val_dataset[0][i]['distances'][j])**2 + (bottleneck_train_val_dataset[0][i]['distances'][j+1])**2)
+
+        mean_spaces.append(distance/10)
+
+print(mean_spaces)
+print(bottleneck_train_val_dataset[i]['distances'][0])
+'''
