@@ -125,7 +125,7 @@ def get_ped_frames(ped_data: npt.ArrayLike) -> dict:
     return frames
 
 
-def construct_kNN_tree(ped_data: npt.ArrayLike) -> dict:
+def construct_kNN_trees(ped_data: npt.ArrayLike) -> dict:
     """
     Constructs multiple KDTrees using the SciPy library for the pedestrian location data.
     This tree structure allows for quick querying of the k nearest neighbors of a location.
@@ -145,32 +145,62 @@ def construct_kNN_tree(ped_data: npt.ArrayLike) -> dict:
     return kNN_frames
 
 
-def build_data_structure(trees_dict, k=10):
-    ks = [k for k in range(2, k+2)]  # build the k's without [1] so that self isn't included
+def get_ped_distances(kNN_trees_dict: dict, k: int = 10) -> dict:
+    """
+    Generates the neccessary input values needed for the neural network.
+    The values are:
+    1. The mean distance of the k nearest neighbors
+    2. The relative distances of the k nearest neighbors each
+        These relative distances are split into the x- and y- direction
+    In total, there are 2k+1 total input values with the following structure for each dict item:
+        mean_spacing, x_diff_1, y_diff_1, x_diff_2, y_diff_2, ..., x_diff_k, y_diff_k
+
+    :param kNN_trees_dict: Dictionary containing KDTrees for each frame.
+    :param k: The number of nearest neighbors the KDTrees are queried for.
+    :return: The distance values used as input for the neural network in a dictionary keyed by the PedID and FrameID.
+    """
+    # build the k's without [1] so that self isn't included
+    # Querying the KDTree for a given pedestrian position will return the pedestrian itself as one of the closest neighbors
+    # To query for k neighbors of a pedestrian without getting the pedestrian itself, we generate the following list:
+    # [2, ..., k+1]
+    # This list has k items but starts at 2 (skipping the closest nearest neighbor, which is the pedestrian itself)
+    ks = [k for k in range(2, k+2)]
 
     returned_dict = {}
 
-    for key, tree in trees_dict.items():
-        # 1. Calculate the Input Data of the following Shape:
-        # Length: 2K+1
-        # mean_spacing - x_diff - y_diff - x_diff2 - y_diff 2 - ...
+    for key, tree in kNN_trees_dict.items():
+        # Iterate through all frames (saved in separate kNN Trees)
 
         for i in range(tree.n):
+            # Iterate through all pedestrians present in a given frame
+            # and calculate the nearest neighbors for all of them
+
+            # The key for the kNN dictionary: (PedID, FrameID)
             dict_key = (tree.data[i, 0], tree.data[i, 1])
+
+            # Initialize the returned dictionary item of length 2k+1
             returned_dict[dict_key] = np.empty(2*len(ks)+1)
-            # returns distances, indexes
+
+            # Query the KDTree for the k nearest neighbors,
+            #   returning their distances to the queried position and their indexes
+            #   in the array containing all pedestrians in a given frame (tree.n)
             distances, indexes = tree.query(tree.data[i], k=ks)
 
-            # calculate mean spacing
+            # Calculate the mean spacing and store it at index 0 of our returned numpy array
             returned_dict[dict_key][0] = np.mean(distances)
 
-            # calculate y_diff and x_diff
+            # Calculate the y_diffs and x_diffs of the k nearest neighbors and store them at
+            #   indexes 1..2k of our returned numpy array
             for j, k in enumerate(indexes):
                 if k < tree.n:
-                    returned_dict[dict_key][2*j+1] = tree.data[k, 2] - tree.data[i, 2]  # x_diff
-                    returned_dict[dict_key][2*j+2] = tree.data[k, 3] - tree.data[i, 3]  # y_diff
+                    returned_dict[dict_key][2 * j + 1] = tree.data[k, 2] - tree.data[i, 2]  # x_diff
+                    returned_dict[dict_key][2 * j + 2] = tree.data[k, 3] - tree.data[i, 3]  # y_diff
 
                 else:
+                    # If the tree for the currently processed frame does not have enough pedestrians to
+                    #   log k nearest neighbors, the missing pedestrians are added using np.inf as relative distances.
+                    # These datapoints can later be removed using clean_dataset(), to allow the network
+                    #   to train only with data where enough neighbors are available.
                     logging.debug(f"Tree: {key}\tTreeIndex: {i}\tNeighborIndex: {k}\n"
                                   f"\tk: {len(ks)}\tTreeItems: {tree.n}\tConsideredTreeItems: {tree.n - 1}\n"  # -1 Item considered since self is removed
                                   f"\tNot enough neighbors, adding np.inf to result array.")
@@ -181,23 +211,24 @@ def build_data_structure(trees_dict, k=10):
     return returned_dict
 
 
-
-
 def clean_dataset(dataset: list[dict]) -> (list[dict], int):
-    """Removes all nan values from the dict"""
+    """
+    Removes data points from our dataset that contain a np.inf or np.nan value.
 
+    :param dataset: The dataset from which to remove invalid datapoints from.
+    :return: The cleaned dataset as well as the number of removed items.
+    """
     logging.info("Cleaning data.")
 
     cleaned_dataset = []
-
     removed_item_counter = 0
 
-    for listitem in dataset:
-        if np.isfinite(listitem['distances']).all() and np.isfinite(listitem['speed']).all():
-            cleaned_dataset.append(listitem)
+    for datapoint in dataset:
+        # np.isfinite returns true if number is not nan and not inf
+        if np.isfinite(datapoint['distances']).all() and np.isfinite(datapoint['speed']).all():
+            cleaned_dataset.append(datapoint)
         else:
             removed_item_counter += 1
-            # print(f"\tBad Listitem: {listitem}")
 
     logging.info(f"Finished cleaning data, {removed_item_counter} items removed.")
 
@@ -209,6 +240,20 @@ def merge_distance_speed(distance_values: dict,
                          k: int,
                          hide_id_frame: bool = True
                          ) -> list[dict]:
+    """
+    Groups the input of the neural network (distance values) and the output
+      of the neural network (speed value) together per (PedID, FrameID) Tuple.
+      Only if a (PedID, FrameID) Tuple has both distance values and a speed value,
+      it is included in the resulting dataset.
+      The resulting dataset is flattened as well.
+
+    :param distance_values: The input of the neural network, the distance values.
+    :param speed_values: The output of the neural network, the speed values.
+    :param k: The number of nearest neighbors.
+    :param hide_id_frame: Whether to hide the PedID and FrameID in the result.
+                          Only used for debugging, PedID and FrameID are not included by default.
+    :return: A flattened list containing all complete datapoints in the dataset.
+    """
     logging.info("Merging preprocessed data.")
     data_list = []
 
@@ -242,15 +287,23 @@ def do_preprocessing(data: npt.ArrayLike,
                      clean_data: bool = True,
                      hide_id_frame: bool = True
                      ) -> list[dict]:
-    """Gets data, returns complete list of dicts"""
+    """
+    Gets data, returns complete list of dicts.
+
+    :param data:
+    :param k:
+    :param clean_data:
+    :param hide_id_frame:
+    :return:
+    """
 
     # logging.basicConfig(level=logging.INFO)
     # logging.warning("Testwarning")
 
     # 1. get Input Values per ID+Frame
     logging.info("Preprocessing distance values.")
-    trees_dict = construct_kNN_tree(data)
-    distance_values = build_data_structure(trees_dict, k=k)
+    trees_dict = construct_kNN_trees(data)
+    distance_values = get_ped_distances(trees_dict, k=k)
 
     # 2. get Speed Values per ID+Frame
     logging.info("Preprocessing speed values.")
