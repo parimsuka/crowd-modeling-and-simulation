@@ -1,6 +1,6 @@
 """
 Module implementing the PedestrianDataset class.
-Also implementing the function create_dataset() and helpful subfunctions
+Also implementing the function create_dataset() and other helpful functions
 used for creating a PedestrianDataset from a .txt file.
 
 author: Simon Blöchinger
