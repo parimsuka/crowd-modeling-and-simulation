@@ -6,13 +6,14 @@ Also implements preprocessing methods for the FD model.
 author: Simon Blöchinger, Sena Korkut, Parim Suka
 """
 
+import logging
+import math
+import typing as t
+
 import numpy as np
 import numpy.typing as npt
-import math
 import scipy
-import logging
 import torch
-import typing as t
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import Dataset
 
