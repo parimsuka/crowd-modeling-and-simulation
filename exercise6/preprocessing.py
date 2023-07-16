@@ -14,6 +14,7 @@ import logging
 import torch
 import typing as t
 from sklearn.preprocessing import MinMaxScaler
+from torch.utils.data import Dataset
 
 
 def get_ped_paths(ped_data: npt.ArrayLike) -> list:
@@ -306,8 +307,13 @@ def do_preprocessing(data: npt.ArrayLike,
         return data
 
     
-def normalize_data(dataset):
-    
+def normalize_data(dataset: Dataset) -> t.Union[Dataset, list]:
+    """
+    Normalize the given data using MinMaxScaler().
+
+    :param dataset: The dataset to be normalized.
+    :return: The normalized dataset.
+    """
     scaler = MinMaxScaler()
     
     # Normalize data
