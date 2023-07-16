@@ -1,8 +1,9 @@
 """
 This module implements preprocessing methods that prepare the data from the dataset to be
 used in the neural network.
+Also implements preprocessing methods for the FD model.
 
-author: Simon Blöchinger
+author: Simon Blöchinger, Sena Korkut, Parim Suka
 """
 
 import numpy as np
@@ -74,32 +75,6 @@ def get_ped_speeds(ped_paths: list, return_list: bool = False) -> t.Union[dict, 
     return ped_speeds_list if return_list else ped_speeds_dict
 
 
-# def get_ped_speeds_list(ped_paths):
-#     """
-#     Takes a list of pedestrian paths and returns a list of pedestrian speeds
-#     TODO: Finalize Docstring
-#     TODO: remove duplicate function and put both in one
-#
-#     :param ped_paths:
-#     :return:
-#     """
-#     ped_speeds = []
-#
-#     # Doing it in a for-loop first, should probably change that later
-#     for ped_path in ped_paths:
-#         # New Format: ID, Frame, Speed
-#         ped_speed = np.empty((ped_path.shape[0]-1, 3))
-#
-#         for i in range(ped_speed.shape[0]):
-#             # Iterate over rows of single pedestrian
-#             ped_speed[i][0:2] = ped_path[i][0:2]  # Copy PedID and FrameID
-#             ped_speed[i][2] = np.linalg.norm(ped_path[i+1][2:5] - ped_path[i][2:5]) / (ped_path[i+1][1] - ped_path[i][1])
-#
-#         ped_speeds.append(ped_speed)
-#
-#     return ped_speeds
-
-
 def get_ped_frames(ped_data: npt.ArrayLike) -> dict:
     """
     Takes the original array of pedestrian data and stores it in a dictionary divided by the FrameID (used as key).
@@ -159,10 +134,9 @@ def get_ped_distances(kNN_trees_dict: dict, k: int = 10) -> dict:
     :param k: The number of nearest neighbors the KDTrees are queried for.
     :return: The distance values used as input for the neural network in a dictionary keyed by the PedID and FrameID.
     """
-    # build the k's without [1] so that self isn't included
     # Querying the KDTree for a given pedestrian position will return the pedestrian itself as one of the closest neighbors
     # To query for k neighbors of a pedestrian without getting the pedestrian itself, we generate the following list:
-    # [2, ..., k+1]
+    #   [2, ..., k+1]
     # This list has k items but starts at 2 (skipping the closest nearest neighbor, which is the pedestrian itself)
     ks = [k for k in range(2, k+2)]
 
@@ -224,8 +198,9 @@ def clean_dataset(dataset: list[dict]) -> (list[dict], int):
     removed_item_counter = 0
 
     for datapoint in dataset:
-        # np.isfinite returns true if number is not nan and not inf
+        # Iterate through all datapoints and remove invalid ones
         if np.isfinite(datapoint['distances']).all() and np.isfinite(datapoint['speed']).all():
+            # np.isfinite returns true if number is not nan and not inf
             cleaned_dataset.append(datapoint)
         else:
             removed_item_counter += 1
@@ -257,21 +232,33 @@ def merge_distance_speed(distance_values: dict,
     logging.info("Merging preprocessed data.")
     data_list = []
 
+    # First, iterate through all distance values and find the corresponding speed values
+    # If such a value is found, they are merged and added to data_list
     for key, input_val in distance_values.items():
+        # Create an empty merged item so that the ordering is correct and it occupies one block in memory
         data_item = {
             'distances': np.empty((2*k + 1)),
             'speed': np.empty(1),
         }
+
+        # If debug information (PedID, FrameID) should be included, add it to the merged item last
         if not hide_id_frame:
             data_item['id+frame'] = key
+
+        # Try to find a speed value for our distance value
         try:
+            # If it does exist, merge both and add to data_list
             data_item['speed'] = speed_values[key]
             data_item['distances'] = input_val
             data_list.append(data_item)
         except KeyError:
+            # If it does not exist, do not add the distance without the speed.
             logging.debug(f"\t\t{key} has no speed value.")
             continue
 
+    # Secondly, iterate through all speed values to see if there are
+    #   any speed values without a distance value
+    # Currently only used to log this occurrence
     for key, speed_val in speed_values.items():
         try:
             _ = distance_values[key]
@@ -288,31 +275,30 @@ def do_preprocessing(data: npt.ArrayLike,
                      hide_id_frame: bool = True
                      ) -> list[dict]:
     """
-    Gets data, returns complete list of dicts.
+    Function executing the whole preprocessing.
+      Takes in the original location data of all pedestrians at each point in time and
+      returns it in the correct format for the neural network.
 
-    :param data:
-    :param k:
-    :param clean_data:
-    :param hide_id_frame:
-    :return:
+    :param data: The original location data of all pedestrians at each point in time.
+    :param k: The number of nearest neighbors used during the preprocessing.
+    :param clean_data: Whether to remove datapoints containing invalid (nan and inf) values.
+    :param hide_id_frame: Whether to hide information only used for debugging.
+    :return: Preprosessed data in the form of a list of dictionaries.
     """
-
-    # logging.basicConfig(level=logging.INFO)
-    # logging.warning("Testwarning")
-
-    # 1. get Input Values per ID+Frame
+    # 1. Get input values for the NN (Distances) per ID+Frame
     logging.info("Preprocessing distance values.")
     trees_dict = construct_kNN_trees(data)
     distance_values = get_ped_distances(trees_dict, k=k)
 
-    # 2. get Speed Values per ID+Frame
+    # 2. Get output/truth values for the NN (Speed) per ID+Frame
     logging.info("Preprocessing speed values.")
     ped_paths = get_ped_paths(data)
     speed_values = get_ped_speeds(ped_paths)
 
-    # 3. Build final list of items (dicts)
+    # 3. Build final list of items (dicts) by merging distances and speed values
     data = merge_distance_speed(distance_values, speed_values, k, hide_id_frame)
 
+    # 4. Remove invalid datapoints if desired
     if clean_data:
         cleaned_data, removed_item_counter = clean_dataset(data)
         return cleaned_data
