@@ -1,8 +1,8 @@
 """
-Preprocessing Methods
+This module implements preprocessing methods that prepare the data from the dataset to be
+used in the neural network.
 
-TODO: Finalize Docstring(s)
-
+author: Simon Blöchinger
 """
 
 import numpy as np
@@ -11,17 +11,17 @@ import math
 import scipy
 import logging
 import torch
+import typing as t
 from sklearn.preprocessing import MinMaxScaler
 
 
-def get_ped_paths(ped_data):
+def get_ped_paths(ped_data: npt.ArrayLike) -> list:
     """
-    Takes an Array of Pedestrian Data and divides it into multiple arrays, one for each pedestrian.
-    Returns a list of these arrays.
-    TODO: finalize Docstring
+    Takes the original array of pedestrian data and divides it into multiple lists for each pedestrian.
+    Each list item then represents the path of one pedestrian.
 
-    :param ped_data:
-    :return:
+    :param ped_data: The original location data of all pedestrians at each point in time.
+    :return: A list of the locations grouped per pedestrian, representing the path a pedestrian took.
     """
     ped_ids = np.unique(ped_data[:, 0])
     ped_paths = []
@@ -34,45 +34,107 @@ def get_ped_paths(ped_data):
     return ped_paths
 
 
-def get_ped_speeds_list(ped_paths):
+def get_ped_speeds(ped_paths: list, return_list: bool = False) -> t.Union[dict, list]:
     """
-    Takes a list of pedestrian paths and returns a list of pedestrian speeds
-    TODO: Finalize Docstring
-    TODO: remove duplicate function and put both in one
+    Takes a list of pedestrian paths and returns the speed of the pedestrians.
+    Can either return the speeds in a dictionary with the PedID and FrameID as key (default)
+    or return the speeds in a list of lists for easier plotting of the speed behavior of one pedestrian.
 
-    :param ped_paths:
-    :return:
+    :param ped_paths: List of pedestrian locations grouped by pedestrain (the paths of each pedestrian).
+    :param return_list: If false (default), returns the data in a dictionary. If true, returns the data in a list.
+    :return: The speeds of the pedestrians in either a dictionary (key: (PedID, FrameID)) or a list of lists.
     """
-    ped_speeds = []
+    # Initialize the returned objects for each case (dictionary or list)
+    if return_list:
+        ped_speeds_list = []
+    else:
+        ped_speeds_dict = {}
 
-    # Doing it in a for-loop first, should probably change that later
     for ped_path in ped_paths:
-        # New Format: ID, Frame, Speed
-        ped_speed = np.empty((ped_path.shape[0]-1, 3))
+        # Iterate over all pedestrian paths
 
-        for i in range(ped_speed.shape[0]):
+        # The length of the returned speed values will be the length of the location values - 1
+        ped_speed_len = ped_path.shape[0] - 1
+
+        if return_list:
+            ped_speed_listitem = np.empty((ped_speed_len, 3))
+
+        for i in range(ped_speed_len):
             # Iterate over rows of single pedestrian
-            ped_speed[i][0:2] = ped_path[i][0:2]  # Copy PedID and FrameID
-            ped_speed[i][2] = np.linalg.norm(ped_path[i+1][2:5] - ped_path[i][2:5]) / (ped_path[i+1][1] - ped_path[i][1])
+            if return_list:
+                ped_speed_listitem[i][0:2] = ped_path[i][0:2]  # Copy PedID and FrameID
+                ped_speed_listitem[i][2] = np.linalg.norm(ped_path[i + 1][2:5] - ped_path[i][2:5]) / (ped_path[i + 1][1] - ped_path[i][1])
+            else:
+                dict_key = (ped_path[i, 0], ped_path[i, 1])
+                ped_speeds_dict[dict_key] = np.linalg.norm(ped_path[i+1][2:5] - ped_path[i][2:5]) / (ped_path[i+1][1] - ped_path[i][1])
 
-        ped_speeds.append(ped_speed)
+        if return_list:
+            ped_speeds_list.append(ped_speed_listitem)
 
-    return ped_speeds
+    return ped_speeds_list if return_list else ped_speeds_dict
 
 
-def get_ped_frames(ped_data):
-    ped_frame_ids = np.unique(ped_data[:, 1])
-    ped_frames = {}
+# def get_ped_speeds_list(ped_paths):
+#     """
+#     Takes a list of pedestrian paths and returns a list of pedestrian speeds
+#     TODO: Finalize Docstring
+#     TODO: remove duplicate function and put both in one
+#
+#     :param ped_paths:
+#     :return:
+#     """
+#     ped_speeds = []
+#
+#     # Doing it in a for-loop first, should probably change that later
+#     for ped_path in ped_paths:
+#         # New Format: ID, Frame, Speed
+#         ped_speed = np.empty((ped_path.shape[0]-1, 3))
+#
+#         for i in range(ped_speed.shape[0]):
+#             # Iterate over rows of single pedestrian
+#             ped_speed[i][0:2] = ped_path[i][0:2]  # Copy PedID and FrameID
+#             ped_speed[i][2] = np.linalg.norm(ped_path[i+1][2:5] - ped_path[i][2:5]) / (ped_path[i+1][1] - ped_path[i][1])
+#
+#         ped_speeds.append(ped_speed)
+#
+#     return ped_speeds
 
-    for i in range(ped_frame_ids.size):
-        ped_id = ped_frame_ids[i]
+
+def get_ped_frames(ped_data: npt.ArrayLike) -> dict:
+    """
+    Takes the original array of pedestrian data and stores it in a dictionary divided by the FrameID (used as key).
+    Each dictionary item then represents the state of all pedestrians in a frame.
+
+    :param ped_data: The original location data of all pedestrians at each point in time.
+    :return: A dictionary of the locations grouped per frame, representing the state of a frame.
+    """
+    # Get a list of all FrameIDs
+    frame_ids = np.unique(ped_data[:, 1])
+    frames = {}
+
+    for i in range(frame_ids.size):
+        # Iterate through all frames in the data
+        ped_id = frame_ids[i]
+
+        # Prepare a mask for gathering all data that have the same FrameID value as our current frame
         ped_mask = (np.isclose(ped_data[:, 1], ped_id))
-        ped_frames[ped_id] = (ped_data[ped_mask, :])
 
-    return ped_frames
+        # Store all data that corresponds to our current frame at the correct dictionary key
+        frames[ped_id] = (ped_data[ped_mask, :])
+
+    return frames
 
 
-def construct_kNN_tree(ped_data):
+def construct_kNN_tree(ped_data: npt.ArrayLike) -> dict:
+    """
+    Constructs multiple KDTrees using the SciPy library for the pedestrian location data.
+    This tree structure allows for quick querying of the k nearest neighbors of a location.
+    First, divides the data into each frame.
+    Then, constructs a separate KDTree for each frame to query the k nearest neighbors for each frame.
+
+    :param ped_data: The original location data of all pedestrians at each point in time.
+    :return: Dictionary containing KDTrees for each frame.
+    """
     # Compute kNN Tree for each Frame sequentially
     ped_frames = get_ped_frames(ped_data)
     kNN_frames = {}
@@ -89,11 +151,9 @@ def build_data_structure(trees_dict, k=10):
     returned_dict = {}
 
     for key, tree in trees_dict.items():
-
         # 1. Calculate the Input Data of the following Shape:
         # Length: 2K+1
         # mean_spacing - x_diff - y_diff - x_diff2 - y_diff 2 - ...
-        # Note: Why split in x and y? Why not just distance?
 
         for i in range(tree.n):
             dict_key = (tree.data[i, 0], tree.data[i, 1])
@@ -121,25 +181,6 @@ def build_data_structure(trees_dict, k=10):
     return returned_dict
 
 
-def get_ped_speeds(ped_paths):
-    """
-    Takes a list of pedestrian paths and returns a list of pedestrian speeds
-    TODO: Finalize Docstring
-    TODO: remove duplicate function and put both in one
-
-    :param ped_paths:
-    :return:
-    """
-    ped_speeds = {}
-
-    for ped_path in ped_paths:
-        range_helper = ped_path.shape[0]-1
-        for i in range(range_helper):
-            # Iterate over rows of single pedestrian
-            dict_key = (ped_path[i, 0], ped_path[i, 1])
-            ped_speeds[dict_key] = np.linalg.norm(ped_path[i+1][2:5] - ped_path[i][2:5]) / (ped_path[i+1][1] - ped_path[i][1])
-
-    return ped_speeds
 
 
 def clean_dataset(dataset: list[dict]) -> (list[dict], int):
@@ -283,21 +324,3 @@ def prepare_weidmann_data(train_dataset, test_dataset, k):
         test_y.append(speed/10)
 
     return train_x, train_y, test_x, test_y
-
-
-
-
-'''
-import math
-mean_spaces = []
-for i in range(len(bottleneck_train_val_dataset[0])):
-        #print(c_015_train_val_datasets[0][i])
-        distance = 0
-        for j in range(1, 21, 2):
-            distance += math.sqrt((bottleneck_train_val_dataset[0][i]['distances'][j])**2 + (bottleneck_train_val_dataset[0][i]['distances'][j+1])**2)
-
-        mean_spaces.append(distance/10)
-
-print(mean_spaces)
-print(bottleneck_train_val_dataset[i]['distances'][0])
-'''
