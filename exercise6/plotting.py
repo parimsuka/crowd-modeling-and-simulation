@@ -1,21 +1,18 @@
 """
-Plotting Methods
+Module containing various plotting methods.
 
-TODO: Finalize Docstring(s)
-
+Authors: Simon Blöchinger, Sena Korkut
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 
-def plot_ped_paths(ped_paths, title=None):
+def plot_ped_paths(ped_paths: list, title=None) -> None:
     """
     Plots list of paths of pedestrians.
-    TODO: finalize Docstring
 
-    :param ped_paths:
-    :return:
+    :param ped_paths: List of paths of pedestrians.
+    :param title: The title of the plot.
     """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -32,13 +29,12 @@ def plot_ped_paths(ped_paths, title=None):
     plt.show()
 
 
-def plot_ped_speeds(ped_speeds, title=None):
+def plot_ped_speeds(ped_speeds: list, title=None) -> None:
     """
     Plots list of speeds of pedestrians.
-    TODO: finalize Docstring
 
-    :param ped_speeds:
-    :return:
+    :param ped_speeds: List of speeds of pedestrians.
+    :param title: The title of the plot.
     """
     fig = plt.figure()
     ax = fig.add_subplot(111)
