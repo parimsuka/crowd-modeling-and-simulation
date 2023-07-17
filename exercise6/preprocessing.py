@@ -334,7 +334,7 @@ def normalize_data(dataset: Dataset) -> t.Union[Dataset, list]:
     return data
 
 
-def prepare_weidmann_data(train_dataset, test_dataset, k=10): 
+def prepare_weidmann_data(train_dataset, test_dataset): 
     """
     Takes a list of train and test dataset and converts to [mean spacing, speed] for each data point.
 
@@ -355,7 +355,7 @@ def prepare_weidmann_data(train_dataset, test_dataset, k=10):
             for j in range(1, 21, 2):
                 distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
             #Adjust distance to meters and speed to m/s
-            train_x.append(distance/(100*k))
+            train_x.append(distance/1000)
             train_y.append(speed/10)
 
     # Get only mean spacing and speed for testing 
@@ -366,7 +366,7 @@ def prepare_weidmann_data(train_dataset, test_dataset, k=10):
         for j in range(1, 21, 2):
             distance += math.sqrt((distances[j])**2 + (distances[j+1])**2)
         #Adjust distance to meters and speed to m/s
-        test_x.append(distance/(100*k))
+        test_x.append(distance/1000)
         test_y.append(speed/10)
 
     return train_x, train_y, test_x, test_y
