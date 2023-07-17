@@ -96,3 +96,34 @@ def plot_histogram(data, xlabel = None, ylabel = None, title = None):
     plt.title(title)
 
     plt.show()
+    
+
+def plot_losses(train_losses, test_losses, all_models):
+    """
+    Plots the losses for different models.
+    
+    Args:
+        train_losses (list): List of loss values for the train_losses models.
+        test_losses (list): List of loss values for the test models.
+        all_models (list): List of model configurations.
+
+    Returns:
+        None
+    """
+    x_axis = [str(models) for models in all_models]
+    
+    plt.figure(figsize=(10, 6))
+    
+    # Plot train_losses as gray line with "Training" label
+    plt.plot(x_axis, train_losses, marker='o', color='gray', label='Training')
+    
+    # Plot test_losses as red line with "Test" label
+    plt.plot(x_axis, test_losses, marker='o', color='red', label='Test')
+    
+    plt.xlabel("Models")
+    plt.ylabel("Loss")
+    plt.title("Losses for Different Models")
+    plt.xticks(rotation=45, ha='right')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()

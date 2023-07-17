@@ -5,23 +5,48 @@ import pytorch_lightning as pl
 
 
 class PedestrianNet(pl.LightningModule):
+#     def __init__(self,
+#                  k: int = 10,
+#                  hidden_size: int = 3,
+#                  learning_rate: float = 1e-3,
+#                  optimizer=torch.optim.Adam):
+#         super().__init__()
+#         self.k = k
+#         self.hidden_size = hidden_size
+#         self.learning_rate = learning_rate
+#         self.optimizer = optimizer
+
+#         self.model = nn.Sequential(
+#             nn.Linear(2*k+1, hidden_size, dtype=torch.float64),
+#             nn.ReLU(),
+#             nn.Linear(hidden_size, 1, dtype=torch.float64),
+# #             nn.ReLU()  # We could use ReLU for output, as speed should be in [0, \infty), but let's try without first
+#         )
+        
     def __init__(self,
-                 k: int = 10,
-                 hidden_size: int = 3,
-                 learning_rate: float = 1e-3,
-                 optimizer=torch.optim.Adam):
+             k: int = 10,
+             hidden_sizes: list = [3],
+             learning_rate: float = 1e-3,
+             optimizer=torch.optim.Adam):
         super().__init__()
         self.k = k
-        self.hidden_size = hidden_size
+        self.hidden_sizes = hidden_sizes
         self.learning_rate = learning_rate
         self.optimizer = optimizer
 
-        self.model = nn.Sequential(
-            nn.Linear(2*k+1, hidden_size, dtype=torch.float64),
-            nn.ReLU(),
-            nn.Linear(hidden_size, 1, dtype=torch.float64),
-#             nn.ReLU()  # We could use ReLU for output, as speed should be in [0, \infty), but let's try without first
-        )
+        layers = [
+            nn.Linear(2 * k + 1, hidden_sizes[0], dtype=torch.float64),
+            nn.ReLU()
+        ]
+
+        for i in range(1, len(hidden_sizes)):
+            layers.append(nn.Linear(hidden_sizes[i-1], hidden_sizes[i], dtype=torch.float64))
+            layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(hidden_sizes[-1], 1, dtype=torch.float64))
+        # layers.append(nn.ReLU())  # We could use ReLU for output, as speed should be in [0, \infty), but let's try without first
+
+        self.model = nn.Sequential(*layers)
 
     def forward(self, x):
         y_hat = self.model(x)
