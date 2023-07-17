@@ -5,6 +5,7 @@ Authors: Simon Blöchinger, Sena Korkut
 """
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 
 def plot_ped_paths(ped_paths: list, title=None) -> None:
@@ -126,4 +127,37 @@ def plot_losses(train_losses, test_losses, all_models):
     plt.xticks(rotation=45, ha='right')
     plt.legend()
     plt.tight_layout()
+    plt.show()
+    
+    
+    
+def plot_losses_FD_NN(x_labels, y_FD, y_NN):
+    """
+    Plot MSE losses for FD and NN models.
+
+    Args:
+        x_labels (list): List of x-axis labels.
+        y_FD (list): List of MSE losses for FD model.
+        y_NN (list): List of MSE losses for NN model.
+
+    Returns:
+        None
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_labels, y_FD, color='red', label='FD')
+    plt.plot(x_labels, y_NN, color='grey', label='NN')
+    plt.xlabel('Labels')
+    plt.ylabel('MSE')
+
+    # Modify y-axis major ticks
+    plt.yticks([0.020, 0.030, 0.040, 0.050])
+
+    # Define minor ticks and draw a grid for them
+    ax = plt.gca()
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.010))
+    ax.yaxis.grid(True, linestyle='--', which='both', alpha=0.5)
+
+    # Place legend at the bottom right without a frame
+    plt.legend(frameon=False, loc='lower right')
+
     plt.show()
