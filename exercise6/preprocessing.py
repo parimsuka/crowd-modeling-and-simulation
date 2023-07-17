@@ -334,7 +334,7 @@ def normalize_data(dataset: Dataset) -> t.Union[Dataset, list]:
     return data
 
 
-def prepare_weidmann_data(train_dataset, test_dataset, k): 
+def prepare_weidmann_data(train_dataset, test_dataset, k=10): 
     """
     Takes a list of train and test dataset and converts to [mean spacing, speed] for each data point.
 
